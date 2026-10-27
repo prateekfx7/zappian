@@ -66,8 +66,33 @@ Format:
    - All 35 tests across repo pass (100%), 0 mypy issues in 11 files, 0 ruff errors.
    - Committed to git (`2e8b5fa`).
 
+### Milestone 2 (M2) — Analysis and Simple Summary (COMPLETE ☑)
+
+#### Actions Completed
+1. **Section 9 Autopsy Report Schema (`reelbrain/app/schemas/report.py`):**
+   - Built full Section 9 data model: 3-line Verdict, Why It Works bullets with timestamps and confidence, Weak points with actionable fixes, Platform notes with heuristic disclaimer, Scores (0–100 labeled as estimates), Sourced stats, Reusable structure blueprint beats, Frame-by-frame table, Memory notes, and Next actions.
+2. **Chunking Engine & Moment Analysis (`reelbrain/app/pipeline/chunker.py`):**
+   - Implemented chunk grouping for clips <=45s with 5s overlap.
+   - Built context integration (spoken speech within 750ms and OCR text) for Qwen2.5-VL moment analysis.
+   - Merged chunk results with boundary deduplication favoring higher confidence.
+3. **Evidence Validation & 1-Attempt Repair (`reelbrain/app/pipeline/validator.py`):**
+   - Validated every timestamp cited against ground-truth sampled frames.
+   - Implemented 1-attempt repair: snaps timestamps within 1000ms to nearest valid frame.
+   - Drops ungrounded claims and enforces strict >=95% evidence coverage (`settings.min_evidence_coverage_pct`), raising `EvidenceValidationError` on violations.
+4. **Section 9 Report Synthesis Engine (`reelbrain/app/pipeline/synthesis.py`):**
+   - Grouped contiguous moments into reusable structural blueprint beats with storytelling roles and attention techniques.
+   - Extracted grounded Why It Works bullets (<=5) and actionable Weak Points (<=3) addressing silence gaps >=500ms, UI overlay danger zones, and visual stagnation.
+   - Calculated heuristic scores (0–100) and generated platform notes (Instagram Reels vs TikTok creator heuristics).
+5. **Report Exporters (`reelbrain/app/pipeline/export.py`):**
+   - Implemented `export_report_markdown`: formatted with clean headers, tables, timestamps, and checklist.
+   - Implemented `export_report_html`: Pinterest-inspired responsive layout with score cards, pill badges, and print CSS.
+   - Implemented `export_report_pdf`: exports self-contained printable document.
+6. **Integration Tests & Verification (`tests/integration/test_m2_analysis_report.py`):**
+   - 5 comprehensive tests verifying chunk boundaries, moment contracts, Section 9 constraints, timestamp snapping/rejection, and Markdown/HTML/PDF exports.
+   - All 40 tests across repository pass (100%), 0 ruff errors, 0 mypy issues in all files.
+
 ---
 
-### Next Milestone Proposal: M2 — Analysis and Simple Summary
-- **Goal:** Chunked VLM analysis (<=45s, 5s overlap), merge, synthesis, evidence validation (enforcing >=95% valid timestamps), and Section 9 simple summary report generation (Verdict, Why it works, Weak points, Reels vs TikTok platform notes, Scores, Reusable structure, Frame-by-frame table).
-- Awaiting user approval before proceeding to M2.
+### Next Milestone Proposal: M3 — Memory System (The Agent's "Mind")
+- **Goal:** Persistent SQLite + ChromaDB memory, episodic video memory, semantic pattern memory, profile & feedback memory, living playbook (`data/PLAYBOOK.md`), and controllable memory commands (`remember: <text>`, `show memory`, `forget <id>`, `export memory` to `data/MEMORY.md`).
+- Awaiting user approval before proceeding to M3.

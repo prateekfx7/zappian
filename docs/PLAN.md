@@ -40,15 +40,15 @@ ReelBrain is a personal AI video-analysis agent for a freelance video editor and
   - [x] Resumable stage pipeline with progress reporting and `stage_data.json` checkpoints (`reelbrain/app/pipeline/orchestrator.py`).
 - **Acceptance:** End-to-end media pipeline completed; failed stages resume cleanly from last completed checkpoint; 4 fps hook + 1 fps body verified in tests.
 
-### M2 — Analysis and Simple Summary (Status: PLANNED)
+### M2 — Analysis and Simple Summary (Status: COMPLETE ☑)
 - **Goal:** Chunked VLM analysis (<=45s, 5s overlap), merge, synthesis, evidence validation, Section 9 report format, Markdown/PDF export.
 - **Tasks:**
-  - [ ] Chunking engine and timestamp-overlap merge logic.
-  - [ ] Prompt templates (`vlm_moment_v1`, `synthesis_v1`).
-  - [ ] Section 9 report layout: Verdict (3 lines), Why it works (5 bullets with timestamps), Weak points, Platform notes (Reels vs TikTok), Scores (0–100 estimates), Reusable structure, Frame-by-frame table.
-  - [ ] Timestamp evidence validation (enforce >=95% valid timestamp coverage).
-  - [ ] Markdown and PDF report export.
-- **Acceptance:** >=95% claims have valid timestamps on golden set; verdict reads like a professional editor.
+  - [x] Chunking engine and timestamp-overlap merge logic (`reelbrain/app/pipeline/chunker.py`).
+  - [x] Prompt templates (`vlm_moment_v1`, `synthesis_v1`) with deterministic contract fallback (`reelbrain/app/providers/vlm.py`).
+  - [x] Section 9 report layout: Verdict (3 lines), Why it works (5 bullets with timestamps), Weak points, Platform notes (Reels vs TikTok), Scores (0–100 estimates), Reusable structure, Frame-by-frame table (`reelbrain/app/schemas/report.py` & `synthesis.py`).
+  - [x] Timestamp evidence validation (enforce >=95% valid timestamp coverage with 1-attempt repair <1000ms) (`reelbrain/app/pipeline/validator.py`).
+  - [x] Markdown, standalone HTML, and printable PDF report exporters (`reelbrain/app/pipeline/export.py`).
+- **Acceptance:** >=95% claims have valid timestamps on golden set; verdict reads like a professional editor; 100% test pass on M2 suite.
 
 ### M3 — Memory System (The Agent's "Mind") (Status: PLANNED)
 - **Goal:** Persistent SQLite + ChromaDB memory, episodic video memory, semantic pattern memory, profile & feedback memory, living playbook (`data/PLAYBOOK.md`), memory controls.

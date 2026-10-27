@@ -118,7 +118,7 @@ def normalize_video(
         "-i",
         str(input_path),
         "-vf",
-        "scale='if(gt(a,720/1280),720,-2)':'if(gt(a,720/1280),-2,1280)':force_original_aspect_ratio=decrease",
+        "scale=720:1280:force_original_aspect_ratio=decrease,pad=ceil(iw/2)*2:ceil(ih/2)*2",
         "-c:v",
         "libx264",
         "-preset",

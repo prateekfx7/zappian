@@ -1,40 +1,46 @@
 {
   "version": "1.0",
-  "videos": [
+  "niche": "Short-Form Video Ads (Instagram Reels & TikTok)",
+  "golden_videos": [
     {
       "id": "g1",
-      "filename": "g1_product_ad.mp4",
-      "category": "product_ad",
-      "description": "D2C physical product ad with immediate problem hook and demo",
-      "expected_beats": ["hook", "problem", "demo", "offer", "cta"]
+      "filename": "g1_problem_solution_ad.mp4",
+      "type": "Product Ad",
+      "description": "D2C physical product ad with immediate problem-agitation hook, feature demo, and clear conversion CTA.",
+      "duration_range_s": "15-30",
+      "required_elements": ["pattern_interrupt_hook", "product_close_up", "on_screen_text_offer"]
     },
     {
       "id": "g2",
-      "filename": "g2_ugc_reel.mp4",
-      "category": "ugc_reel",
-      "description": "Selfie camera UGC style testimonial with high emotional energy",
-      "expected_beats": ["hook", "problem", "social_proof", "cta"]
+      "filename": "g2_ugc_review_ad.mp4",
+      "type": "UGC Reel",
+      "description": "Authentic creator testimonial filmed on front-camera with green screen / relatable setting and high trust.",
+      "duration_range_s": "15-45",
+      "required_elements": ["face_close_up", "relatable_opener", "social_proof"]
     },
     {
       "id": "g3",
-      "filename": "g3_talking_head.mp4",
-      "category": "talking_head",
-      "description": "Creator educational talking head with fast cuts and punch-ins",
-      "expected_beats": ["hook", "insight", "proof", "cta"]
+      "filename": "g3_talking_head_ad.mp4",
+      "type": "Talking Head",
+      "description": "Founder or expert breaking down a contrarian insight or industry myth with fast punchy pacing.",
+      "duration_range_s": "30-60",
+      "required_elements": ["curiosity_gap", "b_roll_inserts", "clear_spoken_pace"]
     },
     {
       "id": "g4",
-      "filename": "g4_screen_demo.mp4",
-      "category": "screen_demo",
-      "description": "SaaS application UI recording with cursor motion and voiceover",
-      "expected_beats": ["hook", "demo", "proof", "cta"]
+      "filename": "g4_screen_demo_ad.mp4",
+      "type": "Screen Demo",
+      "description": "Software or mobile app screen recording showing rapid before/after results and slick finger taps.",
+      "duration_range_s": "15-30",
+      "required_elements": ["screen_recording", "text_callouts", "fast_cut_pacing"]
     },
     {
       "id": "g5",
-      "filename": "g5_music_edit.mp4",
-      "category": "music_edit",
-      "description": "Music-synced rhythmic montage with text cards and fast cuts",
-      "expected_beats": ["hook", "transition", "demo", "cta"]
+      "filename": "g5_music_led_ad.mp4",
+      "type": "Music-Led Edit",
+      "description": "High-octane montage with cuts locked to music beats, visual transitions, and dynamic sound effects.",
+      "duration_range_s": "12-20",
+      "required_elements": ["beat_synced_cuts", "visual_contrast", "loop_connected_ending"]
     }
   ]
 }

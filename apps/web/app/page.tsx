@@ -20,7 +20,12 @@ import {
   Eye,
   AlertCircle,
   Film,
+  Zap,
+  BarChart3,
+  Flame,
+  ArrowRight,
 } from "lucide-react";
+import { ReportViewer, AnalysisReport } from "../components/ReportViewer";
 
 interface PipelineProgress {
   stage: string;
@@ -65,6 +70,12 @@ interface PipelineData {
     silence_gaps: { start_ms: number; end_ms: number; duration_ms: number }[];
     energy_curve: { t_ms: number; rms: number }[];
   };
+  ocr?: {
+    keyframe_ms: number;
+    texts: { text: string; confidence: number; bbox: number[][] }[];
+  }[];
+  analysis?: AnalysisReport;
+  segments?: any[];
 }
 
 export default function Home() {
@@ -74,13 +85,17 @@ export default function Home() {
   const [isDragging, setIsDragging] = useState(false);
   const [rightsConfirmed, setRightsConfirmed] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [videoId, setVideoId] = useState<string | null>(null);
   const [pipelineProgress, setPipelineProgress] = useState<PipelineProgress | null>(null);
   const [pipelineData, setPipelineData] = useState<PipelineData | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [selectedFrame, setSelectedFrame] = useState<FrameItem | null>(null);
+  const [selectedTimestamp, setSelectedTimestamp] = useState<number | null>(null);
+  const [activeTab, setActiveTab] = useState<"autopsy" | "assets">("autopsy");
 
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const inspectorRef = useRef<HTMLDivElement>(null);
 
   // SSE event stream listener for real-time progress
   useEffect(() => {
@@ -125,6 +140,9 @@ export default function Home() {
         setPipelineData(data);
         if (data.frames && data.frames.length > 0) {
           setSelectedFrame(data.frames[0]);
+        }
+        if (data.analysis) {
+          setActiveTab("autopsy");
         }
       }
     } catch (err) {
@@ -176,6 +194,38 @@ export default function Home() {
     const s = totalSec % 60;
     const mill = Math.floor((ms % 1000) / 100);
     return `${m.toString().padStart(2, "0")}:${s.toString().padStart(2, "0")}.${mill}00`;
+  };
+
+  const handleSelectTimestamp = (t_ms: number) => {
+    setSelectedTimestamp(t_ms);
+    if (pipelineData?.frames && pipelineData.frames.length > 0) {
+      const closest = pipelineData.frames.reduce((prev, curr) =>
+        Math.abs(curr.t_ms - t_ms) < Math.abs(prev.t_ms - t_ms) ? curr : prev
+      );
+      setSelectedFrame(closest);
+      inspectorRef.current?.scrollIntoView({ behavior: "smooth", block: "center" });
+    }
+  };
+
+  const handleRunAnalysis = async () => {
+    if (!pipelineData?.video_id) return;
+    setIsAnalyzing(true);
+    setErrorMessage(null);
+    try {
+      const res = await fetch(`http://localhost:8000/v1/videos/${pipelineData.video_id}/analyze`, {
+        method: "POST",
+      });
+      if (!res.ok) {
+        throw new Error("Failed to execute Phase 2 analysis engine.");
+      }
+      const report: AnalysisReport = await res.json();
+      setPipelineData((prev) => (prev ? { ...prev, analysis: report } : null));
+      setActiveTab("autopsy");
+    } catch (err: any) {
+      setErrorMessage(err.message || "Analysis request failed.");
+    } finally {
+      setIsAnalyzing(false);
+    }
   };
 
   const handleStartAnalysis = async (e: React.FormEvent) => {
@@ -264,13 +314,13 @@ export default function Home() {
 
           <div className="hidden md:flex items-center gap-2">
             <button className="px-4 py-2 rounded-full font-semibold text-sm bg-ink text-white">
-              Explore
+              Autopsy
             </button>
             <button className="px-4 py-2 rounded-full font-semibold text-sm text-ink hover:bg-secondary-bg transition">
               Blueprints
             </button>
             <button className="px-4 py-2 rounded-full font-semibold text-sm text-ink hover:bg-secondary-bg transition">
-              Diffs
+              Remix
             </button>
           </div>
         </div>
@@ -290,8 +340,11 @@ export default function Home() {
           <button className="text-sm font-semibold text-ink px-4 py-2 rounded-pin hover:bg-secondary-bg transition">
             Docs
           </button>
-          <button className="btn-primary">
-            Start Analysis
+          <button
+            onClick={() => window.scrollTo({ top: 300, behavior: "smooth" })}
+            className="btn-primary"
+          >
+            New Autopsy
           </button>
         </div>
       </header>
@@ -299,9 +352,9 @@ export default function Home() {
       {/* 2. Hero Section */}
       <main className="flex-1 max-w-7xl mx-auto px-6 py-12 w-full">
         <div className="text-center max-w-3xl mx-auto mb-12">
-          <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-surface-card border border-hairline-soft text-xs font-semibold text-ink mb-6">
+          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-surface-card border border-hairline text-xs font-semibold text-ink mb-6 shadow-xs">
             <Sparkles className="w-3.5 h-3.5 text-primary" />
-            <span>Phase 1 — Ingest & Media Pipeline Live</span>
+            <span>Phase 2 Live — Frame-Grounded Autopsy &amp; Structure Analysis</span>
           </div>
 
           <h1 className="text-4xl md:text-6xl font-extrabold text-ink tracking-display leading-[1.1] mb-6">
@@ -310,8 +363,8 @@ export default function Home() {
           </h1>
 
           <p className="text-lg text-mute font-normal leading-relaxed">
-            Automatic 720p normalization, 1 fps frame extraction, scene cuts, Whisper word-level timestamps,
-            and keyframe OCR. Complete evidence-backed pipeline.
+            Proof, a diff, and a rebuild. Frame-by-frame breakdown explaining <em>why</em> it works
+            with timestamped evidence, source-labeled metrics, and zero hallucination.
           </p>
         </div>
 
@@ -374,7 +427,7 @@ export default function Home() {
                       <Upload className="w-6 h-6" />
                     </div>
                     <div className="text-sm font-semibold text-ink mb-1">
-                      Drag & drop your video file here, or <span className="text-primary underline">browse</span>
+                      Drag &amp; drop your video file here, or <span className="text-primary underline">browse</span>
                     </div>
                     <p className="text-xs text-mute">
                       Supports MP4, MOV, WebM up to 500 MB (up to 3 minutes)
@@ -447,7 +500,7 @@ export default function Home() {
               }`}
             >
               <Sparkles className="w-4 h-4" />
-              <span>{isSubmitting ? "Uploading Video..." : "Run Media Pipeline & Frame Extraction"}</span>
+              <span>{isSubmitting ? "Uploading Video..." : "Run Autopsy Pipeline & Frame Extraction"}</span>
             </button>
 
             {/* Live Pipeline Progress (SSE) */}
@@ -481,182 +534,342 @@ export default function Home() {
           </form>
         </div>
 
-        {/* 4. Real-time Extracted Media & Frame Gallery (Phase 1 Deliverable) */}
+        {/* 4. Active Video Results Section (Phase 1 & Phase 2) */}
         {pipelineData && (
-          <section className="bg-white rounded-pin-lg p-8 border border-hairline mb-12 shadow-sm animate-fade-in">
-            <div className="flex flex-col md:flex-row md:items-center justify-between pb-6 border-b border-hairline gap-4 mb-8">
-              <div>
-                <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-semantic-successPale text-semantic-successDeep mb-2">
-                  <CheckCircle2 className="w-3.5 h-3.5" />
-                  <span>Pipeline Completed (100%)</span>
-                </div>
-                <h2 className="text-2xl font-bold text-ink">
-                  Extracted Media Assets & Timestamps
-                </h2>
-                <p className="text-xs text-mute">
-                  ID: <span className="font-mono text-ink font-semibold">{pipelineData.video_id}</span> • {pipelineData.metadata.duration_s}s duration • {pipelineData.metadata.width}x{pipelineData.metadata.height} @ {pipelineData.metadata.fps}fps
-                </p>
+          <div className="space-y-8">
+            {/* View Switcher Bar */}
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between bg-surface-card p-3 rounded-pin border border-hairline gap-3">
+              <div className="flex bg-white p-1 rounded-full border border-hairline">
+                <button
+                  onClick={() => setActiveTab("autopsy")}
+                  className={`px-5 py-2 rounded-full text-xs font-bold transition flex items-center gap-2 ${
+                    activeTab === "autopsy"
+                      ? "bg-primary text-white shadow-xs"
+                      : "text-ink hover:bg-secondary-bg"
+                  }`}
+                >
+                  <Sparkles className="w-3.5 h-3.5" />
+                  <span>Executive Autopsy (Phase 2)</span>
+                </button>
+                <button
+                  onClick={() => setActiveTab("assets")}
+                  className={`px-5 py-2 rounded-full text-xs font-bold transition flex items-center gap-2 ${
+                    activeTab === "assets"
+                      ? "bg-ink text-white shadow-xs"
+                      : "text-ink hover:bg-secondary-bg"
+                  }`}
+                >
+                  <Film className="w-3.5 h-3.5" />
+                  <span>Raw Pipeline Assets (Phase 1)</span>
+                </button>
               </div>
 
               <div className="flex items-center gap-3">
-                <button
-                  onClick={() => alert("Phase 2 Analysis Engine will be triggered here!")}
-                  className="btn-primary flex items-center gap-2"
-                >
-                  <Sparkles className="w-4 h-4" />
-                  <span>Proceed to Phase 2 Analysis</span>
-                </button>
-              </div>
-            </div>
-
-            {/* Grid of Extracted Frames */}
-            <div className="mb-8">
-              <div className="flex items-center justify-between mb-4">
-                <h3 className="text-sm font-bold text-ink flex items-center gap-2">
-                  <Film className="w-4 h-4 text-primary" />
-                  <span>1 FPS Extracted Frames ({pipelineData.frames.length} total)</span>
-                </h3>
-                <span className="text-xs text-mute">Click any frame to inspect timestamp</span>
-              </div>
-
-              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-3 overflow-x-auto pb-2">
-                {pipelineData.frames.map((frame, idx) => (
-                  <div
-                    key={idx}
-                    onClick={() => setSelectedFrame(frame)}
-                    className={`card-pin p-1 cursor-pointer transition border-2 ${
-                      selectedFrame?.t_ms === frame.t_ms
-                        ? "border-primary shadow-sm"
-                        : "border-transparent hover:border-stone"
-                    }`}
+                {!pipelineData.analysis && (
+                  <button
+                    onClick={handleRunAnalysis}
+                    disabled={isAnalyzing}
+                    className="btn-primary text-xs flex items-center gap-1.5"
                   >
-                    <div className="relative aspect-[9/16] bg-surface-dark rounded-xl overflow-hidden flex items-center justify-center">
-                      <img
-                        src={`http://localhost:8000/storage/thumbs/${pipelineData.video_id}/${frame.t_ms}.jpg`}
-                        alt={`Frame at ${frame.t_ms}ms`}
-                        className="w-full h-full object-cover"
-                        onError={(e) => {
-                          // Fallback to placeholder if thumbnail is rendering
-                          (e.target as HTMLElement).style.display = "none";
-                        }}
-                      />
-                      <div className="absolute top-2 left-2 pill-overlay text-[10px] py-0.5 px-2">
-                        {formatMs(frame.t_ms)}
-                      </div>
-                      {frame.is_keyframe && (
-                        <div className="absolute bottom-2 right-2 bg-primary text-white text-[9px] font-bold px-1.5 py-0.5 rounded-full">
-                          Cut
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                ))}
+                    <Sparkles className="w-3.5 h-3.5" />
+                    <span>{isAnalyzing ? "Synthesizing Report..." : "Run Analysis Engine"}</span>
+                  </button>
+                )}
+                <span className="text-xs font-mono text-mute px-2">
+                  {pipelineData.frames.length} frames • {pipelineData.metadata.duration_s}s
+                </span>
               </div>
             </div>
 
-            {/* Two Column Asset Inspection: Transcript & Audio Energy */}
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              {/* Left: Word-level Transcript */}
-              <div className="bg-surface-card rounded-pin p-6 border border-hairline">
-                <div className="flex items-center justify-between mb-4">
-                  <h3 className="text-sm font-bold text-ink flex items-center gap-2">
-                    <FileText className="w-4 h-4 text-primary" />
-                    <span>Whisper Word Timestamps</span>
-                  </h3>
-                  <span className="pill-overlay text-xs">
-                    {pipelineData.transcript?.words?.length || 0} Words Detected
-                  </span>
-                </div>
-
-                {pipelineData.transcript?.words && pipelineData.transcript.words.length > 0 ? (
-                  <div className="flex flex-wrap gap-1.5 max-h-56 overflow-y-auto p-1">
-                    {pipelineData.transcript.words.map((w, i) => (
-                      <span
-                        key={i}
-                        className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs bg-white border border-hairline hover:border-primary transition cursor-pointer"
-                        title={`${formatMs(w.start_ms)} → ${formatMs(w.end_ms)}`}
-                      >
-                        <span className="font-semibold text-ink">{w.w}</span>
-                        <span className="text-[10px] text-mute font-mono">
-                          {formatMs(w.start_ms)}
-                        </span>
-                      </span>
-                    ))}
-                  </div>
+            {/* Frame Focus Inspector Card (Active when any timestamp is clicked) */}
+            <div
+              ref={inspectorRef}
+              className="bg-white rounded-pin-lg p-6 border border-hairline shadow-sm flex flex-col md:flex-row items-center gap-6"
+            >
+              <div className="relative w-48 aspect-[9/16] bg-surface-dark rounded-pin overflow-hidden flex-shrink-0 shadow-sm">
+                {selectedFrame ? (
+                  <img
+                    src={`http://localhost:8000/storage/thumbs/${pipelineData.video_id}/${selectedFrame.t_ms}.jpg`}
+                    alt={`Frame at ${selectedFrame.t_ms}ms`}
+                    className="w-full h-full object-cover"
+                    onError={(e) => {
+                      (e.target as HTMLElement).style.display = "none";
+                    }}
+                  />
                 ) : (
-                  <p className="text-xs text-mute italic p-4 bg-white/60 rounded-pin text-center">
-                    No spoken words detected in audio track (music or instrumental audio).
-                  </p>
+                  <div className="w-full h-full flex items-center justify-center text-white/50 text-xs">
+                    No Frame
+                  </div>
+                )}
+                <div className="absolute top-2 left-2 pill-overlay text-[10px] py-0.5 px-2">
+                  {selectedFrame ? formatMs(selectedFrame.t_ms) : "00:00.000"}
+                </div>
+                {selectedFrame?.is_keyframe && (
+                  <div className="absolute bottom-2 right-2 bg-primary text-white text-[9px] font-bold px-1.5 py-0.5 rounded-full">
+                    Keyframe
+                  </div>
                 )}
               </div>
 
-              {/* Right: Audio Energy & Silence Gaps */}
-              <div className="bg-surface-card rounded-pin p-6 border border-hairline">
-                <div className="flex items-center justify-between mb-4">
-                  <h3 className="text-sm font-bold text-ink flex items-center gap-2">
-                    <Volume2 className="w-4 h-4 text-primary" />
-                    <span>Audio Features & Pacing</span>
-                  </h3>
-                  <span className="pill-overlay text-xs">
-                    Mean Energy: {pipelineData.audio_features?.mean_energy || 0}
+              <div className="flex-1 space-y-3">
+                <div className="flex items-center gap-2">
+                  <span className="px-2.5 py-0.5 rounded-full text-[10px] font-extrabold uppercase bg-primary text-white">
+                    Grounded Visual Evidence
+                  </span>
+                  <span className="text-xs font-mono text-mute">
+                    Frame Timestamp: {selectedFrame ? `${selectedFrame.t_ms} ms (${formatMs(selectedFrame.t_ms)})` : "0 ms"}
                   </span>
                 </div>
 
-                <div className="space-y-4">
-                  <div>
-                    <div className="text-xs font-semibold text-ink mb-1 flex items-center justify-between">
-                      <span>Detected Silence Gaps (&gt; 500ms):</span>
-                      <span className="font-bold text-primary">
-                        {pipelineData.audio_features?.silence_gaps?.length || 0} Gaps
+                <h4 className="text-lg font-bold text-ink">
+                  Synchronized Frame &amp; Audio Snapshot
+                </h4>
+
+                <p className="text-xs text-mute leading-relaxed">
+                  Every score and structural critique in FrameDNA is anchored to concrete visual or acoustic evidence at this millisecond mark.
+                </p>
+
+                {/* Closest transcript or OCR info */}
+                <div className="pt-2 flex flex-wrap gap-2 text-xs">
+                  <div className="p-2.5 bg-surface-card rounded-pin border border-hairline">
+                    <span className="text-[10px] font-bold uppercase tracking-wider text-mute block mb-0.5">
+                      Spoken Audio Around Timestamp
+                    </span>
+                    <span className="font-medium text-ink">
+                      {pipelineData.transcript?.words && selectedFrame
+                        ? pipelineData.transcript.words
+                            .filter(
+                              (w) =>
+                                Math.abs(w.start_ms - selectedFrame.t_ms) <= 2500 ||
+                                (w.start_ms <= selectedFrame.t_ms && w.end_ms >= selectedFrame.t_ms)
+                            )
+                            .map((w) => w.w)
+                            .join(" ") || "No dialogue active at this moment."
+                        : "No audio transcript available."}
+                    </span>
+                  </div>
+
+                  {pipelineData.ocr && selectedFrame && (
+                    <div className="p-2.5 bg-surface-card rounded-pin border border-hairline">
+                      <span className="text-[10px] font-bold uppercase tracking-wider text-mute block mb-0.5">
+                        On-Screen Keyframe OCR Text
+                      </span>
+                      <span className="font-medium text-ink">
+                        {pipelineData.ocr
+                          .filter((item) => Math.abs(item.keyframe_ms - selectedFrame.t_ms) <= 1500)
+                          .flatMap((item) => item.texts.map((t) => t.text))
+                          .join(" • ") || "No OCR overlay text detected."}
                       </span>
                     </div>
-                    {pipelineData.audio_features?.silence_gaps &&
-                    pipelineData.audio_features.silence_gaps.length > 0 ? (
-                      <div className="space-y-1.5">
-                        {pipelineData.audio_features.silence_gaps.map((gap, i) => (
-                          <div
-                            key={i}
-                            className="p-2 bg-white rounded-pin border border-hairline text-xs flex items-center justify-between"
-                          >
-                            <span className="font-mono text-ink">
-                              {formatMs(gap.start_ms)} → {formatMs(gap.end_ms)}
-                            </span>
-                            <span className="font-bold text-mute">
-                              {gap.duration_ms}ms gap
-                            </span>
+                  )}
+                </div>
+              </div>
+            </div>
+
+            {/* TAB 1: EXECUTIVE AUTOPSY (Phase 2 Deliverable) */}
+            {activeTab === "autopsy" && (
+              <div>
+                {pipelineData.analysis ? (
+                  <ReportViewer
+                    videoId={pipelineData.video_id}
+                    report={pipelineData.analysis}
+                    durationMs={pipelineData.metadata.duration_ms}
+                    onSelectTimestamp={handleSelectTimestamp}
+                    selectedTimestamp={selectedTimestamp}
+                  />
+                ) : (
+                  <div className="p-12 bg-white rounded-pin-lg border border-hairline text-center space-y-4">
+                    <div className="w-14 h-14 rounded-full bg-surface-card flex items-center justify-center text-primary mx-auto shadow-xs">
+                      <Sparkles className="w-7 h-7" />
+                    </div>
+                    <h3 className="text-xl font-bold text-ink">
+                      Autopsy Analysis Engine Ready
+                    </h3>
+                    <p className="text-sm text-mute max-w-md mx-auto">
+                      All media frames, transcript words, and acoustic curves are extracted. Click below to synthesize the 7-score matrix, timestamped evidence, and structural blueprint.
+                    </p>
+                    <button
+                      onClick={handleRunAnalysis}
+                      disabled={isAnalyzing}
+                      className="btn-primary"
+                    >
+                      {isAnalyzing ? "Running Analysis..." : "Generate Autopsy Report Now"}
+                    </button>
+                  </div>
+                )}
+              </div>
+            )}
+
+            {/* TAB 2: RAW ASSETS INSPECTOR (Phase 1 Deliverable) */}
+            {activeTab === "assets" && (
+              <section className="bg-white rounded-pin-lg p-8 border border-hairline mb-12 shadow-sm animate-fade-in">
+                <div className="flex flex-col md:flex-row md:items-center justify-between pb-6 border-b border-hairline gap-4 mb-8">
+                  <div>
+                    <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-semantic-successPale text-semantic-successDeep mb-2">
+                      <CheckCircle2 className="w-3.5 h-3.5" />
+                      <span>Pipeline Completed (100%)</span>
+                    </div>
+                    <h2 className="text-2xl font-bold text-ink">
+                      Extracted Media Assets &amp; Timestamps
+                    </h2>
+                    <p className="text-xs text-mute">
+                      ID: <span className="font-mono text-ink font-semibold">{pipelineData.video_id}</span> • {pipelineData.metadata.duration_s}s duration • {pipelineData.metadata.width}x{pipelineData.metadata.height} @ {pipelineData.metadata.fps}fps
+                    </p>
+                  </div>
+                </div>
+
+                {/* Grid of Extracted Frames */}
+                <div className="mb-8">
+                  <div className="flex items-center justify-between mb-4">
+                    <h3 className="text-sm font-bold text-ink flex items-center gap-2">
+                      <Film className="w-4 h-4 text-primary" />
+                      <span>1 FPS Extracted Frames ({pipelineData.frames.length} total)</span>
+                    </h3>
+                    <span className="text-xs text-mute">Click any frame to inspect timestamp</span>
+                  </div>
+
+                  <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-3 overflow-x-auto pb-2">
+                    {pipelineData.frames.map((frame, idx) => (
+                      <div
+                        key={idx}
+                        onClick={() => handleSelectTimestamp(frame.t_ms)}
+                        className={`card-pin p-1 cursor-pointer transition border-2 ${
+                          selectedFrame?.t_ms === frame.t_ms
+                            ? "border-primary shadow-sm"
+                            : "border-transparent hover:border-stone"
+                        }`}
+                      >
+                        <div className="relative aspect-[9/16] bg-surface-dark rounded-xl overflow-hidden flex items-center justify-center">
+                          <img
+                            src={`http://localhost:8000/storage/thumbs/${pipelineData.video_id}/${frame.t_ms}.jpg`}
+                            alt={`Frame at ${frame.t_ms}ms`}
+                            className="w-full h-full object-cover"
+                            onError={(e) => {
+                              (e.target as HTMLElement).style.display = "none";
+                            }}
+                          />
+                          <div className="absolute top-2 left-2 pill-overlay text-[10px] py-0.5 px-2">
+                            {formatMs(frame.t_ms)}
                           </div>
+                          {frame.is_keyframe && (
+                            <div className="absolute bottom-2 right-2 bg-primary text-white text-[9px] font-bold px-1.5 py-0.5 rounded-full">
+                              Cut
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Two Column Asset Inspection: Transcript & Audio Energy */}
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                  {/* Left: Word-level Transcript */}
+                  <div className="bg-surface-card rounded-pin p-6 border border-hairline">
+                    <div className="flex items-center justify-between mb-4">
+                      <h3 className="text-sm font-bold text-ink flex items-center gap-2">
+                        <FileText className="w-4 h-4 text-primary" />
+                        <span>Whisper Word Timestamps</span>
+                      </h3>
+                      <span className="pill-overlay text-xs">
+                        {pipelineData.transcript?.words?.length || 0} Words Detected
+                      </span>
+                    </div>
+
+                    {pipelineData.transcript?.words && pipelineData.transcript.words.length > 0 ? (
+                      <div className="flex flex-wrap gap-1.5 max-h-56 overflow-y-auto p-1">
+                        {pipelineData.transcript.words.map((w, i) => (
+                          <span
+                            key={i}
+                            onClick={() => handleSelectTimestamp(w.start_ms)}
+                            className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs bg-white border border-hairline hover:border-primary transition cursor-pointer"
+                            title={`${formatMs(w.start_ms)} → ${formatMs(w.end_ms)}`}
+                          >
+                            <span className="font-semibold text-ink">{w.w}</span>
+                            <span className="text-[10px] text-mute font-mono">
+                              {formatMs(w.start_ms)}
+                            </span>
+                          </span>
                         ))}
                       </div>
                     ) : (
-                      <p className="text-xs text-mute italic p-3 bg-white/60 rounded-pin">
-                        Continuous audio pace — zero long silence pauses.
+                      <p className="text-xs text-mute italic p-4 bg-white/60 rounded-pin text-center">
+                        No spoken words detected in audio track (music or instrumental audio).
                       </p>
                     )}
                   </div>
 
-                  <div>
-                    <div className="text-xs font-semibold text-ink mb-1">
-                      Scene Transitions ({pipelineData.scenes.length} cuts detected)
+                  {/* Right: Audio Energy & Silence Gaps */}
+                  <div className="bg-surface-card rounded-pin p-6 border border-hairline">
+                    <div className="flex items-center justify-between mb-4">
+                      <h3 className="text-sm font-bold text-ink flex items-center gap-2">
+                        <Volume2 className="w-4 h-4 text-primary" />
+                        <span>Audio Features &amp; Pacing</span>
+                      </h3>
+                      <span className="pill-overlay text-xs">
+                        Mean Energy: {pipelineData.audio_features?.mean_energy || 0}
+                      </span>
                     </div>
-                    <div className="flex flex-wrap gap-1">
-                      {pipelineData.scenes.map((sc, i) => (
-                        <span
-                          key={i}
-                          className="px-2 py-0.5 rounded-full text-[11px] font-mono bg-white border border-hairline text-ink"
-                        >
-                          Cut {sc.scene_index + 1}: {formatMs(sc.start_ms)}
-                        </span>
-                      ))}
+
+                    <div className="space-y-4">
+                      <div>
+                        <div className="text-xs font-semibold text-ink mb-1 flex items-center justify-between">
+                          <span>Detected Silence Gaps (&gt; 500ms):</span>
+                          <span className="font-bold text-primary">
+                            {pipelineData.audio_features?.silence_gaps?.length || 0} Gaps
+                          </span>
+                        </div>
+                        {pipelineData.audio_features?.silence_gaps &&
+                        pipelineData.audio_features.silence_gaps.length > 0 ? (
+                          <div className="space-y-1.5">
+                            {pipelineData.audio_features.silence_gaps.map((gap, i) => (
+                              <div
+                                key={i}
+                                onClick={() => handleSelectTimestamp(gap.start_ms)}
+                                className="p-2 bg-white rounded-pin border border-hairline text-xs flex items-center justify-between cursor-pointer hover:border-primary transition"
+                              >
+                                <span className="font-mono text-ink">
+                                  {formatMs(gap.start_ms)} → {formatMs(gap.end_ms)}
+                                </span>
+                                <span className="font-bold text-mute">
+                                  {gap.duration_ms}ms gap
+                                </span>
+                              </div>
+                            ))}
+                          </div>
+                        ) : (
+                          <p className="text-xs text-mute italic p-3 bg-white/60 rounded-pin">
+                            Continuous audio pace — zero long silence pauses.
+                          </p>
+                        )}
+                      </div>
+
+                      <div>
+                        <div className="text-xs font-semibold text-ink mb-1">
+                          Scene Transitions ({pipelineData.scenes.length} cuts detected)
+                        </div>
+                        <div className="flex flex-wrap gap-1">
+                          {pipelineData.scenes.map((sc, i) => (
+                            <button
+                              key={i}
+                              onClick={() => handleSelectTimestamp(sc.start_ms)}
+                              className="px-2 py-0.5 rounded-full text-[11px] font-mono bg-white border border-hairline text-ink hover:border-primary transition"
+                            >
+                              Cut {sc.scene_index + 1}: {formatMs(sc.start_ms)}
+                            </button>
+                          ))}
+                        </div>
+                      </div>
                     </div>
                   </div>
                 </div>
-              </div>
-            </div>
-          </section>
+              </section>
+            )}
+          </div>
         )}
 
         {/* 5. Pinterest-style Masonry Showcase Preview */}
-        <section className="mt-8">
+        <section className="mt-12">
           <div className="flex items-center justify-between mb-8">
             <div>
               <h2 className="text-2xl font-bold tracking-tight text-ink">

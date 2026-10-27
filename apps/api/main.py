@@ -273,6 +273,40 @@ async def get_pipeline_data(video_id: str) -> dict[str, Any]:
     return json.loads(content)
 
 
+@app.get("/v1/videos/{video_id}/report", tags=["Analysis"])
+async def get_analysis_report(video_id: str) -> dict[str, Any]:
+    """Returns the validated AnalysisReport per packages/schemas/report.json."""
+    pipeline_res = await get_pipeline_data(video_id)
+    report = pipeline_res.get("analysis")
+    if not report:
+        raise HTTPException(status_code=404, detail="Analysis report not found for this video")
+    return report
+
+
+@app.post("/v1/videos/{video_id}/analyze", tags=["Analysis"])
+async def trigger_analysis(video_id: str) -> dict[str, Any]:
+    """Manually triggers or reruns Phase 2 analysis engine on existing media pipeline assets."""
+    cache_file = ANALYSES_DIR / video_id / "pipeline_data.json"
+    if not cache_file.exists():
+        raise HTTPException(
+            status_code=404,
+            detail="Pipeline data not found. Please upload or ingest the video first.",
+        )
+
+    content = cache_file.read_text(encoding="utf-8")
+    pipeline_data = json.loads(content)
+
+    from workers.analysis.engine import run_full_analysis
+
+    analysis_res = run_full_analysis(pipeline_data=pipeline_data)
+    pipeline_data["analysis"] = analysis_res["report"]
+    pipeline_data["segments"] = analysis_res["segments"]
+
+    cache_file.write_text(json.dumps(pipeline_data, indent=2), encoding="utf-8")
+    return analysis_res["report"]
+
+
+
 if __name__ == "__main__":
     import uvicorn
 

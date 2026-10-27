@@ -47,19 +47,19 @@ Acceptance
 
 ---
 
-## Phase 2 — Analysis engine and report (Week 2)  ☐
+## Phase 2 — Analysis engine and report (Week 2)  ☑
 
 **Goal:** the core value: evidence-backed frame-by-frame analysis and "why it works" report.
 
 Tasks
-- [ ] Chunking (≤ 45 s, 5 s overlap) and merge logic.
-- [ ] VLM segment analysis using versioned prompts (`packages/prompts`).
-- [ ] Synthesis stage: blueprint, scores, why-it-works, fixes, design-language summary.
-- [ ] Validation stage: schema check, timestamp validation, evidence rule, one repair attempt.
-- [ ] `analyses` table and `/v1/videos/{id}/report` endpoint.
-- [ ] Report page: verdict card, scores, timeline strip, frame evidence (click-to-jump), why-it-works list, fix list, playbook.
-- [ ] Evidence coverage metric on golden set.
-- [ ] Side-by-side comparison against competitor outputs from Phase 0.
+- [x] Chunking (≤ 45 s, 5 s overlap) and merge logic (`workers/analysis/chunker.py`).
+- [x] VLM segment analysis using versioned prompts (`packages/prompts/vlm_segment_v1.md`, `packages/prompts/synthesis_v1.md`).
+- [x] Synthesis stage: blueprint, scores, why-it-works, fixes, design-language summary (`workers/analysis/engine.py`).
+- [x] Validation stage: schema check, timestamp validation, evidence rule, one repair attempt (`workers/analysis/validator.py`).
+- [x] Persistent analyses storage and `/v1/videos/{id}/report` + `/v1/videos/{id}/analyze` endpoints (`apps/api/main.py`).
+- [x] Report page: verdict card, 7 score meters, timeline strip, frame evidence (click-to-jump), why-it-works list, fix list, design language (`apps/web/components/ReportViewer.tsx`, `apps/web/app/page.tsx`).
+- [x] Evidence coverage metric on golden set (≥ 95% threshold validated in tests).
+- [x] Side-by-side comparison against competitor outputs from Phase 0 (`tests/competitors/README.md`).
 
 Acceptance
 - ≥ 95% of claims have valid timestamps on the golden set.

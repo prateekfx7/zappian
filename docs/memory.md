@@ -40,13 +40,14 @@ Format: `YYYY-MM-DD | decision | reason | status`
 | 2026-10-27 | GPU Path = Rented Cloud GPU (RunPod/Vast/Modal) for VLMs & video generation; Apple M5 16GB for dev/api/web | Host RAM is 16GB unified; LTX-2/Wan 2.2 requires 24–48GB VRAM | Active |
 | 2026-10-27 | Web UI Design = Pinterest design system (`DESIGN-pinterest.md`) | Pin Sans/Inter, 16px/32px radius, Pinterest red `#e60023` CTA, `#f6f6f3` cards, quiet cream chrome | Active |
 | 2026-10-27 | Media Pipeline = FFmpeg (720p H.264 proxy + 16kHz WAV), 1fps frames, PySceneDetect keyframes, faster-whisper, soundfile/numpy energy curves | Modular, resilient pipeline meeting Phase 1 acceptance criteria | Active |
+| 2026-10-27 | Analysis Engine = Versioned prompts (`vlm_segment_v1`, `synthesis_v1`), chunking (<=45s, 5s overlap), timestamp validator (>=95% coverage requirement), and ReportViewer UI | Satisfies Rule 1, 2, 17, 19 | Active |
 
 ## 4. Current status
 
-- Phase: **Phase 1 completed** (Media pipeline built, tested on golden clip `tests/golden/g1_product_ad.mp4`, SSE live progress, and raw asset gallery viewable in web UI)
-- Next action: **Phase 2 — Analysis engine and report** (VLM chunking, blueprint extraction, why-it-works evidence synthesis, and report UI)
+- Phase: **Phase 2 completed** (Analysis engine, chunking, validator, synthesis, API report endpoint, ReportViewer UI with 7 score meters, timeline strip, and evidence-grounded claims).
+- Next action: **Phase 3 — Stats and compare** (yt-dlp/YouTube API stats, CSV uploads, source labels, diff comparator).
 - Blockers: None.
-- Last milestone: Phase 1 acceptance criteria satisfied.
+- Last milestone: Phase 2 acceptance criteria satisfied (16/16 tests passing, evidence coverage >= 95%).
 
 ## 5. Open questions (owner to answer)
 
@@ -140,6 +141,7 @@ STYLE LOCK: [palette], [lighting], [lens], [grade], fast confident camera moves,
 | 2026-10-27 | Claude (chat) | Wrote PRD, architecture, rules, phases, memory | Start Phase 0 |
 | 2026-10-27 | Antigravity | Phase 0 completed: monorepo scaffold, Docker Compose config, FastAPI stub with OpenAPI & tests, Next.js web app with Pinterest design system, provider interfaces in `packages/providers`, JSON schemas in `packages/schemas`, golden set manifest in `tests/golden`, competitor structure in `tests/competitors`, spikes for VLM, Whisper, and OCR. All tests, linting, and builds pass cleanly. | Phase 1 |
 | 2026-10-27 | Antigravity | Phase 1 completed: Built Ingest and Media Pipeline (FFmpeg 720p normalization & WAV extraction, 1 fps frame extraction with thumbnails, PySceneDetect scene cut keyframes, faster-whisper word-level STT, soundfile/numpy audio energy analysis, SSE stage progress streaming, and Next.js asset gallery). 13/13 unit & integration tests pass cleanly. | Start Phase 2 |
+| 2026-10-27 | Antigravity | Phase 2 completed: Built Analysis Engine (`chunker.py`, `validator.py`, `engine.py`), versioned prompts (`vlm_segment_v1.md`, `synthesis_v1.md`), evidence validation enforcing >=95% ground truth timestamp coverage, `/v1/videos/{id}/report` and `/analyze` API endpoints, and Pinterest-themed `ReportViewer` UI with 7 score meters, timeline strip, and frame-grounded evidence badges. 16/16 tests passing. | Start Phase 3 |
 
 ## 14. Update protocol
 

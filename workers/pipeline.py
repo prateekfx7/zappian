@@ -167,14 +167,23 @@ def run_media_pipeline(
 
         # Stage 5: Audio Features
         state.update(
-            "audio_features", 90, "Analyzing audio energy curves and silence gaps..."
+            "audio_features", 85, "Analyzing audio energy curves and silence gaps..."
         )
         audio_features = analyze_audio_features(audio_path)
         results["audio_features"] = audio_features
 
-        # Complete & Save cache
+        # Stage 6: VLM Segment Analysis & Synthesis (Phase 2)
         state.update(
-            "ready", 100, "Media pipeline complete. Ready for analysis.", results
+            "synthesize", 92, "Synthesizing frame-by-frame blueprint and calculating evidence scores..."
+        )
+        from workers.analysis.engine import run_full_analysis
+        analysis_result = run_full_analysis(pipeline_data=results)
+        results["analysis"] = analysis_result["report"]
+        results["segments"] = analysis_result["segments"]
+
+        # Stage 7: Ready
+        state.update(
+            "ready", 100, "Autopsy analysis and evidence validation complete.", results
         )
         with open(cache_file, "w") as f:
             json.dump(results, f, indent=2)

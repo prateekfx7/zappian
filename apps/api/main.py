@@ -15,6 +15,7 @@ from fastapi import (
     status,
 )
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field
 from sse_starlette.sse import EventSourceResponse
@@ -49,8 +50,9 @@ AUDIO_DIR = STORAGE_DIR / "audio"
 ANALYSES_DIR = STORAGE_DIR / "analyses"
 COMPARES_DIR = ANALYSES_DIR / "compares"
 CONCEPTS_DIR = STORAGE_DIR / "concepts"
+DRAFTS_DIR = STORAGE_DIR / "drafts"
 
-for d in [ORIGINALS_DIR, PROXIES_DIR, FRAMES_DIR, THUMBS_DIR, AUDIO_DIR, ANALYSES_DIR, COMPARES_DIR, CONCEPTS_DIR]:
+for d in [ORIGINALS_DIR, PROXIES_DIR, FRAMES_DIR, THUMBS_DIR, AUDIO_DIR, ANALYSES_DIR, COMPARES_DIR, CONCEPTS_DIR, DRAFTS_DIR]:
     d.mkdir(parents=True, exist_ok=True)
 
 # Mount local storage for serving proxy videos and frame thumbnails to frontend
@@ -494,7 +496,9 @@ async def get_remix_concept(concept_id: str) -> dict[str, Any]:
 @app.post("/v1/concepts/{concept_id}/generate", tags=["Remix"])
 async def trigger_concept_generation(concept_id: str) -> dict[str, Any]:
     """
-    Validates originality status before permitting draft video generation per Rule 4.
+    Validates originality status before permitting draft video generation per Rule 4,
+    synthesizes flowing voiceover track (Rule 21), generates shot clips with Style Lock (Rule 22),
+    and assembles 9:16 draft video with <= 200ms audio-video sync.
     """
     concept_file = CONCEPTS_DIR / f"{concept_id}.json"
     if not concept_file.exists():
@@ -512,13 +516,52 @@ async def trigger_concept_generation(concept_id: str) -> dict[str, Any]:
             ),
         )
 
+    from workers.draft_pipeline import run_draft_generation
+
+    try:
+        draft_meta = run_draft_generation(concept_id)
+    except Exception as e:
+        raise HTTPException(
+            status_code=500,
+            detail=f"Draft video generation failed: {e!s}",
+        ) from e
+
     return {
         "concept_id": concept_id,
         "status": "ready_for_generation",
         "shots_count": len(concept.get("shots", [])),
         "style_lock": concept.get("style_lock"),
-        "message": "Originality check passed (0 plagiarized 5-grams). Concept approved for draft video generation.",
+        "message": "Originality check passed (0 plagiarized 5-grams). Draft video generated and synchronized.",
+        **draft_meta,
     }
+
+
+@app.get("/v1/concepts/{concept_id}/draft", tags=["Remix"])
+async def get_concept_draft(concept_id: str) -> dict[str, Any]:
+    """Retrieves metadata and asset URLs for a previously generated draft video."""
+    draft_file = DRAFTS_DIR / concept_id / "draft_data.json"
+    if not draft_file.exists():
+        raise HTTPException(
+            status_code=404,
+            detail=f"Draft video for concept '{concept_id}' has not been generated yet.",
+        )
+    return json.loads(draft_file.read_text(encoding="utf-8"))
+
+
+@app.get("/v1/concepts/{concept_id}/export", tags=["Remix"])
+async def export_concept_draft_video(concept_id: str) -> FileResponse:
+    """Exports and downloads the assembled 9:16 draft MP4 file."""
+    video_path = DRAFTS_DIR / concept_id / "final.mp4"
+    if not video_path.exists():
+        raise HTTPException(
+            status_code=404,
+            detail=f"Final assembled video for concept '{concept_id}' not found.",
+        )
+    return FileResponse(
+        path=str(video_path),
+        media_type="video/mp4",
+        filename=f"framedna_{concept_id}_draft.mp4",
+    )
 
 
 

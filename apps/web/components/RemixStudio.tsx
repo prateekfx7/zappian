@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Sparkles,
   ShieldCheck,
@@ -17,6 +17,7 @@ import {
   Lightbulb,
   CheckCircle2,
 } from "lucide-react";
+import { DraftPlayer, DraftData } from "./DraftPlayer";
 
 export interface RemixConcept {
   concept_id: string;
@@ -85,6 +86,21 @@ export function RemixStudio({ sourceVideoId, onGenerationReady }: RemixStudioPro
   const [generationMessage, setGenerationMessage] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
+  // Phase 5 State: Draft Video Generation & Player
+  const [draftData, setDraftData] = useState<DraftData | null>(null);
+  const [isGeneratingDraft, setIsGeneratingDraft] = useState(false);
+
+  // Check if draft was already generated for this concept
+  useEffect(() => {
+    if (!concept?.concept_id) return;
+    fetch(`http://localhost:8000/v1/concepts/${concept.concept_id}/draft`)
+      .then((res) => (res.ok ? res.json() : null))
+      .then((data) => {
+        if (data && data.video_url) setDraftData(data);
+      })
+      .catch(() => {});
+  }, [concept?.concept_id]);
+
   const handleGenerateConcept = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!productOrTopic.trim()) return;
@@ -92,6 +108,7 @@ export function RemixStudio({ sourceVideoId, onGenerationReady }: RemixStudioPro
     setIsGenerating(true);
     setErrorMessage(null);
     setGenerationMessage(null);
+    setDraftData(null);
 
     try {
       const res = await fetch("http://localhost:8000/v1/concepts", {
@@ -141,6 +158,10 @@ export function RemixStudio({ sourceVideoId, onGenerationReady }: RemixStudioPro
   const handleTriggerGeneration = async () => {
     if (!concept) return;
 
+    setIsGeneratingDraft(true);
+    setErrorMessage(null);
+    setGenerationMessage(null);
+
     try {
       const res = await fetch(`http://localhost:8000/v1/concepts/${concept.concept_id}/generate`, {
         method: "POST",
@@ -152,10 +173,13 @@ export function RemixStudio({ sourceVideoId, onGenerationReady }: RemixStudioPro
       }
 
       const data = await res.json();
-      setGenerationMessage(data.message || "Concept approved for draft generation.");
+      setDraftData(data);
+      setGenerationMessage(data.message || "Draft video generated and synchronized within ±200ms.");
       if (onGenerationReady) onGenerationReady(concept.concept_id);
     } catch (err: any) {
       setErrorMessage(err.message || "Failed to trigger generation.");
+    } finally {
+      setIsGeneratingDraft(false);
     }
   };
 
@@ -564,23 +588,43 @@ export function RemixStudio({ sourceVideoId, onGenerationReady }: RemixStudioPro
                 Originality Check Passed • Concept Approved
               </h4>
               <p className="text-xs text-mute">
-                Proceed to draft generation using open-source LTX-2 or Wan 2.2 providers.
+                Proceed to draft video generation using open-source LTX-2 or Wan 2.2 providers with &le;200ms audio sync.
               </p>
             </div>
 
             <button
               onClick={handleTriggerGeneration}
-              className="btn-primary flex items-center gap-2 cursor-pointer shadow-sm"
+              disabled={isGeneratingDraft}
+              className="btn-primary flex items-center gap-2 cursor-pointer shadow-sm disabled:opacity-50"
             >
               <Video className="w-4 h-4" />
-              <span>Queue Video Generation (Phase 5)</span>
+              <span>{isGeneratingDraft ? "Synthesizing & Assembling Draft..." : "Generate 9:16 Draft Video (Phase 5)"}</span>
             </button>
           </div>
 
-          {generationMessage && (
+          {isGeneratingDraft && (
+            <div className="p-6 bg-primary/5 rounded-pin border border-primary/20 flex items-center gap-4 animate-pulse">
+              <Sparkles className="w-6 h-6 text-primary animate-spin flex-shrink-0" />
+              <div>
+                <p className="text-sm font-bold text-ink">Generating 9:16 Video Draft...</p>
+                <p className="text-xs text-mute">
+                  Synthesizing continuous voiceover (Rule 21), generating LTX-2/Wan shots with Style Lock (Rule 22), and verifying &le;200ms audio sync.
+                </p>
+              </div>
+            </div>
+          )}
+
+          {generationMessage && !draftData && (
             <div className="p-4 bg-emerald-50 text-emerald-800 text-xs font-semibold rounded-pin border border-emerald-200 flex items-center gap-2">
               <CheckCircle2 className="w-4 h-4 flex-shrink-0" />
               <span>{generationMessage}</span>
+            </div>
+          )}
+
+          {/* Phase 5: Draft Video Player Component */}
+          {draftData && (
+            <div className="pt-2">
+              <DraftPlayer draft={draftData} onRegenerate={handleTriggerGeneration} />
             </div>
           )}
         </div>

@@ -404,7 +404,7 @@ export default function Home() {
               }`}
             >
               <Wand2 className="w-3.5 h-3.5" />
-              <span>Remix (Phase 4)</span>
+              <span>Remix &amp; Draft (Phases 4-5)</span>
             </button>
           </div>
         </div>

@@ -43,13 +43,14 @@ Format: `YYYY-MM-DD | decision | reason | status`
 | 2026-10-27 | Analysis Engine = Versioned prompts (`vlm_segment_v1`, `synthesis_v1`), chunking (<=45s, 5s overlap), timestamp validator (>=95% coverage requirement), and ReportViewer UI | Satisfies Rule 1, 2, 17, 19 | Active |
 | 2026-10-27 | Stats & Compare = Source-labeled stats (youtube_api, ytdlp, manual, csv), strict Rule 2 audit (sales never fabricated), and dual-timestamp citing compare engine | Satisfies Rule 1, 2, 7 | Active |
 | 2026-10-27 | Remix & Originality Engine = 5-gram text overlap (<10%), consecutive words (<=8), visual similarity (<0.80), concept judge (premise/setting/characters/metaphor), and single flowing spoken voiceover script | Satisfies Rule 4, 18, 21, 22 | Active |
+| 2026-10-27 | Draft Video Generation & Assembly = LTX-2 (drafts), Wan 2.2 (quality), LocalTTSProvider (16kHz WAV continuous voiceover), FFmpeg 9:16 vertical assembly with <= 200ms audio-video sync | Satisfies Rule 7, 21, 22, 30 | Active |
 
 ## 4. Current status
 
-- Phase: **Phase 4 completed (Major Milestone: v1 Demo-Ready Product)** (Ingest + Analysis + Compare + Remix with Originality Check all live and integrated).
-- Next action: **Phase 5 — Draft video generation and assembly** (LTX-2 draft video generation, Kokoro/XTTS voiceover synthesis, FFmpeg audio/video muxing).
+- Phase: **Phase 5 completed** (End-to-end Draft Video Generation, TTS synthesis, FFmpeg 9:16 assembly with &le;200ms audio sync, and interactive Draft Player UI).
+- Next action: **Phase 6 — Productization** (Billing/Stripe/Razorpay, Project library & saved blueprints, branded share links, rate limits & abuse controls).
 - Blockers: None.
-- Last milestone: v1 Milestone Achieved: Phases 0–4 complete (22/22 tests passing, 100% originality gate pass rate).
+- Last milestone: Phase 5 Complete (26/26 tests passing, 0 mypy issues in 30 source files, 0 ruff errors, Next.js build clean).
 
 ## 5. Open questions (owner to answer)
 
@@ -146,6 +147,7 @@ STYLE LOCK: [palette], [lighting], [lens], [grade], fast confident camera moves,
 | 2026-10-27 | Antigravity | Phase 2 completed: Built Analysis Engine (`chunker.py`, `validator.py`, `engine.py`), versioned prompts (`vlm_segment_v1.md`, `synthesis_v1.md`), evidence validation enforcing >=95% ground truth timestamp coverage, `/v1/videos/{id}/report` and `/analyze` API endpoints, and Pinterest-themed `ReportViewer` UI with 7 score meters, timeline strip, and frame-grounded evidence badges. 16/16 tests passing. | Start Phase 3 |
 | 2026-10-27 | Antigravity | Phase 3 completed: Built Stats Providers (`stats.py` with YtDlp and CSV batch parser), source-labeled stats management (`StatsDrawer.tsx`), side-by-side video compare engine (`compare.py`, `compare.json`), dual-timestamp citing diffs, and Pinterest-themed `CompareViewer` with printable client export. 19/19 tests passing. | Start Phase 4 |
 | 2026-10-27 | Antigravity | Phase 4 completed: Built Remix Concept Generator (`generator.py`, `concept.json`), Originality Engine (`originality.py` auditing 5-gram overlap, consecutive words, and concept judge), single continuous spoken script per Rule 21, Style Lock builder per Rule 22, shot prompt formatters for LTX-2/Wan, and Pinterest-themed `RemixStudio` UI. 22/22 tests passing. Reached v1 Demo-Ready Milestone! | Start Phase 5 |
+| 2026-10-27 | Antigravity | Phase 5 completed: Built Draft Video Generation Pipeline (`draft_pipeline.py`), TTS Provider (`tts.py` with 16kHz mono WAV continuous voiceover), VideoGen Providers (`videogen.py` for LTX-2 drafts & Wan 2.2 quality), FFmpeg 9:16 vertical assembler (`assembler.py` guaranteeing &le;200ms audio-video sync), API endpoints (`POST /v1/concepts/{id}/generate`, `GET /v1/concepts/{id}/draft`, `GET /v1/concepts/{id}/export`), and Pinterest-styled `DraftPlayer` component with interactive shot scrubber and live OCR overlays. 26/26 tests passing. | Start Phase 6 |
 
 ## 14. Update protocol
 

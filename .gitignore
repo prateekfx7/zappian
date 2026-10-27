@@ -38,6 +38,7 @@ node_modules/
 out/
 .npm
 .turbo
+*.tsbuildinfo
 
 # Media & Storage
 /storage/

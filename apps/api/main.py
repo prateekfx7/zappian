@@ -108,6 +108,10 @@ class VideoResponse(BaseModel):
     created_at: datetime
 
 
+import logging
+
+logger = logging.getLogger("reelbrain.api")
+
 ALLOWED_EXTENSIONS = {".mp4", ".mov", ".webm", ".mkv"}
 
 
@@ -118,6 +122,65 @@ def execute_pipeline_background(video_id: str, file_path: Path) -> None:
     except Exception as e:  # noqa: BLE001
         state = get_or_create_pipeline_state(video_id)
         state.update("failed", state.progress_pct, f"Pipeline execution failed: {e!s}")
+
+
+def download_and_process_url_background(video_id: str, url: str) -> None:
+    """Downloads video from URL via yt-dlp, then executes the media pipeline."""
+    state = get_or_create_pipeline_state(video_id)
+    target_dir = ORIGINALS_DIR / video_id
+    target_dir.mkdir(parents=True, exist_ok=True)
+
+    try:
+        state.update("ingest", 5, "Connecting to video link...")
+        import yt_dlp
+
+        def progress_hook(d: dict[str, Any]) -> None:
+            if d.get("status") == "downloading":
+                total = d.get("total_bytes") or d.get("total_bytes_estimate") or 0
+                downloaded = d.get("downloaded_bytes") or 0
+                if total > 0:
+                    pct = min(20, int((downloaded / total) * 15) + 5)
+                    state.update("ingest", pct, f"Downloading video stream: {int((downloaded / total) * 100)}%")
+
+        out_template = str(target_dir / "downloaded_%(id)s.%(ext)s")
+        ydl_opts = {
+            "outtmpl": out_template,
+            "format": "bestvideo[ext=mp4]+bestaudio[ext=m4a]/best[ext=mp4]/best",
+            "merge_output_format": "mp4",
+            "max_filesize": settings.max_upload_size_mb * 1024 * 1024,
+            "no_playlist": True,
+            "quiet": True,
+            "no_warnings": True,
+            "progress_hooks": [progress_hook],
+            "socket_timeout": 30,
+        }
+
+        with yt_dlp.YoutubeDL(ydl_opts) as ydl:
+            ydl.download([url])
+
+        candidates = list(target_dir.glob("downloaded_*.*"))
+        if not candidates:
+            raise RuntimeError("No media stream could be extracted from this link.")
+
+        downloaded_file = candidates[0]
+        state.update("ingest", 25, "Download complete. Starting media pipeline...")
+        run_media_pipeline(video_id=video_id, original_video_path=downloaded_file)
+
+    except Exception as e:
+        err_str = str(e)
+        logger.error(f"Failed to ingest URL for video {video_id}: {err_str}")
+
+        clean_msg = "This link couldn't be downloaded. Please upload the video file directly instead."
+        if any(term in err_str.lower() for term in ["empty media response", "login", "not granting access", "cookie", "sign in"]):
+            clean_msg = "This platform requires user authentication/login (e.g. private Instagram or TikTok). Please save the video to your device and use 'File Upload' to analyze."
+        elif "unsupported url" in err_str.lower():
+            clean_msg = "Unsupported video link format. Please paste a valid YouTube, TikTok, or direct video URL, or use 'File Upload'."
+        elif "max-filesize" in err_str.lower() or "too large" in err_str.lower():
+            clean_msg = f"Video exceeds maximum allowed size of {settings.max_upload_size_mb}MB."
+        elif "timed out" in err_str.lower():
+            clean_msg = "The download connection timed out. Please check the URL or use 'File Upload'."
+
+        state.update("failed", 0, clean_msg, error=clean_msg)
 
 
 @app.get("/health", response_model=HealthResponse, tags=["System"])
@@ -136,28 +199,34 @@ async def health_check() -> HealthResponse:
     status_code=status.HTTP_201_CREATED,
     tags=["Videos"],
 )
-async def create_video(payload: VideoCreateRequest) -> VideoResponse:
+async def create_video(
+    payload: VideoCreateRequest,
+    background_tasks: BackgroundTasks,
+) -> VideoResponse:
     if not payload.rights_confirmed:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="Rights confirmation is required. You must certify rights to analyze this video.",
         )
-    if payload.source_type == "youtube" and not payload.source_url:
+    if not payload.source_url or not payload.source_url.strip():
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Source URL is required for YouTube video ingestion.",
+            detail="Source URL is required for video link ingestion.",
         )
 
+    clean_url = payload.source_url.strip()
     video_id = str(uuid.uuid4())
     state = get_or_create_pipeline_state(video_id)
-    state.update("queued", 0, "Video ingest queued.")
+    state.update("ingest", 5, "Video link queued. Connecting to stream...")
+
+    background_tasks.add_task(download_and_process_url_background, video_id, clean_url)
 
     return VideoResponse(
         id=video_id,
         source_type=payload.source_type,
-        status="queued",
+        status="processing",
         stage="ingest",
-        storage_key=f"urls/{video_id}" if payload.source_url else None,
+        storage_key=f"urls/{video_id}",
         created_at=datetime.now(UTC),
     )
 
@@ -251,6 +320,7 @@ async def stream_video_events(video_id: str):
                     "video_id": video_id,
                     "stage": state.stage,
                     "progress_pct": state.progress_pct,
+                    "message": state.error or f"Stage: {state.stage}",
                     "error": state.error,
                 }
             ),

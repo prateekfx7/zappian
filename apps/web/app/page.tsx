@@ -131,6 +131,7 @@ export default function Home() {
         } else if (data.stage === "failed") {
           eventSource.close();
           setErrorMessage(data.message || "Pipeline execution failed.");
+          setPipelineProgress(null);
         }
       } catch (err) {
         console.error("SSE parse error", err);
@@ -340,7 +341,7 @@ export default function Home() {
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
             source_type: "youtube",
-            source_url: videoUrl,
+            source_url: videoUrl.trim(),
             rights_confirmed: true,
           }),
         });
@@ -571,14 +572,14 @@ export default function Home() {
                       </div>
                     ) : (
                       <div>
-                        <div className="relative">
-                          <LinkIcon className="w-4 h-4 text-secondary absolute left-4 top-3" />
+                        <div className="relative flex items-center">
+                          <LinkIcon className="w-4 h-4 text-secondary absolute left-4 pointer-events-none" />
                           <input
                             type="url"
                             value={videoUrl}
                             onChange={(e) => setVideoUrl(e.target.value)}
                             placeholder="Paste video link (YouTube, TikTok, Reels)"
-                            className="input-minimal w-full pl-11 pr-4"
+                            className="input-minimal has-left-icon w-full pr-4"
                           />
                         </div>
                       </div>
@@ -603,7 +604,7 @@ export default function Home() {
                       disabled={isSubmitting || !isFormValid}
                       className="btn-primary w-full"
                     >
-                      <span>{isSubmitting ? "Uploading Video..." : "Analyze Video"}</span>
+                      <span>{isSubmitting ? "Queueing Video..." : "Analyze Video"}</span>
                     </button>
 
                     {/* Pipeline Progress */}
@@ -626,9 +627,26 @@ export default function Home() {
                     )}
 
                     {errorMessage && (
-                      <div className="p-3 bg-neutral text-error text-xs font-normal rounded-md border border-error/30 flex items-center gap-2">
-                        <AlertCircle className="w-4 h-4 flex-shrink-0" />
-                        <span>{errorMessage}</span>
+                      <div className="p-4 bg-neutral rounded-md border border-error/30 text-xs space-y-2.5 animate-fade-in">
+                        <div className="flex items-start gap-2.5 text-error">
+                          <AlertCircle className="w-4 h-4 flex-shrink-0 mt-0.5" />
+                          <span className="leading-relaxed">{errorMessage}</span>
+                        </div>
+                        {sourceType === "youtube" && (
+                          <div className="pt-1">
+                            <button
+                              type="button"
+                              onClick={() => {
+                                setSourceType("upload");
+                                setErrorMessage(null);
+                              }}
+                              className="btn-secondary text-xs h-8 px-3.5 inline-flex items-center gap-1.5 cursor-pointer"
+                            >
+                              <Upload className="w-3.5 h-3.5" />
+                              <span>Switch to File Upload</span>
+                            </button>
+                          </div>
+                        )}
                       </div>
                     )}
                   </form>

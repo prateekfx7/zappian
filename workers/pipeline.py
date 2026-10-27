@@ -40,14 +40,21 @@ class PipelineState:
         progress_pct: int,
         message: str,
         payload: dict[str, Any] | None = None,
+        error: str | None = None,
     ) -> None:
         self.stage = stage
         self.progress_pct = progress_pct
+        if stage == "failed":
+            self.error = error or message
+        elif error:
+            self.error = error
+
         event = {
             "video_id": self.video_id,
             "stage": stage,
             "progress_pct": progress_pct,
             "message": message,
+            "error": self.error,
             "timestamp": datetime.now(UTC).isoformat(),
             "payload": payload or {},
         }

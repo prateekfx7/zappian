@@ -110,6 +110,9 @@ body {
   outline: none;
   transition: border-color 0.15s ease;
 }
+.input-minimal.has-left-icon {
+  padding-left: 42px !important;
+}
 .input-minimal:focus {
   border-color: #171717;
 }

@@ -93,7 +93,7 @@ export function ReportViewer({
   onOpenStatsDrawer,
   onOpenRemix,
 }: ReportViewerProps) {
-  // Progressive disclosure: drawers closed by default
+  // Progressive disclosure: deep dive drawers closed by default
   const [isWhyItWorksOpen, setIsWhyItWorksOpen] = useState<boolean>(false);
   const [isBlueprintOpen, setIsBlueprintOpen] = useState<boolean>(false);
   const [isFixesOpen, setIsFixesOpen] = useState<boolean>(false);
@@ -125,7 +125,7 @@ export function ReportViewer({
   const verdictDropoff = verdictParts[1] || "Viewer momentum holds steady across key narrative beats.";
   const verdictFit = verdictParts[2] || "Best fit: TikTok and Instagram Reels paid social ad.";
 
-  // Calculate composite viral performance score
+  // Calculate composite performance score
   const compositeScore = Math.min(
     99,
     Math.max(
@@ -141,18 +141,18 @@ export function ReportViewer({
   );
 
   return (
-    <div className="space-y-6 animate-fade-in">
+    <div className="space-y-6 animate-fade-in text-primary">
       {/* ========================================================= */}
-      {/* APPLE-STYLE UNIFIED CARD (Single Score Ring + 3 Crisp Bullets) */}
+      {/* 1. VERCEL MINIMAL UNIFIED CARD (Single Score Ring + 3 Bullets) */}
       {/* ========================================================= */}
-      <div className="bg-white rounded-3xl p-6 md:p-8 border border-black/[0.06] shadow-sm">
+      <div className="bg-surface rounded-md p-6 md:p-8 border border-border">
         {/* Top Header */}
-        <div className="flex items-center justify-between pb-6 border-b border-black/[0.06] mb-6">
+        <div className="flex items-center justify-between pb-6 border-b border-border mb-6">
           <div>
-            <h2 className="text-xl md:text-2xl font-semibold tracking-tight text-ink">
+            <h2 className="text-xl md:text-2xl font-normal tracking-tight text-primary">
               Autopsy Overview
             </h2>
-            <p className="text-xs text-mute mt-0.5">
+            <p className="text-sm text-secondary mt-0.5">
               Verified with frame-by-frame evidence
             </p>
           </div>
@@ -162,7 +162,7 @@ export function ReportViewer({
               <button
                 type="button"
                 onClick={onOpenRemix}
-                className="btn-primary text-xs h-9 px-4 rounded-full"
+                className="btn-primary"
               >
                 1-Click Remix
               </button>
@@ -173,7 +173,7 @@ export function ReportViewer({
         {/* Main Content: Left Score Ring, Right 3 Crisp Bullets */}
         <div className="grid grid-cols-1 md:grid-cols-12 gap-8 items-center">
           {/* Left Column: Clean Score Ring (4 cols) */}
-          <div className="md:col-span-4 flex flex-col items-center justify-center p-6 bg-surface-card/50 rounded-2xl border border-hairline/40">
+          <div className="md:col-span-4 flex flex-col items-center justify-center p-6 bg-neutral rounded-md border border-border">
             <div className="relative w-36 h-36 flex items-center justify-center">
               <svg className="w-full h-full -rotate-90" viewBox="0 0 100 100">
                 <circle
@@ -181,40 +181,40 @@ export function ReportViewer({
                   cy="50"
                   r="42"
                   fill="transparent"
-                  stroke="#e5e5e0"
-                  strokeWidth="7"
+                  stroke="#E5E7EB"
+                  strokeWidth="6"
                 />
                 <circle
                   cx="50"
                   cy="50"
                   r="42"
                   fill="transparent"
-                  stroke="#e60023"
-                  strokeWidth="7"
+                  stroke="#171717"
+                  strokeWidth="6"
                   strokeDasharray="263.89"
                   strokeDashoffset={263.89 - (compositeScore / 100) * 263.89}
                   strokeLinecap="round"
-                  className="transition-all duration-1000 ease-out"
+                  className="transition-all duration-700 ease-out"
                 />
               </svg>
               <div className="absolute inset-0 flex flex-col items-center justify-center text-center">
-                <span className="text-3xl font-extrabold tracking-tight text-ink">
+                <span className="text-3xl font-normal tracking-tight text-primary">
                   {compositeScore}
                 </span>
-                <span className="text-[10px] font-semibold text-mute uppercase tracking-wider">
+                <span className="text-[10px] font-medium text-secondary uppercase tracking-wider">
                   Out of 100
                 </span>
               </div>
             </div>
-            <span className="text-xs font-bold text-ink mt-3">
+            <span className="text-sm font-medium text-primary mt-3">
               Performance Score
             </span>
-            <div className="flex items-center gap-3 mt-2 text-[11px] text-mute">
-              <span>Hook <strong className="text-ink font-semibold">{report.scores.hook}</strong></span>
+            <div className="flex items-center gap-3 mt-2 text-xs text-secondary font-mono">
+              <span>Hook {report.scores.hook}</span>
               <span>•</span>
-              <span>Pacing <strong className="text-ink font-semibold">{report.scores.retention}</strong></span>
+              <span>Pacing {report.scores.retention}</span>
               <span>•</span>
-              <span>Emotion <strong className="text-ink font-semibold">{report.scores.emotion}</strong></span>
+              <span>Emotion {report.scores.emotion}</span>
             </div>
           </div>
 
@@ -222,12 +222,12 @@ export function ReportViewer({
           <div className="md:col-span-8 space-y-5">
             {/* 1. Hook Strength */}
             <div className="flex items-start gap-3.5">
-              <div className="w-2.5 h-2.5 rounded-full bg-emerald-500 mt-1.5 flex-shrink-0" />
+              <div className="w-1.5 h-1.5 rounded-full bg-primary mt-2 flex-shrink-0" />
               <div>
-                <div className="text-[11px] font-bold text-mute uppercase tracking-wider mb-0.5">
+                <div className="text-xs font-medium text-secondary uppercase tracking-wider mb-0.5">
                   Hook Strength
                 </div>
-                <p className="text-sm font-semibold text-ink leading-relaxed">
+                <p className="text-sm text-primary leading-relaxed font-normal">
                   {verdictBest}
                 </p>
               </div>
@@ -235,23 +235,23 @@ export function ReportViewer({
 
             {/* 2. Drop-off Risk */}
             <div className="flex items-start gap-3.5">
-              <div className="w-2.5 h-2.5 rounded-full bg-amber-500 mt-1.5 flex-shrink-0" />
+              <div className="w-1.5 h-1.5 rounded-full bg-secondary mt-2 flex-shrink-0" />
               <div>
                 <div className="flex items-center gap-2 mb-0.5">
-                  <span className="text-[11px] font-bold text-mute uppercase tracking-wider">
+                  <span className="text-xs font-medium text-secondary uppercase tracking-wider">
                     Drop-off Risk
                   </span>
                   {report.fixes && report.fixes[0] && (
                     <button
                       type="button"
                       onClick={() => onSelectTimestamp && onSelectTimestamp(report.fixes[0].t_ms)}
-                      className="text-[11px] font-mono font-bold text-primary hover:underline cursor-pointer"
+                      className="text-xs font-mono text-primary hover:underline cursor-pointer"
                     >
                       @{formatMs(report.fixes[0].t_ms)}
                     </button>
                   )}
                 </div>
-                <p className="text-sm font-semibold text-ink leading-relaxed">
+                <p className="text-sm text-primary leading-relaxed font-normal">
                   {verdictDropoff}
                 </p>
               </div>
@@ -259,12 +259,12 @@ export function ReportViewer({
 
             {/* 3. Primary Actionable Fix */}
             <div className="flex items-start gap-3.5">
-              <div className="w-2.5 h-2.5 rounded-full bg-primary mt-1.5 flex-shrink-0" />
+              <div className="w-1.5 h-1.5 rounded-full bg-accent mt-2 flex-shrink-0" />
               <div>
-                <div className="text-[11px] font-bold text-mute uppercase tracking-wider mb-0.5">
+                <div className="text-xs font-medium text-secondary uppercase tracking-wider mb-0.5">
                   Primary Fix
                 </div>
-                <p className="text-sm font-semibold text-ink leading-relaxed">
+                <p className="text-sm text-primary leading-relaxed font-normal">
                   {report.fixes && report.fixes[0] ? report.fixes[0].change : "Optimize cut rhythm during product demonstration to sustain watch time."}
                 </p>
               </div>
@@ -274,43 +274,43 @@ export function ReportViewer({
       </div>
 
       {/* ========================================================= */}
-      {/* 2. COLLAPSIBLE DEEP DIVE: WHY VIEWERS WATCH (A4)          */}
+      {/* 2. COLLAPSIBLE DEEP DIVE: WHY VIEWERS WATCH               */}
       {/* ========================================================= */}
-      <div className="bg-white rounded-pin-lg border border-hairline shadow-sm overflow-hidden">
+      <div className="bg-surface rounded-md border border-border overflow-hidden">
         <button
           type="button"
           onClick={() => setIsWhyItWorksOpen(!isWhyItWorksOpen)}
-          className="w-full p-6 md:p-8 flex items-center justify-between text-left hover:bg-surface-card/30 transition cursor-pointer"
+          className="w-full p-5 md:p-6 flex items-center justify-between text-left hover:bg-neutral transition cursor-pointer"
         >
           <div>
-            <h3 className="text-lg md:text-xl font-bold text-ink flex items-center gap-2">
-              <Sparkles className="w-5 h-5 text-primary" />
+            <h3 className="text-base md:text-lg font-normal tracking-tight text-primary flex items-center gap-2">
+              <Sparkles className="w-4 h-4 text-primary" />
               <span>Why Viewers Watch (Exact Frame Evidence)</span>
             </h3>
-            <p className="text-xs text-mute mt-0.5">
-              Timestamped proof explaining why each scene engages viewers on Reels &amp; TikTok.
+            <p className="text-xs text-secondary mt-0.5">
+              Timestamped proof explaining why each scene engages viewers.
             </p>
           </div>
           <div className="flex items-center gap-3">
-            <span className="text-xs font-semibold text-mute hidden sm:inline">
+            <span className="text-xs font-mono text-secondary hidden sm:inline">
               {filteredClaims.length} Claims Verified
             </span>
-            {isWhyItWorksOpen ? <ChevronUp className="w-5 h-5 text-mute" /> : <ChevronDown className="w-5 h-5 text-mute" />}
+            {isWhyItWorksOpen ? <ChevronUp className="w-4 h-4 text-secondary" /> : <ChevronDown className="w-4 h-4 text-secondary" />}
           </div>
         </button>
 
         {isWhyItWorksOpen && (
-          <div className="px-6 md:px-8 pb-8 pt-2 border-t border-hairline/60">
+          <div className="px-5 md:px-6 pb-6 pt-2 border-t border-border">
             {/* Category Filter Pills */}
             <div className="flex flex-wrap gap-1.5 mb-6">
               {categories.map((cat) => (
                 <button
                   key={cat}
                   onClick={() => setSelectedCategory(cat)}
-                  className={`px-3 py-1 rounded-full text-xs font-bold capitalize transition cursor-pointer ${
+                  className={`px-3 py-1 rounded-full text-xs font-medium capitalize transition cursor-pointer ${
                     selectedCategory === cat
-                      ? "bg-ink text-white"
-                      : "bg-surface-card hover:bg-secondary-bg text-mute hover:text-ink border border-hairline"
+                      ? "bg-primary text-tertiary"
+                      : "bg-surface hover:bg-neutral text-secondary hover:text-primary border border-border"
                   }`}
                 >
                   {cat === "all" ? "All Drivers" : cat}
@@ -322,42 +322,39 @@ export function ReportViewer({
               {filteredClaims.map((item, idx) => (
                 <div
                   key={idx}
-                  className="card-pin p-5 flex flex-col justify-between border border-hairline hover:border-stone transition"
+                  className="bg-neutral rounded-md p-5 flex flex-col justify-between border border-border"
                 >
                   <div>
                     <div className="flex items-center justify-between mb-3">
-                      <span className="px-2.5 py-0.5 rounded-full text-[10px] font-extrabold uppercase bg-secondary-bg text-ink">
+                      <span className="chip-minimal text-[10px] uppercase font-medium">
                         {item.category}
                       </span>
-                      <span className="text-[10px] font-semibold text-mute flex items-center gap-1">
-                        Certainty:
-                        <span className={`capitalize font-bold ${item.confidence === "high" ? "text-emerald-700" : "text-amber-700"}`}>
-                          {item.confidence}
-                        </span>
+                      <span className="text-[10px] font-mono text-secondary">
+                        Certainty: <span className="text-primary font-medium">{item.confidence}</span>
                       </span>
                     </div>
 
-                    <p className="text-sm font-semibold text-ink leading-relaxed mb-4">
+                    <p className="text-sm font-normal text-primary leading-relaxed mb-4">
                       "{item.claim}"
                     </p>
                   </div>
 
                   {/* Evidence Pills */}
-                  <div className="pt-3 border-t border-hairline">
-                    <div className="text-[11px] font-bold text-mute mb-2">Timestamped Frames:</div>
+                  <div className="pt-3 border-t border-border">
+                    <div className="text-[11px] font-medium text-secondary mb-2 uppercase tracking-wider">Frames:</div>
                     <div className="flex flex-wrap gap-2">
                       {item.evidence.map((ev, evIdx) => (
                         <button
                           key={evIdx}
                           onClick={() => onSelectTimestamp && onSelectTimestamp(ev.t_ms)}
-                          className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-mono font-bold transition cursor-pointer border ${
+                          className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-mono transition cursor-pointer border ${
                             selectedTimestamp === ev.t_ms
-                              ? "bg-primary text-white border-primary shadow-xs"
-                              : "bg-white hover:bg-surface-card text-ink border-hairline hover:border-primary"
+                              ? "bg-primary text-tertiary border-primary"
+                              : "bg-surface hover:bg-neutral text-primary border-border"
                           }`}
                           title={`Jump to frame at ${ev.t_ms}ms`}
                         >
-                          <Clock className="w-3 h-3 text-primary" />
+                          <Clock className="w-3 h-3 text-secondary" />
                           <span>{formatMs(ev.t_ms)}</span>
                         </button>
                       ))}
@@ -371,35 +368,35 @@ export function ReportViewer({
       </div>
 
       {/* ========================================================= */}
-      {/* 3. COLLAPSIBLE DEEP DIVE: STRUCTURAL BLUEPRINT (A4)       */}
+      {/* 3. COLLAPSIBLE DEEP DIVE: STRUCTURAL BLUEPRINT            */}
       {/* ========================================================= */}
-      <div className="bg-white rounded-pin-lg border border-hairline shadow-sm overflow-hidden">
+      <div className="bg-surface rounded-md border border-border overflow-hidden">
         <button
           type="button"
           onClick={() => setIsBlueprintOpen(!isBlueprintOpen)}
-          className="w-full p-6 md:p-8 flex items-center justify-between text-left hover:bg-surface-card/30 transition cursor-pointer"
+          className="w-full p-5 md:p-6 flex items-center justify-between text-left hover:bg-neutral transition cursor-pointer"
         >
           <div>
-            <h3 className="text-lg md:text-xl font-bold text-ink flex items-center gap-2">
-              <Layers className="w-5 h-5 text-primary" />
+            <h3 className="text-base md:text-lg font-normal tracking-tight text-primary flex items-center gap-2">
+              <Layers className="w-4 h-4 text-primary" />
               <span>Story Structure Blueprint (The Reusable Bones)</span>
             </h3>
-            <p className="text-xs text-mute mt-0.5">
+            <p className="text-xs text-secondary mt-0.5">
               Click any beat block to inspect camera techniques and narrative role.
             </p>
           </div>
           <div className="flex items-center gap-3">
-            <span className="text-xs font-semibold text-mute hidden sm:inline">
+            <span className="text-xs font-mono text-secondary hidden sm:inline">
               {report.blueprint.length} Story Beats
             </span>
-            {isBlueprintOpen ? <ChevronUp className="w-5 h-5 text-mute" /> : <ChevronDown className="w-5 h-5 text-mute" />}
+            {isBlueprintOpen ? <ChevronUp className="w-4 h-4 text-secondary" /> : <ChevronDown className="w-4 h-4 text-secondary" />}
           </div>
         </button>
 
         {isBlueprintOpen && (
-          <div className="px-6 md:px-8 pb-8 pt-2 border-t border-hairline/60">
+          <div className="px-5 md:px-6 pb-6 pt-2 border-t border-border">
             {/* Visual Timeline Track */}
-            <div className="w-full bg-secondary-bg h-14 rounded-pin p-1.5 flex gap-1 mb-4 overflow-x-auto">
+            <div className="w-full bg-neutral h-12 rounded-md p-1 flex gap-1 mb-4 overflow-x-auto border border-border">
               {report.blueprint.map((beat, index) => {
                 const beatDuration = Math.max(beat.t_end_ms - beat.t_start_ms, 500);
                 const widthPct = Math.max((beatDuration / totalDuration) * 100, 10);
@@ -412,17 +409,17 @@ export function ReportViewer({
                       setActiveBeatIndex(index);
                       if (onSelectTimestamp) onSelectTimestamp(beat.t_start_ms);
                     }}
-                    className={`h-full rounded-xl transition-all relative flex flex-col justify-center px-3 text-left overflow-hidden select-none cursor-pointer ${
+                    className={`h-full rounded-sm transition flex flex-col justify-center px-3 text-left overflow-hidden select-none cursor-pointer ${
                       isActive
-                        ? "bg-primary text-white shadow-md scale-[1.02] z-10"
-                        : "bg-white hover:bg-white/80 text-ink border border-hairline"
+                        ? "bg-primary text-tertiary"
+                        : "bg-surface hover:bg-neutral text-primary border border-border"
                     }`}
-                    style={{ minWidth: "100px", flexBasis: `${widthPct}%` }}
+                    style={{ minWidth: "90px", flexBasis: `${widthPct}%` }}
                   >
-                    <div className="text-[11px] font-bold truncate uppercase tracking-wider">
+                    <div className="text-[10px] font-medium truncate uppercase tracking-wider">
                       {beat.role}
                     </div>
-                    <div className={`text-[10px] font-mono truncate ${isActive ? "text-white/80" : "text-mute"}`}>
+                    <div className={`text-[10px] font-mono truncate ${isActive ? "text-tertiary/80" : "text-secondary"}`}>
                       {formatMs(beat.t_start_ms)}
                     </div>
                   </button>
@@ -432,27 +429,27 @@ export function ReportViewer({
 
             {/* Selected Beat Card */}
             {activeBeatIndex !== null && report.blueprint[activeBeatIndex] && (
-              <div className="p-4 bg-surface-card rounded-pin border border-hairline animate-fade-in flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+              <div className="p-4 bg-neutral rounded-md border border-border flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
                 <div>
                   <div className="flex items-center gap-2 mb-1">
-                    <span className="px-2.5 py-0.5 rounded-full text-[10px] font-extrabold uppercase bg-primary text-white">
+                    <span className="chip-minimal text-[10px] uppercase font-medium">
                       Beat #{activeBeatIndex + 1}: {report.blueprint[activeBeatIndex].role}
                     </span>
-                    <span className="text-xs font-mono text-mute">
+                    <span className="text-xs font-mono text-secondary">
                       {formatMs(report.blueprint[activeBeatIndex].t_start_ms)} → {formatMs(report.blueprint[activeBeatIndex].t_end_ms)}
                     </span>
                   </div>
-                  <div className="text-sm font-bold text-ink">
-                    Technique: <span className="font-normal text-body">{report.blueprint[activeBeatIndex].technique}</span>
+                  <div className="text-sm font-medium text-primary">
+                    Technique: <span className="font-normal text-secondary">{report.blueprint[activeBeatIndex].technique}</span>
                   </div>
-                  <div className="text-xs text-mute mt-0.5">
+                  <div className="text-xs text-secondary mt-0.5">
                     Purpose: {report.blueprint[activeBeatIndex].purpose}
                   </div>
                 </div>
 
                 <button
                   onClick={() => onSelectTimestamp && onSelectTimestamp(report.blueprint[activeBeatIndex].t_start_ms)}
-                  className="px-4 py-2 rounded-full text-xs font-bold bg-white text-ink border border-hairline hover:border-primary shadow-xs transition"
+                  className="btn-secondary text-xs"
                 >
                   Inspect Frame at {formatMs(report.blueprint[activeBeatIndex].t_start_ms)}
                 </button>
@@ -463,48 +460,48 @@ export function ReportViewer({
       </div>
 
       {/* ========================================================= */}
-      {/* 4. COLLAPSIBLE DEEP DIVE: ALL RANKED FIXES (A4)           */}
+      {/* 4. COLLAPSIBLE DEEP DIVE: ALL RANKED FIXES                */}
       {/* ========================================================= */}
-      <div className="bg-white rounded-pin-lg border border-hairline shadow-sm overflow-hidden">
+      <div className="bg-surface rounded-md border border-border overflow-hidden">
         <button
           type="button"
           onClick={() => setIsFixesOpen(!isFixesOpen)}
-          className="w-full p-6 md:p-8 flex items-center justify-between text-left hover:bg-surface-card/30 transition cursor-pointer"
+          className="w-full p-5 md:p-6 flex items-center justify-between text-left hover:bg-neutral transition cursor-pointer"
         >
           <div>
-            <h3 className="text-lg md:text-xl font-bold text-ink flex items-center gap-2">
-              <Lightbulb className="w-5 h-5 text-primary" />
+            <h3 className="text-base md:text-lg font-normal tracking-tight text-primary flex items-center gap-2">
+              <Lightbulb className="w-4 h-4 text-primary" />
               <span>Full Actionable Fixes List ({report.fixes?.length || 0})</span>
             </h3>
-            <p className="text-xs text-mute mt-0.5">
-              Specific video and audio improvements to eliminate viewer friction.
+            <p className="text-xs text-secondary mt-0.5">
+              Specific video and audio improvements to eliminate viewer drop-off.
             </p>
           </div>
           <div className="flex items-center gap-3">
-            {isFixesOpen ? <ChevronUp className="w-5 h-5 text-mute" /> : <ChevronDown className="w-5 h-5 text-mute" />}
+            {isFixesOpen ? <ChevronUp className="w-4 h-4 text-secondary" /> : <ChevronDown className="w-4 h-4 text-secondary" />}
           </div>
         </button>
 
         {isFixesOpen && (
-          <div className="px-6 md:px-8 pb-8 pt-2 border-t border-hairline/60 space-y-3">
+          <div className="px-5 md:px-6 pb-6 pt-2 border-t border-border space-y-3">
             {report.fixes.map((fix) => (
               <div
                 key={fix.rank}
-                className="p-4 bg-surface-card rounded-pin border border-hairline flex flex-col md:flex-row md:items-center justify-between gap-4 hover:bg-white transition"
+                className="p-4 bg-neutral rounded-md border border-border flex flex-col md:flex-row md:items-center justify-between gap-4"
               >
                 <div className="flex items-start gap-3">
-                  <div className="w-7 h-7 rounded-full bg-ink text-white font-black text-xs flex items-center justify-center flex-shrink-0 mt-0.5">
-                    #{fix.rank}
+                  <div className="w-6 h-6 rounded-full bg-primary text-tertiary font-mono text-xs flex items-center justify-center flex-shrink-0 mt-0.5">
+                    {fix.rank}
                   </div>
                   <div>
-                    <div className="text-sm font-bold text-ink leading-snug">
+                    <div className="text-sm font-normal text-primary leading-snug">
                       {fix.change}
                     </div>
-                    <div className="text-xs text-mute mt-1 flex items-center gap-2">
+                    <div className="text-xs text-secondary mt-1 flex items-center gap-2 font-mono">
                       <span>Occurs at:</span>
                       <button
                         onClick={() => onSelectTimestamp && onSelectTimestamp(fix.t_ms)}
-                        className="font-mono font-bold text-ink underline hover:text-primary cursor-pointer"
+                        className="text-primary underline hover:text-secondary cursor-pointer"
                       >
                         {formatMs(fix.t_ms)}
                       </button>
@@ -513,18 +510,12 @@ export function ReportViewer({
                 </div>
 
                 <div className="flex items-center gap-3">
-                  <span
-                    className={`px-3 py-1 rounded-full text-xs font-extrabold capitalize border ${
-                      fix.expected_impact === "high"
-                        ? "bg-rose-50 text-semantic-errorDeep border-rose-200"
-                        : "bg-amber-50 text-amber-800 border-amber-200"
-                    }`}
-                  >
+                  <span className="chip-minimal text-xs font-mono capitalize">
                     {fix.expected_impact} Lift
                   </span>
                   <button
                     onClick={() => onSelectTimestamp && onSelectTimestamp(fix.t_ms)}
-                    className="px-3 py-1.5 rounded-full text-xs font-bold bg-white text-ink border border-hairline hover:border-primary transition"
+                    className="btn-secondary text-xs"
                   >
                     View Frame
                   </button>
@@ -540,44 +531,44 @@ export function ReportViewer({
       {/* ========================================================= */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {/* Style Lock */}
-        <div className="bg-white rounded-pin-lg border border-hairline shadow-sm overflow-hidden">
+        <div className="bg-surface rounded-md border border-border overflow-hidden">
           <button
             type="button"
             onClick={() => setIsDesignOpen(!isDesignOpen)}
-            className="w-full p-6 flex items-center justify-between text-left hover:bg-surface-card/30 transition cursor-pointer"
+            className="w-full p-5 flex items-center justify-between text-left hover:bg-neutral transition cursor-pointer"
           >
             <div>
-              <h3 className="text-base font-bold text-ink flex items-center gap-2">
+              <h3 className="text-sm font-medium text-primary flex items-center gap-2">
                 <Palette className="w-4 h-4 text-primary" />
                 <span>Visual Style Lock</span>
               </h3>
-              <p className="text-xs text-mute">Palette, lighting, motion &amp; typography</p>
+              <p className="text-xs text-secondary">Palette, lighting, motion &amp; typography</p>
             </div>
-            {isDesignOpen ? <ChevronUp className="w-4 h-4 text-mute" /> : <ChevronDown className="w-4 h-4 text-mute" />}
+            {isDesignOpen ? <ChevronUp className="w-4 h-4 text-secondary" /> : <ChevronDown className="w-4 h-4 text-secondary" />}
           </button>
 
           {isDesignOpen && (
-            <div className="px-6 pb-6 pt-2 border-t border-hairline/60 space-y-4">
+            <div className="px-5 pb-5 pt-2 border-t border-border space-y-4">
               <div>
-                <span className="text-[11px] font-bold text-mute uppercase tracking-wider block mb-2">Palette</span>
+                <span className="text-[10px] font-medium text-secondary uppercase tracking-wider block mb-2">Palette</span>
                 <div className="flex flex-wrap gap-2">
                   {report.design_language.palette.map((color, cIdx) => (
-                    <div key={cIdx} className="flex items-center gap-1.5 p-1 bg-surface-card rounded-md border border-hairline">
-                      <div className="w-5 h-5 rounded shadow-xs" style={{ backgroundColor: color }} />
-                      <span className="text-[11px] font-mono font-semibold text-ink">{color}</span>
+                    <div key={cIdx} className="flex items-center gap-1.5 p-1 bg-neutral rounded-sm border border-border">
+                      <div className="w-4 h-4 rounded-sm border border-border" style={{ backgroundColor: color }} />
+                      <span className="text-[11px] font-mono text-primary">{color}</span>
                     </div>
                   ))}
                 </div>
               </div>
 
               <div className="grid grid-cols-2 gap-3 text-xs">
-                <div className="bg-surface-card p-3 rounded-xl border border-hairline">
-                  <span className="text-mute block font-semibold mb-0.5">Cut Rhythm</span>
-                  <span className="font-bold text-ink">Every {report.design_language.cut_rhythm_s}s</span>
+                <div className="bg-neutral p-3 rounded-md border border-border">
+                  <span className="text-secondary block font-normal mb-0.5">Cut Rhythm</span>
+                  <span className="font-medium text-primary">Every {report.design_language.cut_rhythm_s}s</span>
                 </div>
-                <div className="bg-surface-card p-3 rounded-xl border border-hairline">
-                  <span className="text-mute block font-semibold mb-0.5">Motion Style</span>
-                  <span className="font-bold text-ink truncate block">{report.design_language.motion_style}</span>
+                <div className="bg-neutral p-3 rounded-md border border-border">
+                  <span className="text-secondary block font-normal mb-0.5">Motion Style</span>
+                  <span className="font-medium text-primary truncate block">{report.design_language.motion_style}</span>
                 </div>
               </div>
             </div>
@@ -585,42 +576,42 @@ export function ReportViewer({
         </div>
 
         {/* Verified Stats */}
-        <div className="bg-white rounded-pin-lg border border-hairline shadow-sm overflow-hidden">
+        <div className="bg-surface rounded-md border border-border overflow-hidden">
           <button
             type="button"
             onClick={() => setIsStatsOpen(!isStatsOpen)}
-            className="w-full p-6 flex items-center justify-between text-left hover:bg-surface-card/30 transition cursor-pointer"
+            className="w-full p-5 flex items-center justify-between text-left hover:bg-neutral transition cursor-pointer"
           >
             <div>
-              <h3 className="text-base font-bold text-ink flex items-center gap-2">
+              <h3 className="text-sm font-medium text-primary flex items-center gap-2">
                 <BarChart3 className="w-4 h-4 text-primary" />
-                <span>Verified Third-Party Stats</span>
+                <span>Verified Stats</span>
               </h3>
-              <p className="text-xs text-mute">Only verified platform numbers with source labels</p>
+              <p className="text-xs text-secondary">Platform analytics with verified source labels</p>
             </div>
-            {isStatsOpen ? <ChevronUp className="w-4 h-4 text-mute" /> : <ChevronDown className="w-4 h-4 text-mute" />}
+            {isStatsOpen ? <ChevronUp className="w-4 h-4 text-secondary" /> : <ChevronDown className="w-4 h-4 text-secondary" />}
           </button>
 
           {isStatsOpen && (
-            <div className="px-6 pb-6 pt-2 border-t border-hairline/60 space-y-3">
+            <div className="px-5 pb-5 pt-2 border-t border-border space-y-3">
               {report.stats && report.stats.length > 0 ? (
                 <div className="grid grid-cols-2 gap-3">
                   {report.stats.map((st, sIdx) => (
-                    <div key={sIdx} className="p-3 bg-surface-card rounded-xl border border-hairline">
-                      <div className="text-[10px] font-bold text-mute uppercase">{st.metric}</div>
-                      <div className="text-xl font-extrabold text-ink">{st.value.toLocaleString()}</div>
-                      <div className="text-[10px] text-primary font-bold mt-1">Source: {st.source}</div>
+                    <div key={sIdx} className="p-3 bg-neutral rounded-md border border-border">
+                      <div className="text-[10px] font-medium text-secondary uppercase tracking-wider">{st.metric}</div>
+                      <div className="text-xl font-normal text-primary mt-1">{st.value.toLocaleString()}</div>
+                      <div className="text-[10px] text-secondary font-mono mt-1">Source: {st.source}</div>
                     </div>
                   ))}
                 </div>
               ) : (
                 <div className="text-center py-4">
-                  <p className="text-xs text-mute mb-2">No third-party analytics data connected for this clip.</p>
+                  <p className="text-xs text-secondary mb-2">No third-party analytics data connected for this clip.</p>
                   {onOpenStatsDrawer && (
                     <button
                       type="button"
                       onClick={onOpenStatsDrawer}
-                      className="text-xs font-bold text-primary hover:underline"
+                      className="text-xs font-medium text-primary hover:underline cursor-pointer"
                     >
                       + Add stats or upload CSV &rarr;
                     </button>

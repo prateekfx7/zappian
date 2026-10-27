@@ -33,7 +33,6 @@ import { ReportViewer, AnalysisReport } from "../components/ReportViewer";
 import { CompareViewer, CompareReport } from "../components/CompareViewer";
 import { StatsDrawer } from "../components/StatsDrawer";
 import { RemixStudio } from "../components/RemixStudio";
-import { StepExplainerCard } from "../components/StepExplainerCard";
 import { API_BASE_URL } from "../lib/api";
 
 interface PipelineProgress {
@@ -104,7 +103,7 @@ export default function Home() {
   const [selectedTimestamp, setSelectedTimestamp] = useState<number | null>(null);
   const [activeTab, setActiveTab] = useState<"autopsy" | "assets">("autopsy");
 
-  // Phase 3 & 4 State: Stats Drawer, Compare Engine & Remix
+  // Stats Drawer, Compare Engine & Remix
   const [showStatsDrawer, setShowStatsDrawer] = useState(false);
   const [showOverflowMenu, setShowOverflowMenu] = useState(false);
   const [compareVideoIdA, setCompareVideoIdA] = useState("");
@@ -161,7 +160,6 @@ export default function Home() {
         if (data.analysis) {
           setActiveTab("autopsy");
         }
-        // Pre-fill compare field
         if (!compareVideoIdA) setCompareVideoIdA(vid);
       }
     } catch (err) {
@@ -235,7 +233,7 @@ export default function Home() {
         method: "POST",
       });
       if (!res.ok) {
-        throw new Error("Failed to execute Phase 2 analysis engine.");
+        throw new Error("Failed to execute analysis engine.");
       }
       const report: AnalysisReport = await res.json();
       setPipelineData((prev) => (prev ? { ...prev, analysis: report } : null));
@@ -301,7 +299,7 @@ export default function Home() {
     setPipelineProgress(null);
 
     if (!rightsConfirmed) {
-      setErrorMessage("Please confirm rights ownership before proceeding.");
+      setErrorMessage("Please confirm permission before proceeding.");
       return;
     }
 
@@ -311,7 +309,7 @@ export default function Home() {
     }
 
     if (sourceType === "youtube" && !videoUrl.trim()) {
-      setErrorMessage("Please paste a valid YouTube video URL.");
+      setErrorMessage("Please paste a valid video URL.");
       return;
     }
 
@@ -349,7 +347,7 @@ export default function Home() {
 
         if (!response.ok) {
           const errData = await response.json().catch(() => ({ detail: "Failed to queue URL" }));
-          throw new Error(errData.detail || "Server rejected YouTube ingest request.");
+          throw new Error(errData.detail || "Server rejected video URL request.");
         }
 
         const data = await response.json();
@@ -369,9 +367,9 @@ export default function Home() {
       (sourceType === "youtube" && videoUrl.trim().length > 0));
 
   return (
-    <div className="min-h-screen flex flex-col bg-surface-canvas selection:bg-primary/20">
-      {/* 1. Refined Minimalist Apple-Style Header */}
-      <header className="sticky top-0 z-50 bg-white/80 backdrop-blur-xl border-b border-black/[0.06] h-14 px-6 flex items-center justify-between">
+    <div className="min-h-screen flex flex-col bg-neutral text-primary">
+      {/* 1. Header — Vercel Minimal Navigation */}
+      <header className="sticky top-0 z-50 bg-surface border-b border-border h-14 px-6 flex items-center justify-between">
         <div
           onClick={() => {
             setAppMode("autopsy");
@@ -379,60 +377,63 @@ export default function Home() {
             setVideoId(null);
             setPipelineProgress(null);
           }}
-          className="flex items-center gap-2 cursor-pointer"
+          className="flex items-center gap-2.5 cursor-pointer"
         >
-          <div className="w-7 h-7 rounded-lg bg-ink flex items-center justify-center text-white font-bold text-xs shadow-xs">
-            R
+          <div className="w-6 h-6 rounded-sm bg-primary flex items-center justify-center text-tertiary font-medium text-xs">
+            ▲
           </div>
-          <span className="font-semibold text-sm tracking-tight text-ink">ReelBrain</span>
+          <span className="font-medium text-sm tracking-tight text-primary">ReelBrain</span>
         </div>
 
-        {/* Center: Clean 3-Mode Segmented Controller */}
-        <div className="flex items-center bg-secondary-bg/60 p-1 rounded-full border border-black/[0.04]">
+        {/* Center: Monochrome 3-Mode Segmented Pill */}
+        <div className="flex items-center bg-neutral p-0.5 rounded-full border border-border">
           <button
             onClick={() => setAppMode("autopsy")}
-            className={`px-3.5 py-1 rounded-full text-xs font-semibold transition cursor-pointer ${
-              appMode === "autopsy" ? "bg-white text-ink shadow-xs" : "text-mute hover:text-ink"
+            className={`px-3.5 py-1 rounded-full text-xs font-medium transition cursor-pointer ${
+              appMode === "autopsy"
+                ? "bg-surface text-primary border border-border shadow-none"
+                : "text-secondary hover:text-primary"
             }`}
           >
             Autopsy
           </button>
           <button
             onClick={() => setAppMode("compare")}
-            className={`px-3.5 py-1 rounded-full text-xs font-semibold transition cursor-pointer ${
-              appMode === "compare" ? "bg-white text-ink shadow-xs" : "text-mute hover:text-ink"
+            className={`px-3.5 py-1 rounded-full text-xs font-medium transition cursor-pointer ${
+              appMode === "compare"
+                ? "bg-surface text-primary border border-border shadow-none"
+                : "text-secondary hover:text-primary"
             }`}
           >
             Compare
           </button>
           <button
             onClick={() => setAppMode("remix")}
-            className={`px-3.5 py-1 rounded-full text-xs font-semibold transition cursor-pointer ${
-              appMode === "remix" ? "bg-white text-ink shadow-xs" : "text-mute hover:text-ink"
+            className={`px-3.5 py-1 rounded-full text-xs font-medium transition cursor-pointer ${
+              appMode === "remix"
+                ? "bg-surface text-primary border border-border shadow-none"
+                : "text-secondary hover:text-primary"
             }`}
           >
             Remix
           </button>
         </div>
 
-        {/* Right: Sleek Overflow Menu */}
+        {/* Right: Minimal Overflow Menu */}
         <div className="relative">
           <button
             onClick={() => setShowOverflowMenu(!showOverflowMenu)}
-            className="w-8 h-8 rounded-full flex items-center justify-center text-mute hover:text-ink hover:bg-secondary-bg/80 transition cursor-pointer"
+            className="w-8 h-8 rounded-full flex items-center justify-center text-secondary hover:text-primary hover:bg-neutral transition cursor-pointer"
             aria-label="More options"
           >
             <MoreHorizontal className="w-4 h-4" />
           </button>
 
           {showOverflowMenu && (
-            <div className="absolute right-0 mt-2 w-52 bg-white/95 backdrop-blur-xl rounded-2xl border border-black/[0.08] shadow-lg p-2 z-50 animate-fade-in text-xs space-y-1">
-              <div className="px-3 py-2 border-b border-hairline/60 flex items-center justify-between">
-                <span className="text-mute font-medium">Backend API</span>
-                <span className="inline-flex items-center gap-1.5 text-emerald-600 font-semibold">
-                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
-                  Port 8001
-                </span>
+            <div className="absolute right-0 mt-2 w-52 bg-surface rounded-md border border-border p-1.5 z-50 text-xs space-y-0.5">
+              <div className="px-3 py-2 border-b border-border flex items-center justify-between text-secondary">
+                <span>Backend API</span>
+                <span className="font-mono text-[11px] text-primary">Port 8001</span>
               </div>
               <button
                 onClick={() => {
@@ -440,9 +441,9 @@ export default function Home() {
                   fetchPipelineData("g1_product_ad");
                   setAppMode("autopsy");
                 }}
-                className="w-full text-left px-3 py-2 rounded-xl hover:bg-secondary-bg/60 text-ink font-medium transition cursor-pointer"
+                className="w-full text-left px-3 py-2 rounded-sm hover:bg-neutral text-primary font-normal transition cursor-pointer"
               >
-                Load Sample Video Autopsy
+                Load Sample Autopsy
               </button>
               {pipelineData && (
                 <button
@@ -452,7 +453,7 @@ export default function Home() {
                     setVideoId(null);
                     setPipelineProgress(null);
                   }}
-                  className="w-full text-left px-3 py-2 rounded-xl hover:bg-secondary-bg/60 text-ink font-medium transition cursor-pointer"
+                  className="w-full text-left px-3 py-2 rounded-sm hover:bg-neutral text-primary font-normal transition cursor-pointer"
                 >
                   Analyze New Video
                 </button>
@@ -462,33 +463,34 @@ export default function Home() {
         </div>
       </header>
 
-      {/* 2. Main Content Body */}
-      <main className="flex-1 max-w-5xl mx-auto px-6 py-10 w-full">
+      {/* 2. Main Body with Expansive Whitespace */}
+      <main className="flex-1 max-w-5xl mx-auto px-6 py-12 md:py-16 w-full">
         {/* MODE A: AUTOPSY ENGINE */}
         {appMode === "autopsy" && (
           <div>
-
-            {/* Centered Spotlight Dropzone (Only visible when no video is loaded) */}
+            {/* Centered Spotlight Dropzone */}
             {!pipelineData && (
               <div className="max-w-xl mx-auto py-12 md:py-20 text-center animate-fade-in">
-                <h1 className="text-3xl md:text-4xl font-semibold tracking-tight text-ink mb-2">
+                <h1 className="text-4xl md:text-5xl font-normal tracking-[-3.36px] text-primary mb-3">
                   Drop a video to analyze
                 </h1>
-                <p className="text-sm text-mute mb-8 font-normal">
+                <p className="text-base text-secondary mb-10 font-normal">
                   Pacing, hook psychology, and original remix
                 </p>
 
-                <div className="bg-white rounded-3xl p-8 border border-black/[0.06] shadow-sm text-left">
-                  {/* Segmented Mode Selector: Upload File or Link */}
-                  <div className="flex bg-secondary-bg/50 p-1 rounded-full w-fit mx-auto mb-6 border border-black/[0.04]">
+                <div className="bg-surface rounded-md p-8 md:p-10 border border-border text-left">
+                  {/* Segmented Source Selector */}
+                  <div className="flex bg-neutral p-0.5 rounded-full w-fit mx-auto mb-6 border border-border">
                     <button
                       type="button"
                       onClick={() => {
                         setSourceType("upload");
                         setErrorMessage(null);
                       }}
-                      className={`px-4 py-1.5 rounded-full text-xs font-semibold transition cursor-pointer ${
-                        sourceType === "upload" ? "bg-white text-ink shadow-xs" : "text-mute hover:text-ink"
+                      className={`px-4 py-1.5 rounded-full text-xs font-medium transition cursor-pointer ${
+                        sourceType === "upload"
+                          ? "bg-surface text-primary border border-border"
+                          : "text-secondary hover:text-primary"
                       }`}
                     >
                       File Upload
@@ -499,8 +501,10 @@ export default function Home() {
                         setSourceType("youtube");
                         setErrorMessage(null);
                       }}
-                      className={`px-4 py-1.5 rounded-full text-xs font-semibold transition cursor-pointer ${
-                        sourceType === "youtube" ? "bg-white text-ink shadow-xs" : "text-mute hover:text-ink"
+                      className={`px-4 py-1.5 rounded-full text-xs font-medium transition cursor-pointer ${
+                        sourceType === "youtube"
+                          ? "bg-surface text-primary border border-border"
+                          : "text-secondary hover:text-primary"
                       }`}
                     >
                       Video Link
@@ -524,33 +528,33 @@ export default function Home() {
                             onDragOver={handleDragOver}
                             onDragLeave={handleDragLeave}
                             onDrop={handleDrop}
-                            className={`border border-dashed rounded-2xl p-8 text-center transition cursor-pointer flex flex-col items-center justify-center min-h-[160px] ${
+                            className={`border border-dashed rounded-md p-8 text-center transition cursor-pointer flex flex-col items-center justify-center min-h-[160px] ${
                               isDragging
-                                ? "border-primary bg-primary/5"
-                                : "border-stone/80 bg-surface-card/40 hover:bg-surface-card/80 hover:border-ink/20"
+                                ? "border-primary bg-neutral"
+                                : "border-border bg-neutral/50 hover:bg-neutral hover:border-primary/40"
                             }`}
                           >
-                            <div className="w-10 h-10 rounded-full bg-secondary-bg flex items-center justify-center text-ink mb-3 shadow-xs">
-                              <Upload className="w-5 h-5" />
+                            <div className="w-10 h-10 rounded-full bg-surface border border-border flex items-center justify-center text-primary mb-3">
+                              <Upload className="w-4 h-4" />
                             </div>
-                            <div className="text-sm font-semibold text-ink mb-1">
-                              Drop video here, or <span className="text-primary hover:underline">browse</span>
+                            <div className="text-sm font-medium text-primary mb-1">
+                              Drop video here, or <span className="underline">browse</span>
                             </div>
-                            <p className="text-xs text-mute">
+                            <p className="text-xs text-secondary">
                               MP4, MOV, or WebM
                             </p>
                           </div>
                         ) : (
-                          <div className="p-4 bg-surface-card/60 rounded-2xl border border-hairline/60 flex items-center justify-between">
+                          <div className="p-4 bg-neutral rounded-md border border-border flex items-center justify-between">
                             <div className="flex items-center gap-3">
-                              <div className="w-9 h-9 rounded-full bg-white flex items-center justify-center text-primary shadow-xs">
+                              <div className="w-8 h-8 rounded-full bg-surface border border-border flex items-center justify-center text-primary">
                                 <FileVideo className="w-4 h-4" />
                               </div>
                               <div>
-                                <div className="text-xs font-semibold text-ink max-w-xs truncate">
+                                <div className="text-xs font-medium text-primary max-w-xs truncate">
                                   {selectedFile.name}
                                 </div>
-                                <div className="text-[11px] text-mute">
+                                <div className="text-[11px] text-secondary font-mono">
                                   {formatFileSize(selectedFile.size)}
                                 </div>
                               </div>
@@ -558,7 +562,7 @@ export default function Home() {
                             <button
                               type="button"
                               onClick={() => setSelectedFile(null)}
-                              className="p-1 rounded-full hover:bg-secondary-bg text-mute hover:text-ink transition cursor-pointer"
+                              className="p-1 rounded-full hover:bg-surface text-secondary hover:text-primary transition cursor-pointer"
                             >
                               <X className="w-4 h-4" />
                             </button>
@@ -568,28 +572,28 @@ export default function Home() {
                     ) : (
                       <div>
                         <div className="relative">
-                          <LinkIcon className="w-4 h-4 text-mute absolute left-4 top-3.5" />
+                          <LinkIcon className="w-4 h-4 text-secondary absolute left-4 top-3" />
                           <input
                             type="url"
                             value={videoUrl}
                             onChange={(e) => setVideoUrl(e.target.value)}
-                            placeholder="Paste YouTube, TikTok, or Reels link"
-                            className="w-full bg-surface-card/40 border border-stone/80 rounded-2xl py-3 pl-11 pr-4 text-xs font-medium text-ink outline-none focus:border-primary transition"
+                            placeholder="Paste video link (YouTube, TikTok, Reels)"
+                            className="input-minimal w-full pl-11 pr-4"
                           />
                         </div>
                       </div>
                     )}
 
-                    {/* Minimalist 1-line Rights Checkbox */}
+                    {/* Rights Checkbox */}
                     <div className="flex items-center gap-2.5 pt-1">
                       <input
                         type="checkbox"
                         id="rights"
                         checked={rightsConfirmed}
                         onChange={(e) => setRightsConfirmed(e.target.checked)}
-                        className="h-3.5 w-3.5 rounded text-primary focus:ring-primary border-stone cursor-pointer"
+                        className="h-3.5 w-3.5 rounded border-border text-primary focus:ring-primary cursor-pointer accent-primary"
                       />
-                      <label htmlFor="rights" className="text-xs text-mute cursor-pointer select-none">
+                      <label htmlFor="rights" className="text-xs text-secondary cursor-pointer select-none">
                         I have permission to analyze this video.
                       </label>
                     </div>
@@ -597,27 +601,22 @@ export default function Home() {
                     <button
                       type="submit"
                       disabled={isSubmitting || !isFormValid}
-                      className={`w-full h-11 rounded-2xl font-semibold text-xs flex items-center justify-center gap-2 transition ${
-                        isFormValid && !isSubmitting
-                          ? "bg-primary hover:bg-primary-pressed text-white cursor-pointer shadow-xs active:scale-[0.99]"
-                          : "bg-secondary-bg text-mute cursor-not-allowed border border-hairline/60"
-                      }`}
+                      className="btn-primary w-full"
                     >
-                      <Sparkles className="w-3.5 h-3.5" />
                       <span>{isSubmitting ? "Uploading Video..." : "Analyze Video"}</span>
                     </button>
 
-                    {/* Minimal SSE Pipeline Progress */}
+                    {/* Pipeline Progress */}
                     {pipelineProgress && (
-                      <div className="p-4 bg-surface-card/50 rounded-2xl border border-hairline/60 space-y-2.5 animate-fade-in">
-                        <div className="flex items-center justify-between text-xs font-semibold text-ink">
+                      <div className="p-4 bg-neutral rounded-md border border-border space-y-2.5 animate-fade-in">
+                        <div className="flex items-center justify-between text-xs font-medium text-primary">
                           <span className="flex items-center gap-2">
                             <Activity className="w-3.5 h-3.5 text-primary animate-spin" />
                             <span className="capitalize">{pipelineProgress.stage.replace(/_/g, " ")}</span>
                           </span>
-                          <span className="font-mono text-mute">{pipelineProgress.progress_pct}%</span>
+                          <span className="font-mono text-secondary">{pipelineProgress.progress_pct}%</span>
                         </div>
-                        <div className="w-full h-1.5 bg-secondary-bg rounded-full overflow-hidden">
+                        <div className="w-full h-1 bg-border rounded-full overflow-hidden">
                           <div
                             className="h-full bg-primary transition-all duration-300"
                             style={{ width: `${pipelineProgress.progress_pct}%` }}
@@ -627,7 +626,7 @@ export default function Home() {
                     )}
 
                     {errorMessage && (
-                      <div className="p-3 bg-rose-50 text-rose-800 text-xs font-medium rounded-xl border border-rose-200 flex items-center gap-2">
+                      <div className="p-3 bg-neutral text-error text-xs font-normal rounded-md border border-error/30 flex items-center gap-2">
                         <AlertCircle className="w-4 h-4 flex-shrink-0" />
                         <span>{errorMessage}</span>
                       </div>
@@ -639,40 +638,40 @@ export default function Home() {
 
             {/* Active Video Results Section */}
             {pipelineData && (
-              <div className="space-y-8">
+              <div className="space-y-8 animate-fade-in">
                 {/* View Switcher Bar */}
-                <div className="flex flex-col sm:flex-row sm:items-center justify-between bg-surface-card p-3 rounded-pin border border-hairline gap-3">
-                  <div className="flex bg-white p-1 rounded-full border border-hairline">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between bg-surface p-2.5 rounded-md border border-border gap-3">
+                  <div className="flex bg-neutral p-0.5 rounded-full border border-border">
                     <button
                       onClick={() => setActiveTab("autopsy")}
-                      className={`px-5 py-2 rounded-full text-xs font-bold transition flex items-center gap-2 ${
+                      className={`px-4 py-1.5 rounded-full text-xs font-medium transition flex items-center gap-2 ${
                         activeTab === "autopsy"
-                          ? "bg-primary text-white shadow-xs"
-                          : "text-ink hover:bg-secondary-bg"
+                          ? "bg-surface text-primary border border-border"
+                          : "text-secondary hover:text-primary"
                       }`}
                     >
                       <Sparkles className="w-3.5 h-3.5" />
-                      <span>Executive Autopsy</span>
+                      <span>Autopsy Report</span>
                     </button>
                     <button
                       onClick={() => setActiveTab("assets")}
-                      className={`px-5 py-2 rounded-full text-xs font-bold transition flex items-center gap-2 ${
+                      className={`px-4 py-1.5 rounded-full text-xs font-medium transition flex items-center gap-2 ${
                         activeTab === "assets"
-                          ? "bg-ink text-white shadow-xs"
-                          : "text-ink hover:bg-secondary-bg"
+                          ? "bg-surface text-primary border border-border"
+                          : "text-secondary hover:text-primary"
                       }`}
                     >
                       <Film className="w-3.5 h-3.5" />
-                      <span>Raw Assets</span>
+                      <span>Extracted Assets</span>
                     </button>
                   </div>
 
                   <div className="flex items-center gap-2">
                     <button
                       onClick={() => setShowStatsDrawer(true)}
-                      className="px-3.5 py-2 rounded-full text-xs font-bold bg-white hover:bg-secondary-bg border border-hairline text-ink flex items-center gap-1.5 transition cursor-pointer"
+                      className="btn-secondary text-xs flex items-center gap-1.5"
                     >
-                      <BarChart3 className="w-3.5 h-3.5 text-primary" />
+                      <BarChart3 className="w-3.5 h-3.5 text-secondary" />
                       <span>Stats ({pipelineData.analysis?.stats?.length || 0})</span>
                     </button>
 
@@ -681,15 +680,15 @@ export default function Home() {
                         setCompareVideoIdA(pipelineData.video_id);
                         setAppMode("compare");
                       }}
-                      className="px-3.5 py-2 rounded-full text-xs font-bold bg-white hover:bg-secondary-bg border border-hairline text-ink flex items-center gap-1.5 transition cursor-pointer"
+                      className="btn-secondary text-xs flex items-center gap-1.5"
                     >
-                      <GitCompare className="w-3.5 h-3.5" />
+                      <GitCompare className="w-3.5 h-3.5 text-secondary" />
                       <span>Compare</span>
                     </button>
 
                     <button
                       onClick={() => setAppMode("remix")}
-                      className="btn-primary text-xs flex items-center gap-1.5 cursor-pointer shadow-xs"
+                      className="btn-primary text-xs flex items-center gap-1.5"
                     >
                       <Wand2 className="w-3.5 h-3.5" />
                       <span>Remix Concept</span>
@@ -697,12 +696,12 @@ export default function Home() {
                   </div>
                 </div>
 
-                {/* Frame Focus Inspector Card */}
+                {/* Grounded Frame Inspector Card */}
                 <div
                   ref={inspectorRef}
-                  className="bg-white rounded-pin-lg p-6 border border-hairline shadow-sm flex flex-col md:flex-row items-center gap-6"
+                  className="bg-surface rounded-md p-6 md:p-8 border border-border flex flex-col md:flex-row items-center gap-6"
                 >
-                  <div className="relative w-48 aspect-[9/16] bg-surface-dark rounded-pin overflow-hidden flex-shrink-0 shadow-sm">
+                  <div className="relative w-44 aspect-[9/16] bg-neutral rounded-md border border-border overflow-hidden flex-shrink-0">
                     {selectedFrame ? (
                       <img
                         src={`${API_BASE_URL}/storage/thumbs/${pipelineData.video_id}/${selectedFrame.t_ms}.jpg`}
@@ -713,15 +712,15 @@ export default function Home() {
                         }}
                       />
                     ) : (
-                      <div className="w-full h-full flex items-center justify-center text-white/50 text-xs">
+                      <div className="w-full h-full flex items-center justify-center text-secondary text-xs font-mono">
                         No Frame
                       </div>
                     )}
-                    <div className="absolute top-2 left-2 pill-overlay text-[10px] py-0.5 px-2">
-                      {selectedFrame ? formatMs(selectedFrame.t_ms) : "00:00.000"}
+                    <div className="absolute top-2 left-2 chip-minimal text-[10px] py-0.5 px-2">
+                      {selectedFrame ? formatMs(selectedFrame.t_ms) : "00:00.00"}
                     </div>
                     {selectedFrame?.is_keyframe && (
-                      <div className="absolute bottom-2 right-2 bg-primary text-white text-[9px] font-bold px-1.5 py-0.5 rounded-full">
+                      <div className="absolute bottom-2 right-2 bg-primary text-tertiary text-[9px] font-medium px-1.5 py-0.5 rounded-full">
                         Keyframe
                       </div>
                     )}
@@ -729,28 +728,28 @@ export default function Home() {
 
                   <div className="flex-1 space-y-3">
                     <div className="flex items-center gap-2">
-                      <span className="px-2.5 py-0.5 rounded-full text-[10px] font-extrabold uppercase bg-primary text-white">
-                        Grounded Visual Evidence
+                      <span className="chip-minimal text-[10px] uppercase font-medium">
+                        Visual Evidence
                       </span>
-                      <span className="text-xs font-mono text-mute">
-                        Frame Timestamp: {selectedFrame ? `${selectedFrame.t_ms} ms (${formatMs(selectedFrame.t_ms)})` : "0 ms"}
+                      <span className="text-xs font-mono text-secondary">
+                        {selectedFrame ? `${selectedFrame.t_ms} ms (${formatMs(selectedFrame.t_ms)})` : "0 ms"}
                       </span>
                     </div>
 
-                    <h4 className="text-lg font-bold text-ink">
-                      Synchronized Frame &amp; Audio Snapshot
+                    <h4 className="text-lg font-normal tracking-tight text-primary">
+                      Frame &amp; Acoustic Snapshot
                     </h4>
 
-                    <p className="text-xs text-mute leading-relaxed">
-                      Every score and structural critique in FrameDNA is anchored to concrete visual or acoustic evidence at this millisecond mark.
+                    <p className="text-sm text-secondary leading-relaxed">
+                      Every score and critique in ReelBrain is anchored to concrete visual or acoustic evidence at this millisecond mark.
                     </p>
 
                     <div className="pt-2 flex flex-wrap gap-2 text-xs">
-                      <div className="p-2.5 bg-surface-card rounded-pin border border-hairline">
-                        <span className="text-[10px] font-bold uppercase tracking-wider text-mute block mb-0.5">
-                          Spoken Audio Around Timestamp
+                      <div className="p-3 bg-neutral rounded-md border border-border flex-1 min-w-[200px]">
+                        <span className="text-[10px] font-medium uppercase tracking-wider text-secondary block mb-1">
+                          Spoken Audio
                         </span>
-                        <span className="font-medium text-ink">
+                        <span className="font-normal text-primary text-xs">
                           {pipelineData.transcript?.words && selectedFrame
                             ? pipelineData.transcript.words
                                 .filter(
@@ -765,15 +764,15 @@ export default function Home() {
                       </div>
 
                       {pipelineData.ocr && selectedFrame && (
-                        <div className="p-2.5 bg-surface-card rounded-pin border border-hairline">
-                          <span className="text-[10px] font-bold uppercase tracking-wider text-mute block mb-0.5">
-                            On-Screen Keyframe OCR Text
+                        <div className="p-3 bg-neutral rounded-md border border-border flex-1 min-w-[200px]">
+                          <span className="text-[10px] font-medium uppercase tracking-wider text-secondary block mb-1">
+                            On-Screen Text (OCR)
                           </span>
-                          <span className="font-medium text-ink">
+                          <span className="font-normal text-primary text-xs">
                             {pipelineData.ocr
                               .filter((item) => Math.abs(item.keyframe_ms - selectedFrame.t_ms) <= 1500)
                               .flatMap((item) => item.texts.map((t) => t.text))
-                              .join(" • ") || "No OCR overlay text detected."}
+                              .join(" • ") || "No text overlay detected."}
                           </span>
                         </div>
                       )}
@@ -795,22 +794,22 @@ export default function Home() {
                         onOpenRemix={() => setAppMode("remix")}
                       />
                     ) : (
-                      <div className="p-12 bg-white rounded-pin-lg border border-hairline text-center space-y-4">
-                        <div className="w-14 h-14 rounded-full bg-surface-card flex items-center justify-center text-primary mx-auto shadow-xs">
-                          <Sparkles className="w-7 h-7" />
+                      <div className="p-12 bg-surface rounded-md border border-border text-center space-y-4">
+                        <div className="w-12 h-12 rounded-full bg-neutral border border-border flex items-center justify-center text-primary mx-auto">
+                          <Sparkles className="w-5 h-5" />
                         </div>
-                        <h3 className="text-xl font-bold text-ink">
+                        <h3 className="text-xl font-normal tracking-tight text-primary">
                           Autopsy Analysis Engine Ready
                         </h3>
-                        <p className="text-sm text-mute max-w-md mx-auto">
-                          All media frames, transcript words, and acoustic curves are extracted. Click below to synthesize the 7-score matrix, timestamped evidence, and structural blueprint.
+                        <p className="text-sm text-secondary max-w-md mx-auto">
+                          All media frames, transcript words, and acoustic curves are extracted. Synthesize the 7-score matrix and blueprint.
                         </p>
                         <button
                           onClick={handleRunAnalysis}
                           disabled={isAnalyzing}
                           className="btn-primary"
                         >
-                          {isAnalyzing ? "Running Analysis..." : "Generate Autopsy Report Now"}
+                          {isAnalyzing ? "Running Analysis..." : "Generate Autopsy Report"}
                         </button>
                       </div>
                     )}
@@ -819,29 +818,29 @@ export default function Home() {
 
                 {/* TAB 2: RAW ASSETS INSPECTOR */}
                 {activeTab === "assets" && (
-                  <section className="bg-white rounded-pin-lg p-8 border border-hairline mb-12 shadow-sm animate-fade-in">
-                    <div className="flex flex-col md:flex-row md:items-center justify-between pb-6 border-b border-hairline gap-4 mb-8">
+                  <section className="bg-surface rounded-md p-6 md:p-8 border border-border mb-12 animate-fade-in">
+                    <div className="flex flex-col md:flex-row md:items-center justify-between pb-6 border-b border-border gap-4 mb-6">
                       <div>
-                        <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-semantic-successPale text-semantic-successDeep mb-2">
-                          <CheckCircle2 className="w-3.5 h-3.5" />
+                        <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium bg-neutral border border-border text-primary mb-2">
+                          <CheckCircle2 className="w-3.5 h-3.5 text-primary" />
                           <span>Pipeline Completed (100%)</span>
                         </div>
-                        <h2 className="text-2xl font-bold text-ink">
+                        <h2 className="text-xl md:text-2xl font-normal tracking-tight text-primary">
                           Extracted Media Assets &amp; Timestamps
                         </h2>
-                        <p className="text-xs text-mute">
-                          ID: <span className="font-mono text-ink font-semibold">{pipelineData.video_id}</span> • {pipelineData.metadata.duration_s}s duration • {pipelineData.metadata.width}x{pipelineData.metadata.height} @ {pipelineData.metadata.fps}fps
+                        <p className="text-xs text-secondary mt-1 font-mono">
+                          ID: {pipelineData.video_id} • {pipelineData.metadata.duration_s}s duration • {pipelineData.metadata.width}x{pipelineData.metadata.height} @ {pipelineData.metadata.fps}fps
                         </p>
                       </div>
                     </div>
 
-                    <div className="mb-8">
+                    <div>
                       <div className="flex items-center justify-between mb-4">
-                        <h3 className="text-sm font-bold text-ink flex items-center gap-2">
+                        <h3 className="text-sm font-medium text-primary flex items-center gap-2">
                           <Film className="w-4 h-4 text-primary" />
                           <span>1 FPS Extracted Frames ({pipelineData.frames.length} total)</span>
                         </h3>
-                        <span className="text-xs text-mute">Click any frame to inspect timestamp</span>
+                        <span className="text-xs text-secondary">Click any frame to inspect timestamp</span>
                       </div>
 
                       <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-3 overflow-x-auto pb-2">
@@ -849,13 +848,13 @@ export default function Home() {
                           <div
                             key={idx}
                             onClick={() => handleSelectTimestamp(frame.t_ms)}
-                            className={`card-pin p-1 cursor-pointer transition border-2 ${
+                            className={`p-1 rounded-md cursor-pointer transition border ${
                               selectedFrame?.t_ms === frame.t_ms
-                                ? "border-primary shadow-sm"
-                                : "border-transparent hover:border-stone"
+                                ? "border-primary bg-neutral"
+                                : "border-border hover:border-secondary"
                             }`}
                           >
-                            <div className="relative aspect-[9/16] bg-surface-dark rounded-xl overflow-hidden flex items-center justify-center">
+                            <div className="relative aspect-[9/16] bg-neutral rounded-sm overflow-hidden flex items-center justify-center">
                               <img
                                 src={`${API_BASE_URL}/storage/thumbs/${pipelineData.video_id}/${frame.t_ms}.jpg`}
                                 alt={`Frame at ${frame.t_ms}ms`}
@@ -864,11 +863,11 @@ export default function Home() {
                                   (e.target as HTMLElement).style.display = "none";
                                 }}
                               />
-                              <div className="absolute top-2 left-2 pill-overlay text-[10px] py-0.5 px-2">
+                              <div className="absolute top-1.5 left-1.5 chip-minimal text-[9px] py-0 px-1.5">
                                 {formatMs(frame.t_ms)}
                               </div>
                               {frame.is_keyframe && (
-                                <div className="absolute bottom-2 right-2 bg-primary text-white text-[9px] font-bold px-1.5 py-0.5 rounded-full">
+                                <div className="absolute bottom-1.5 right-1.5 bg-primary text-tertiary text-[8px] font-medium px-1.5 py-0.5 rounded-full">
                                   Cut
                                 </div>
                               )}
@@ -884,27 +883,27 @@ export default function Home() {
           </div>
         )}
 
-        {/* MODE B: COMPARE STUDIO (Phase 3) */}
+        {/* MODE B: COMPARE STUDIO */}
         {appMode === "compare" && (
           <div className="space-y-8 animate-fade-in">
-            <div className="text-center max-w-3xl mx-auto mb-10">
-              <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-surface-card border border-hairline text-xs font-semibold text-ink mb-4 shadow-xs">
+            <div className="text-center max-w-2xl mx-auto mb-10">
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-neutral border border-border text-xs font-medium text-primary mb-3">
                 <GitCompare className="w-3.5 h-3.5 text-primary" />
-                <span>Phase 3 Feature: Side-by-Side Blueprint Diff Engine</span>
+                <span>Side-by-Side Blueprint Diff Engine</span>
               </div>
-              <h2 className="text-3xl md:text-5xl font-extrabold text-ink tracking-tight mb-4">
+              <h2 className="text-3xl md:text-4xl font-normal tracking-[-3.36px] text-primary mb-3">
                 Compare Winner vs Flop
               </h2>
-              <p className="text-sm md:text-base text-mute">
-                Align narrative beats, score deltas, and pacing velocity. Every claim cites exact timestamps from both clips.
+              <p className="text-sm text-secondary">
+                Align narrative beats, score deltas, and pacing velocity. Every claim cites exact timestamps.
               </p>
             </div>
 
-            <div className="max-w-3xl mx-auto bg-surface-card rounded-pin-lg p-8 border border-hairline shadow-sm">
+            <div className="max-w-2xl mx-auto bg-surface rounded-md p-6 md:p-8 border border-border">
               <form onSubmit={handleRunCompare} className="space-y-6">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                   <div>
-                    <label className="block text-xs font-bold uppercase tracking-wider text-ink mb-2">
+                    <label className="block text-xs font-medium text-secondary mb-2">
                       Video A ID (Baseline or Winner)
                     </label>
                     <input
@@ -912,13 +911,13 @@ export default function Home() {
                       value={compareVideoIdA}
                       onChange={(e) => setCompareVideoIdA(e.target.value)}
                       placeholder="e.g. 7481ba93-..."
-                      className="w-full bg-white border border-stone rounded-xl py-3 px-4 text-xs font-mono text-ink outline-none focus:border-primary transition"
+                      className="input-minimal w-full font-mono text-xs"
                       required
                     />
                   </div>
 
                   <div>
-                    <label className="block text-xs font-bold uppercase tracking-wider text-ink mb-2">
+                    <label className="block text-xs font-medium text-secondary mb-2">
                       Video B ID (Comparison Concept)
                     </label>
                     <input
@@ -926,26 +925,33 @@ export default function Home() {
                       value={compareVideoIdB}
                       onChange={(e) => setCompareVideoIdB(e.target.value)}
                       placeholder="e.g. 81a942df-..."
-                      className="w-full bg-white border border-stone rounded-xl py-3 px-4 text-xs font-mono text-ink outline-none focus:border-primary transition"
+                      className="input-minimal w-full font-mono text-xs"
                       required
                     />
                   </div>
                 </div>
 
-                <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-2">
-                  <span className="text-xs text-mute">
-                    Both videos must be ingested and analyzed before running blueprint diff.
+                <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-2 border-t border-border">
+                  <span className="text-xs text-secondary">
+                    Both videos must be analyzed before running blueprint diff.
                   </span>
 
                   <button
                     type="submit"
                     disabled={isComparing || !compareVideoIdA || !compareVideoIdB}
-                    className="btn-primary flex items-center gap-2 cursor-pointer disabled:opacity-50"
+                    className="btn-primary"
                   >
-                    <GitCompare className="w-4 h-4" />
+                    <GitCompare className="w-4 h-4 mr-1.5" />
                     <span>{isComparing ? "Aligning Blueprints..." : "Run Diff Comparison"}</span>
                   </button>
                 </div>
+
+                {errorMessage && (
+                  <div className="p-3 bg-neutral text-error text-xs font-normal rounded-md border border-error/30 flex items-center gap-2">
+                    <AlertCircle className="w-4 h-4 flex-shrink-0" />
+                    <span>{errorMessage}</span>
+                  </div>
+                )}
               </form>
             </div>
 
@@ -955,7 +961,7 @@ export default function Home() {
           </div>
         )}
 
-        {/* MODE C: REMIX CONCEPT STUDIO (Phase 4) */}
+        {/* MODE C: REMIX CONCEPT STUDIO */}
         {appMode === "remix" && (
           <RemixStudio
             sourceVideoId={pipelineData?.video_id || compareVideoIdA || "g1_product_ad"}
@@ -974,20 +980,20 @@ export default function Home() {
         />
       )}
 
-      {/* Clean Footer */}
-      <footer className="border-t border-hairline py-8 px-6 bg-white mt-16 text-center text-xs text-mute">
-        <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
+      {/* Minimal Footer */}
+      <footer className="border-t border-border py-8 px-6 bg-surface mt-16 text-xs text-secondary">
+        <div className="max-w-5xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
           <div className="flex items-center gap-2">
-            <div className="w-5 h-5 rounded-full bg-primary flex items-center justify-center text-white text-[10px] font-black">
-              F
+            <div className="w-5 h-5 rounded-sm bg-primary flex items-center justify-center text-tertiary text-[10px] font-medium">
+              ▲
             </div>
-            <span className="font-bold text-ink">FrameDNA</span>
-            <span>&copy; 2026. Open-Source-First Video Autopsy &amp; Structure Remix Engine.</span>
+            <span className="font-medium text-primary">ReelBrain</span>
+            <span>&copy; 2026. Video Autopsy &amp; Remix Engine.</span>
           </div>
           <div className="flex items-center gap-6">
-            <span className="hover:text-ink cursor-pointer">Rules</span>
-            <span className="hover:text-ink cursor-pointer">Privacy &amp; Retention</span>
-            <span className="hover:text-ink cursor-pointer">Originality Policy</span>
+            <span className="hover:text-primary cursor-pointer transition">Docs</span>
+            <span className="hover:text-primary cursor-pointer transition">Privacy</span>
+            <span className="hover:text-primary cursor-pointer transition">Originality Policy</span>
           </div>
         </div>
       </footer>

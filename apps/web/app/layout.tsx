@@ -2,9 +2,9 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "FrameDNA — Video Autopsy & Structure Remix Engine",
+  title: "ReelBrain — Video Autopsy & Remix Engine",
   description:
-    "Analyse videos frame by frame, uncover growth & retention mechanics with timestamped evidence, and generate original remixes.",
+    "Analyze reels and TikToks frame by frame, uncover retention mechanics with timestamped evidence, and remix original concepts.",
 };
 
 export default function RootLayout({
@@ -22,11 +22,11 @@ export default function RootLayout({
           crossOrigin="anonymous"
         />
         <link
-          href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+          href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&family=Geist+Mono:wght@400;500&display=swap"
           rel="stylesheet"
         />
       </head>
-      <body className="min-h-screen bg-surface-canvas text-body">
+      <body className="min-h-screen bg-neutral text-ink antialiased selection:bg-primary selection:text-tertiary">
         {children}
       </body>
     </html>

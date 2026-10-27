@@ -67,13 +67,11 @@ export function DraftPlayer({ draft, onRegenerate }: DraftPlayerProps) {
     ? draft.voiceover_url
     : `${API_BASE_URL}${draft.voiceover_url}`;
 
-  // Track playback time and active shot
   const handleTimeUpdate = () => {
     if (!videoRef.current) return;
     const t = videoRef.current.currentTime;
     setCurrentTime(t);
 
-    // Identify which shot is active based on t
     let cumulative = 0;
     for (let i = 0; i < draft.shots.length; i++) {
       const shot = draft.shots[i];
@@ -133,46 +131,40 @@ export function DraftPlayer({ draft, onRegenerate }: DraftPlayerProps) {
   const activeShot = draft.shots[activeShotIndex] || draft.shots[0];
 
   return (
-    <div className="bg-white rounded-pin-lg border border-hairline shadow-sm overflow-hidden animate-fade-in">
+    <div className="bg-surface rounded-md border border-border overflow-hidden animate-fade-in text-primary">
       {/* 1. Header Bar */}
-      <div className="p-6 border-b border-hairline flex flex-col md:flex-row md:items-center justify-between gap-4 bg-surface-card/60">
+      <div className="p-6 border-b border-border flex flex-col md:flex-row md:items-center justify-between gap-4 bg-neutral">
         <div>
-          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-primary/10 text-primary mb-2">
-            <Film className="w-3.5 h-3.5" />
-            <span>Phase 5: 9:16 Draft Video Player</span>
+          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-mono bg-surface border border-border text-primary mb-2">
+            <Film className="w-3.5 h-3.5 text-primary" />
+            <span>9:16 Draft Video Player</span>
           </div>
-          <h3 className="text-xl font-extrabold text-ink tracking-tight">
-            Assembled 9:16 Video &amp; Voiceover Preview
+          <h3 className="text-xl font-normal tracking-tight text-primary">
+            Assembled Video &amp; Voiceover Preview
           </h3>
-          <p className="text-xs text-mute font-mono">
+          <p className="text-xs text-secondary font-mono mt-0.5">
             Concept: {draft.product_or_topic} • ID: {draft.concept_id.slice(0, 8)}...
           </p>
         </div>
 
         <div className="flex flex-wrap items-center gap-2">
           {/* Audio Sync Badge */}
-          <div
-            className={`px-3 py-1.5 rounded-full text-xs font-bold flex items-center gap-1.5 ${
-              draft.in_sync
-                ? "bg-emerald-50 text-emerald-800 border border-emerald-200"
-                : "bg-amber-50 text-amber-800 border border-amber-200"
-            }`}
-          >
-            <CheckCircle2 className="w-4 h-4 text-emerald-600" />
-            <span>Sync: &plusmn;{draft.sync_delta_ms}ms ({draft.in_sync ? "Guaranteed &le;200ms" : "Review"})</span>
+          <div className="chip-minimal text-xs font-mono">
+            <CheckCircle2 className="w-3.5 h-3.5 text-primary" />
+            <span>Sync: &plusmn;{draft.sync_delta_ms}ms</span>
           </div>
 
           {/* Style Lock Badge */}
-          <div className="pill-overlay text-xs font-bold flex items-center gap-1.5">
+          <div className="chip-minimal text-xs font-mono">
             <ShieldCheck className="w-3.5 h-3.5 text-primary" />
-            <span>Style Lock Enforced</span>
+            <span>Style Lock</span>
           </div>
 
           {/* Export Action */}
           <a
             href={fullExportUrl}
-            download={`framedna_${draft.concept_id}_draft.mp4`}
-            className="btn-primary text-xs flex items-center gap-1.5 shadow-sm"
+            download={`reelbrain_${draft.concept_id}_draft.mp4`}
+            className="btn-primary text-xs flex items-center gap-1.5"
           >
             <Download className="w-3.5 h-3.5" />
             <span>Export MP4</span>
@@ -184,13 +176,13 @@ export function DraftPlayer({ draft, onRegenerate }: DraftPlayerProps) {
       <div className="p-6 md:p-8 grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
         {/* Left / Center: 9:16 Mobile Player Viewport */}
         <div className="lg:col-span-5 flex flex-col items-center">
-          <div className="relative w-full max-w-[300px] aspect-[9/16] bg-black rounded-[32px] overflow-hidden shadow-2xl border-4 border-stone-800 flex flex-col justify-between group">
-            {/* Top Phone Notch / Model Tag */}
-            <div className="absolute top-3 inset-x-0 z-20 flex items-center justify-between px-4 pointer-events-none">
-              <span className="px-2 py-0.5 rounded-full text-[9px] font-black uppercase tracking-wider bg-black/60 text-white backdrop-blur-md">
+          <div className="relative w-full max-w-[300px] aspect-[9/16] bg-black rounded-md overflow-hidden border border-border flex flex-col justify-between group">
+            {/* Top Model Tag */}
+            <div className="absolute top-3 inset-x-0 z-20 flex items-center justify-between px-3 pointer-events-none">
+              <span className="px-2 py-0.5 rounded-full text-[9px] font-mono uppercase bg-black/80 text-white border border-white/20">
                 {activeShotIndex === 0 ? "Wan 2.2 Hero" : "LTX-2 Draft"}
               </span>
-              <span className="px-2 py-0.5 rounded-full text-[9px] font-mono text-white/80 bg-black/60 backdrop-blur-md">
+              <span className="px-2 py-0.5 rounded-full text-[9px] font-mono text-white/80 bg-black/80 border border-white/20">
                 720x1280
               </span>
             </div>
@@ -209,8 +201,8 @@ export function DraftPlayer({ draft, onRegenerate }: DraftPlayerProps) {
 
             {/* Dynamic OCR / On-Screen Text Overlay */}
             {activeShot?.on_screen_text && (
-              <div className="absolute top-16 inset-x-4 z-10 pointer-events-none animate-fade-in">
-                <div className="bg-primary/95 text-white text-xs font-black tracking-wide uppercase px-3 py-2 rounded-xl text-center shadow-lg border border-white/20">
+              <div className="absolute top-14 inset-x-3 z-10 pointer-events-none animate-fade-in">
+                <div className="bg-primary/90 text-white text-xs font-medium tracking-wide uppercase px-3 py-1.5 rounded-md text-center border border-white/20">
                   {activeShot.on_screen_text}
                 </div>
               </div>
@@ -218,8 +210,8 @@ export function DraftPlayer({ draft, onRegenerate }: DraftPlayerProps) {
 
             {/* Shot Description Floating Subtitle */}
             <div className="absolute bottom-16 inset-x-3 z-10 pointer-events-none">
-              <div className="bg-black/75 backdrop-blur-md text-white text-[11px] p-2.5 rounded-xl border border-white/10 shadow-lg">
-                <div className="text-[9px] font-bold uppercase text-primary mb-0.5">
+              <div className="bg-black/80 text-white text-[11px] p-2.5 rounded-md border border-white/10">
+                <div className="text-[9px] font-mono uppercase text-secondary mb-0.5">
                   Shot #{activeShot?.shot_index}: {activeShot?.shot_type}
                 </div>
                 <p className="line-clamp-2 leading-tight text-white/90">
@@ -228,9 +220,9 @@ export function DraftPlayer({ draft, onRegenerate }: DraftPlayerProps) {
               </div>
             </div>
 
-            {/* Interactive Player Controls Bar */}
-            <div className="absolute bottom-0 inset-x-0 z-20 bg-gradient-to-t from-black/90 via-black/50 to-transparent p-3 pt-6 flex flex-col gap-2">
-              {/* Progress Bar */}
+            {/* Player Controls Bar */}
+            <div className="absolute bottom-0 inset-x-0 z-20 bg-black/90 p-3 flex flex-col gap-2">
+              {/* Progress Track */}
               <input
                 type="range"
                 min={0}
@@ -238,26 +230,26 @@ export function DraftPlayer({ draft, onRegenerate }: DraftPlayerProps) {
                 step={0.1}
                 value={currentTime}
                 onChange={handleSliderSeek}
-                className="w-full h-1 bg-white/30 rounded-lg appearance-none cursor-pointer accent-primary"
+                className="w-full h-1 bg-white/20 rounded-full appearance-none cursor-pointer accent-white"
               />
 
               <div className="flex items-center justify-between text-white text-xs">
                 <div className="flex items-center gap-2">
                   <button
                     onClick={togglePlay}
-                    className="p-1.5 rounded-full hover:bg-white/20 transition cursor-pointer"
+                    className="p-1 rounded hover:bg-white/20 transition cursor-pointer"
                   >
-                    {isPlaying ? <Pause className="w-4 h-4 fill-white" /> : <Play className="w-4 h-4 fill-white" />}
+                    {isPlaying ? <Pause className="w-3.5 h-3.5 fill-white" /> : <Play className="w-3.5 h-3.5 fill-white" />}
                   </button>
 
                   <button
                     onClick={toggleMute}
-                    className="p-1.5 rounded-full hover:bg-white/20 transition cursor-pointer"
+                    className="p-1 rounded hover:bg-white/20 transition cursor-pointer"
                   >
-                    {isMuted ? <VolumeX className="w-4 h-4" /> : <Volume2 className="w-4 h-4" />}
+                    {isMuted ? <VolumeX className="w-3.5 h-3.5" /> : <Volume2 className="w-3.5 h-3.5" />}
                   </button>
 
-                  <span className="font-mono text-[10px] text-white/80">
+                  <span className="font-mono text-[10px] text-white/70">
                     {currentTime.toFixed(1)}s / {duration.toFixed(1)}s
                   </span>
                 </div>
@@ -269,17 +261,17 @@ export function DraftPlayer({ draft, onRegenerate }: DraftPlayerProps) {
                       setCurrentTime(0);
                     }
                   }}
-                  className="p-1 rounded-full hover:bg-white/20 transition cursor-pointer"
+                  className="p-1 rounded hover:bg-white/20 transition cursor-pointer"
                   title="Restart"
                 >
-                  <RotateCcw className="w-3.5 h-3.5" />
+                  <RotateCcw className="w-3 h-3" />
                 </button>
               </div>
             </div>
           </div>
 
-          <p className="text-[11px] text-mute mt-3 font-medium text-center">
-            Click video or spacebar to play/pause • Tap shots on the right to jump
+          <p className="text-[11px] text-secondary mt-3 font-normal text-center">
+            Click video to play/pause • Select shot below to jump
           </p>
         </div>
 
@@ -287,56 +279,56 @@ export function DraftPlayer({ draft, onRegenerate }: DraftPlayerProps) {
         <div className="lg:col-span-7 space-y-6">
           {/* Key Generation Metrics */}
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-            <div className="p-3 bg-surface-card rounded-xl border border-hairline">
-              <span className="text-[10px] uppercase font-bold text-mute block mb-1">
+            <div className="p-3 bg-neutral rounded-md border border-border">
+              <span className="text-[10px] uppercase font-medium text-secondary block mb-1">
                 Total Duration
               </span>
-              <span className="text-base font-extrabold text-ink font-mono">
+              <span className="text-base font-normal text-primary font-mono">
                 {draft.duration_s}s
               </span>
             </div>
 
-            <div className="p-3 bg-surface-card rounded-xl border border-hairline">
-              <span className="text-[10px] uppercase font-bold text-mute block mb-1">
+            <div className="p-3 bg-neutral rounded-md border border-border">
+              <span className="text-[10px] uppercase font-medium text-secondary block mb-1">
                 Shots Assembled
               </span>
-              <span className="text-base font-extrabold text-ink font-mono">
+              <span className="text-base font-normal text-primary font-mono">
                 {draft.shots_count} Cuts
               </span>
             </div>
 
-            <div className="p-3 bg-surface-card rounded-xl border border-hairline">
-              <span className="text-[10px] uppercase font-bold text-mute block mb-1">
+            <div className="p-3 bg-neutral rounded-md border border-border">
+              <span className="text-[10px] uppercase font-medium text-secondary block mb-1">
                 Voiceover Sync
               </span>
-              <span className="text-base font-extrabold text-emerald-600 font-mono">
+              <span className="text-base font-normal text-primary font-mono">
                 &plusmn;{draft.sync_delta_ms}ms
               </span>
             </div>
 
-            <div className="p-3 bg-surface-card rounded-xl border border-hairline">
-              <span className="text-[10px] uppercase font-bold text-mute block mb-1">
+            <div className="p-3 bg-neutral rounded-md border border-border">
+              <span className="text-[10px] uppercase font-medium text-secondary block mb-1">
                 Resolution
               </span>
-              <span className="text-base font-extrabold text-ink font-mono">
+              <span className="text-base font-normal text-primary font-mono">
                 9:16 (720p)
               </span>
             </div>
           </div>
 
-          {/* Interactive Shot Timeline Scrubber */}
+          {/* Interactive Shot Timeline */}
           <div>
             <div className="flex items-center justify-between mb-3">
-              <h4 className="text-sm font-bold text-ink flex items-center gap-2">
+              <h4 className="text-sm font-medium text-primary flex items-center gap-2">
                 <Layers className="w-4 h-4 text-primary" />
                 <span>Interactive Shot Timeline</span>
               </h4>
-              <span className="text-xs text-mute font-mono">
+              <span className="text-xs text-secondary font-mono">
                 Active: Shot #{activeShotIndex + 1}
               </span>
             </div>
 
-            <div className="space-y-2.5 max-h-[420px] overflow-y-auto pr-1">
+            <div className="space-y-2 max-h-[420px] overflow-y-auto pr-1">
               {draft.shots.map((shot, idx) => {
                 const isActive = activeShotIndex === idx;
                 const modelName = idx === 0 ? "Wan 2.2 Quality" : "LTX-2 Draft";
@@ -345,49 +337,43 @@ export function DraftPlayer({ draft, onRegenerate }: DraftPlayerProps) {
                   <div
                     key={idx}
                     onClick={() => seekToShot(shot, idx)}
-                    className={`p-3.5 rounded-xl border transition-all cursor-pointer flex flex-col gap-2 ${
+                    className={`p-3 rounded-md border transition cursor-pointer flex flex-col gap-2 ${
                       isActive
-                        ? "bg-primary/5 border-primary shadow-sm"
-                        : "bg-surface-card hover:bg-stone/20 border-hairline"
+                        ? "bg-neutral border-primary"
+                        : "bg-surface hover:bg-neutral border-border"
                     }`}
                   >
                     <div className="flex items-center justify-between text-xs">
                       <div className="flex items-center gap-2">
-                        <span
-                          className={`w-6 h-6 rounded-full flex items-center justify-center font-bold text-[11px] ${
-                            isActive
-                              ? "bg-primary text-white"
-                              : "bg-white text-ink border border-hairline"
-                          }`}
-                        >
-                          {shot.shot_index}
+                        <span className="chip-minimal text-[10px] font-mono">
+                          Shot #{shot.shot_index}
                         </span>
-                        <span className="font-bold text-ink">
+                        <span className="font-medium text-primary">
                           {shot.shot_type}
                         </span>
-                        <span className="text-mute font-medium">
+                        <span className="text-secondary font-normal">
                           • {shot.camera_motion}
                         </span>
                       </div>
 
                       <div className="flex items-center gap-2">
-                        <span className="px-2 py-0.5 rounded-full text-[10px] font-mono font-bold bg-white border border-hairline text-ink">
+                        <span className="chip-minimal text-[10px] font-mono">
                           {shot.duration_s}s
                         </span>
-                        <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-ink text-white">
+                        <span className="chip-minimal text-[10px] font-mono">
                           {modelName}
                         </span>
                       </div>
                     </div>
 
-                    <p className="text-xs text-body leading-relaxed pl-8">
+                    <p className="text-xs text-secondary leading-relaxed pl-2">
                       {shot.description}
                     </p>
 
                     {shot.on_screen_text && (
-                      <div className="pl-8 flex items-center gap-1.5 text-[11px] font-semibold text-primary">
-                        <Zap className="w-3 h-3" />
-                        <span>OCR Overlay: "{shot.on_screen_text}"</span>
+                      <div className="pl-2 flex items-center gap-1.5 text-[11px] font-normal text-primary">
+                        <Zap className="w-3 h-3 text-secondary" />
+                        <span>OCR: "{shot.on_screen_text}"</span>
                       </div>
                     )}
                   </div>
@@ -397,14 +383,14 @@ export function DraftPlayer({ draft, onRegenerate }: DraftPlayerProps) {
           </div>
 
           {/* Download & Raw Assets Section */}
-          <div className="p-4 bg-surface-card rounded-xl border border-hairline flex flex-col sm:flex-row items-center justify-between gap-3">
+          <div className="p-4 bg-neutral rounded-md border border-border flex flex-col sm:flex-row items-center justify-between gap-3">
             <div className="flex items-center gap-3">
               <a
                 href={fullVoiceoverUrl}
                 download="voiceover.wav"
-                className="px-3 py-2 rounded-full text-xs font-bold bg-white hover:bg-secondary-bg text-ink border border-hairline flex items-center gap-1.5 cursor-pointer"
+                className="btn-secondary text-xs flex items-center gap-1.5"
               >
-                <Radio className="w-3.5 h-3.5 text-primary" />
+                <Radio className="w-3.5 h-3.5 text-secondary" />
                 <span>Download Audio Track (16kHz WAV)</span>
               </a>
             </div>
@@ -412,7 +398,7 @@ export function DraftPlayer({ draft, onRegenerate }: DraftPlayerProps) {
             {onRegenerate && (
               <button
                 onClick={onRegenerate}
-                className="px-4 py-2 rounded-full text-xs font-bold text-mute hover:text-ink transition flex items-center gap-1.5 cursor-pointer"
+                className="btn-secondary text-xs flex items-center gap-1.5"
               >
                 <RotateCcw className="w-3.5 h-3.5" />
                 <span>Re-assemble Draft</span>

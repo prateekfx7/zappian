@@ -11,6 +11,7 @@ import {
   AlertCircle,
   FileSpreadsheet,
 } from "lucide-react";
+import { API_BASE_URL } from "../lib/api";
 
 interface StatItem {
   metric: string;
@@ -52,7 +53,7 @@ export function StatsDrawer({
     setMessage(null);
 
     try {
-      const res = await fetch(`http://localhost:8000/v1/videos/${videoId}/stats`, {
+      const res = await fetch(`${API_BASE_URL}/v1/videos/${videoId}/stats`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -89,7 +90,7 @@ export function StatsDrawer({
       const formData = new FormData();
       formData.append("file", csvFile);
 
-      const res = await fetch(`http://localhost:8000/v1/videos/${videoId}/stats/csv`, {
+      const res = await fetch(`${API_BASE_URL}/v1/videos/${videoId}/stats/csv`, {
         method: "POST",
         body: formData,
       });

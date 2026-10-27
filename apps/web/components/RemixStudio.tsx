@@ -18,6 +18,7 @@ import {
   CheckCircle2,
 } from "lucide-react";
 import { DraftPlayer, DraftData } from "./DraftPlayer";
+import { API_BASE_URL } from "../lib/api";
 
 export interface RemixConcept {
   concept_id: string;
@@ -93,7 +94,7 @@ export function RemixStudio({ sourceVideoId, onGenerationReady }: RemixStudioPro
   // Check if draft was already generated for this concept
   useEffect(() => {
     if (!concept?.concept_id) return;
-    fetch(`http://localhost:8000/v1/concepts/${concept.concept_id}/draft`)
+    fetch(`${API_BASE_URL}/v1/concepts/${concept.concept_id}/draft`)
       .then((res) => (res.ok ? res.json() : null))
       .then((data) => {
         if (data && data.video_url) setDraftData(data);
@@ -111,7 +112,7 @@ export function RemixStudio({ sourceVideoId, onGenerationReady }: RemixStudioPro
     setDraftData(null);
 
     try {
-      const res = await fetch("http://localhost:8000/v1/concepts", {
+      const res = await fetch(`${API_BASE_URL}/v1/concepts`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -163,7 +164,7 @@ export function RemixStudio({ sourceVideoId, onGenerationReady }: RemixStudioPro
     setGenerationMessage(null);
 
     try {
-      const res = await fetch(`http://localhost:8000/v1/concepts/${concept.concept_id}/generate`, {
+      const res = await fetch(`${API_BASE_URL}/v1/concepts/${concept.concept_id}/generate`, {
         method: "POST",
       });
 

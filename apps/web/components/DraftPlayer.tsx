@@ -18,6 +18,7 @@ import {
   Maximize2,
   Radio,
 } from "lucide-react";
+import { API_BASE_URL } from "../lib/api";
 
 export interface DraftShot {
   shot_index: number;
@@ -59,12 +60,12 @@ export function DraftPlayer({ draft, onRegenerate }: DraftPlayerProps) {
 
   const fullVideoUrl = draft.video_url.startsWith("http")
     ? draft.video_url
-    : `http://localhost:8000${draft.video_url}`;
+    : `${API_BASE_URL}${draft.video_url}`;
 
-  const fullExportUrl = `http://localhost:8000/v1/concepts/${draft.concept_id}/export`;
+  const fullExportUrl = `${API_BASE_URL}/v1/concepts/${draft.concept_id}/export`;
   const fullVoiceoverUrl = draft.voiceover_url.startsWith("http")
     ? draft.voiceover_url
-    : `http://localhost:8000${draft.voiceover_url}`;
+    : `${API_BASE_URL}${draft.voiceover_url}`;
 
   // Track playback time and active shot
   const handleTimeUpdate = () => {

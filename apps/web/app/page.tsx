@@ -32,6 +32,7 @@ import { ReportViewer, AnalysisReport } from "../components/ReportViewer";
 import { CompareViewer, CompareReport } from "../components/CompareViewer";
 import { StatsDrawer } from "../components/StatsDrawer";
 import { RemixStudio } from "../components/RemixStudio";
+import { API_BASE_URL } from "../lib/api";
 
 interface PipelineProgress {
   stage: string;
@@ -115,7 +116,7 @@ export default function Home() {
   useEffect(() => {
     if (!videoId) return;
 
-    const eventSource = new EventSource(`http://localhost:8000/v1/videos/${videoId}/events`);
+    const eventSource = new EventSource(`${API_BASE_URL}/v1/videos/${videoId}/events`);
 
     eventSource.addEventListener("progress", (e) => {
       try {
@@ -147,7 +148,7 @@ export default function Home() {
 
   const fetchPipelineData = async (vid: string) => {
     try {
-      const res = await fetch(`http://localhost:8000/v1/videos/${vid}/pipeline`);
+      const res = await fetch(`${API_BASE_URL}/v1/videos/${vid}/pipeline`);
       if (res.ok) {
         const data: PipelineData = await res.json();
         setPipelineData(data);
@@ -227,7 +228,7 @@ export default function Home() {
     setIsAnalyzing(true);
     setErrorMessage(null);
     try {
-      const res = await fetch(`http://localhost:8000/v1/videos/${pipelineData.video_id}/analyze`, {
+      const res = await fetch(`${API_BASE_URL}/v1/videos/${pipelineData.video_id}/analyze`, {
         method: "POST",
       });
       if (!res.ok) {
@@ -267,7 +268,7 @@ export default function Home() {
     setErrorMessage(null);
 
     try {
-      const res = await fetch("http://localhost:8000/v1/compare", {
+      const res = await fetch(`${API_BASE_URL}/v1/compare`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -319,7 +320,7 @@ export default function Home() {
         formData.append("file", selectedFile);
         formData.append("rights_confirmed", "true");
 
-        const response = await fetch("http://localhost:8000/v1/videos/upload", {
+        const response = await fetch(`${API_BASE_URL}/v1/videos/upload`, {
           method: "POST",
           body: formData,
         });
@@ -333,7 +334,7 @@ export default function Home() {
         setVideoId(data.id);
         setCompareVideoIdA(data.id);
       } else {
-        const response = await fetch("http://localhost:8000/v1/videos", {
+        const response = await fetch(`${API_BASE_URL}/v1/videos`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
@@ -692,7 +693,7 @@ export default function Home() {
                   <div className="relative w-48 aspect-[9/16] bg-surface-dark rounded-pin overflow-hidden flex-shrink-0 shadow-sm">
                     {selectedFrame ? (
                       <img
-                        src={`http://localhost:8000/storage/thumbs/${pipelineData.video_id}/${selectedFrame.t_ms}.jpg`}
+                        src={`${API_BASE_URL}/storage/thumbs/${pipelineData.video_id}/${selectedFrame.t_ms}.jpg`}
                         alt={`Frame at ${selectedFrame.t_ms}ms`}
                         className="w-full h-full object-cover"
                         onError={(e) => {
@@ -843,7 +844,7 @@ export default function Home() {
                           >
                             <div className="relative aspect-[9/16] bg-surface-dark rounded-xl overflow-hidden flex items-center justify-center">
                               <img
-                                src={`http://localhost:8000/storage/thumbs/${pipelineData.video_id}/${frame.t_ms}.jpg`}
+                                src={`${API_BASE_URL}/storage/thumbs/${pipelineData.video_id}/${frame.t_ms}.jpg`}
                                 alt={`Frame at ${frame.t_ms}ms`}
                                 className="w-full h-full object-cover"
                                 onError={(e) => {

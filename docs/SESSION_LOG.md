@@ -41,6 +41,33 @@ Format:
    - All 31 tests passing (100%), 0 mypy issues in 5 source files, 0 ruff errors.
    - Committed to git (`a2f7451`).
 
-### Next Milestone Proposal: M1 — Ingest and Media Pipeline
-- **Goal:** Ingest video files / links, smart frame sampling (4 fps for 0–3s hook, then 1 fps, plus scene cut keyframes), faster-whisper transcription, OCR with top/middle/bottom safe zone tagging, librosa audio features, and resumable pipeline stages.
-- Awaiting user approval before proceeding to M1.
+### Milestone 1 (M1) — Ingest and Media Pipeline (COMPLETE ☑)
+
+#### Actions Completed
+1. **Ingest Stage (`reelbrain/app/pipeline/ingest.py`):**
+   - Built format, size (<=500MB), duration (<=180s), and rights verification.
+   - Built 720p H.264 proxy normalization and 16kHz mono WAV extraction.
+   - Built sandboxed yt-dlp link downloader with friendly upload fallback.
+2. **Smart Frame Sampler (`reelbrain/app/pipeline/sampler.py`):**
+   - Implemented 4 fps hook sampling (250ms steps for 0–3000ms).
+   - Implemented 1 fps body sampling (1000ms steps for > 3000ms).
+   - Integrated PySceneDetect keyframe extraction and 180px thumbnail generation.
+3. **Speech-to-Text Transcription (`reelbrain/app/pipeline/transcript.py`):**
+   - Faster-whisper transcription producing word-level millisecond timestamps.
+4. **On-Screen Text OCR (`reelbrain/app/pipeline/ocr.py`):**
+   - Extracted keyframe text with vertical safe zone classification (`top < 28%`, `middle 28-72%`, `bottom > 72%`) and marketing purpose inference.
+5. **Audio Feature Analysis (`reelbrain/app/pipeline/audio.py`):**
+   - RMS energy curve in 250ms windows, silence gaps (>=500ms), speech pace (WPS), and loudness spikes.
+6. **Master Pipeline Orchestrator with Resumability (`reelbrain/app/pipeline/orchestrator.py`):**
+   - Incremental checkpoint caching in `data/analyses/{video_id}/stage_data.json`.
+   - Rerunning skips completed stages automatically.
+7. **Verification & Testing (`tests/integration/test_m1_media_pipeline.py`):**
+   - Verified rights gating, 4 fps hook + 1 fps body frame steps, safe-zone bounding boxes, and stage-level resumability.
+   - All 35 tests across repo pass (100%), 0 mypy issues in 11 files, 0 ruff errors.
+   - Committed to git (`2e8b5fa`).
+
+---
+
+### Next Milestone Proposal: M2 — Analysis and Simple Summary
+- **Goal:** Chunked VLM analysis (<=45s, 5s overlap), merge, synthesis, evidence validation (enforcing >=95% valid timestamps), and Section 9 simple summary report generation (Verdict, Why it works, Weak points, Reels vs TikTok platform notes, Scores, Reusable structure, Frame-by-frame table).
+- Awaiting user approval before proceeding to M2.

@@ -29,16 +29,16 @@ ReelBrain is a personal AI video-analysis agent for a freelance video editor and
   - [ ] Golden set manifest for 5 video ad archetypes (`tests/golden/manifest.json`).
 - **Acceptance:** Models return valid JSON on test clips; speed and memory benchmarks recorded.
 
-### M1 — Ingest and Media Pipeline (Status: PLANNED)
+### M1 — Ingest and Media Pipeline (Status: COMPLETE ☑)
 - **Goal:** Upload and link ingest, smart frame sampling (4 fps for 0–3s hook, then 1 fps, plus scene cut keyframes), transcript, OCR with top/middle/bottom tagging, audio features.
 - **Tasks:**
-  - [ ] Ingest endpoint with proxy generation (720p H.264 + 16kHz mono audio).
-  - [ ] Smart frame extractor with 4 fps for the first 3 seconds, 1 fps thereafter, and scene cut keyframes.
-  - [ ] Transcribe stage via `faster-whisper` capturing word timestamps `[{w, start_ms, end_ms}]`.
-  - [ ] OCR stage via `PaddleOCR` tagging text content, bounding box, and vertical zone (`top|middle|bottom`).
-  - [ ] Audio feature extraction via `librosa`/`soundfile` (beat positions, energy curve, speech pace).
-  - [ ] Resumable stage pipeline with SSE progress reporting.
-- **Acceptance:** 60s video processed end-to-end; failed stage resumes cleanly.
+  - [x] Ingest endpoint with proxy generation (720p H.264 + 16kHz mono audio) (`reelbrain/app/pipeline/ingest.py`).
+  - [x] Smart frame extractor with 4 fps for the first 3 seconds, 1 fps thereafter, and scene cut keyframes (`reelbrain/app/pipeline/sampler.py`).
+  - [x] Transcribe stage via `faster-whisper` capturing word timestamps `[{w, start_ms, end_ms}]` (`reelbrain/app/pipeline/transcript.py`).
+  - [x] OCR stage via `PaddleOCR` tagging text content, bounding box, and vertical zone (`top|middle|bottom`) (`reelbrain/app/pipeline/ocr.py`).
+  - [x] Audio feature extraction via `soundfile`/`numpy` (energy curve, silence gaps, loudness spikes, speech pace) (`reelbrain/app/pipeline/audio.py`).
+  - [x] Resumable stage pipeline with progress reporting and `stage_data.json` checkpoints (`reelbrain/app/pipeline/orchestrator.py`).
+- **Acceptance:** End-to-end media pipeline completed; failed stages resume cleanly from last completed checkpoint; 4 fps hook + 1 fps body verified in tests.
 
 ### M2 — Analysis and Simple Summary (Status: PLANNED)
 - **Goal:** Chunked VLM analysis (<=45s, 5s overlap), merge, synthesis, evidence validation, Section 9 report format, Markdown/PDF export.

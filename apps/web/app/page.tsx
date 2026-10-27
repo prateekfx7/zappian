@@ -27,6 +27,7 @@ import {
   GitCompare,
   Trophy,
   Wand2,
+  MoreHorizontal,
 } from "lucide-react";
 import { ReportViewer, AnalysisReport } from "../components/ReportViewer";
 import { CompareViewer, CompareReport } from "../components/CompareViewer";
@@ -105,6 +106,7 @@ export default function Home() {
 
   // Phase 3 & 4 State: Stats Drawer, Compare Engine & Remix
   const [showStatsDrawer, setShowStatsDrawer] = useState(false);
+  const [showOverflowMenu, setShowOverflowMenu] = useState(false);
   const [compareVideoIdA, setCompareVideoIdA] = useState("");
   const [compareVideoIdB, setCompareVideoIdB] = useState("");
   const [isComparing, setIsComparing] = useState(false);
@@ -368,137 +370,141 @@ export default function Home() {
 
   return (
     <div className="min-h-screen flex flex-col bg-surface-canvas selection:bg-primary/20">
-      {/* 1. Pinterest-inspired Sticky Navigation */}
-      <header className="sticky top-0 z-50 bg-white/95 backdrop-blur-md border-b border-hairline h-16 px-6 flex items-center justify-between">
-        <div className="flex items-center gap-6">
-          <div
+      {/* 1. Refined Minimalist Apple-Style Header */}
+      <header className="sticky top-0 z-50 bg-white/80 backdrop-blur-xl border-b border-black/[0.06] h-14 px-6 flex items-center justify-between">
+        <div
+          onClick={() => {
+            setAppMode("autopsy");
+            setPipelineData(null);
+            setVideoId(null);
+            setPipelineProgress(null);
+          }}
+          className="flex items-center gap-2 cursor-pointer"
+        >
+          <div className="w-7 h-7 rounded-lg bg-ink flex items-center justify-center text-white font-bold text-xs shadow-xs">
+            R
+          </div>
+          <span className="font-semibold text-sm tracking-tight text-ink">ReelBrain</span>
+        </div>
+
+        {/* Center: Clean 3-Mode Segmented Controller */}
+        <div className="flex items-center bg-secondary-bg/60 p-1 rounded-full border border-black/[0.04]">
+          <button
             onClick={() => setAppMode("autopsy")}
-            className="flex items-center gap-2.5 cursor-pointer"
+            className={`px-3.5 py-1 rounded-full text-xs font-semibold transition cursor-pointer ${
+              appMode === "autopsy" ? "bg-white text-ink shadow-xs" : "text-mute hover:text-ink"
+            }`}
           >
-            <div className="w-9 h-9 rounded-full bg-primary flex items-center justify-center text-white font-black text-lg shadow-sm">
-              R
-            </div>
-            <div>
-              <span className="font-extrabold text-xl tracking-tight text-ink block leading-none">ReelBrain</span>
-              <span className="text-[10px] text-mute font-medium block">AI Video Analyst</span>
-            </div>
-          </div>
-
-          <div className="hidden md:flex items-center gap-2">
-            <button
-              onClick={() => setAppMode("autopsy")}
-              className={`px-4 py-2 rounded-full font-bold text-xs transition cursor-pointer ${
-                appMode === "autopsy" ? "bg-ink text-white" : "text-ink hover:bg-secondary-bg"
-              }`}
-            >
-              1. Video Autopsy
-            </button>
-            <button
-              onClick={() => setAppMode("compare")}
-              className={`px-4 py-2 rounded-full font-bold text-xs transition flex items-center gap-1.5 cursor-pointer ${
-                appMode === "compare" ? "bg-ink text-white" : "text-ink hover:bg-secondary-bg"
-              }`}
-            >
-              <GitCompare className="w-3.5 h-3.5" />
-              <span>2. Compare Ads</span>
-            </button>
-            <button
-              onClick={() => setAppMode("remix")}
-              className={`px-4 py-2 rounded-full font-bold text-xs transition flex items-center gap-1.5 cursor-pointer ${
-                appMode === "remix" ? "bg-ink text-white" : "text-ink hover:bg-secondary-bg"
-              }`}
-            >
-              <Wand2 className="w-3.5 h-3.5" />
-              <span>3. 1-Click Remix</span>
-            </button>
-          </div>
-        </div>
-
-        {/* Center Search Pill */}
-        <div className="hidden lg:flex items-center flex-1 max-w-md mx-8 relative">
-          <Search className="w-4 h-4 text-mute absolute left-4" />
-          <input
-            type="text"
-            placeholder="Search viral blueprints, hooks, and niches..."
-            className="w-full bg-surface-card hover:bg-surface-card/80 focus:bg-white border border-transparent focus:border-stone rounded-full py-2.5 pl-11 pr-4 text-sm text-ink outline-none transition"
-          />
-        </div>
-
-        {/* Right Nav */}
-        <div className="flex items-center gap-3">
-          <button className="text-sm font-semibold text-ink px-4 py-2 rounded-pin hover:bg-secondary-bg transition">
-            Docs
+            Autopsy
           </button>
           <button
-            onClick={() => {
-              setAppMode("autopsy");
-              window.scrollTo({ top: 300, behavior: "smooth" });
-            }}
-            className="btn-primary"
+            onClick={() => setAppMode("compare")}
+            className={`px-3.5 py-1 rounded-full text-xs font-semibold transition cursor-pointer ${
+              appMode === "compare" ? "bg-white text-ink shadow-xs" : "text-mute hover:text-ink"
+            }`}
           >
-            New Autopsy
+            Compare
           </button>
+          <button
+            onClick={() => setAppMode("remix")}
+            className={`px-3.5 py-1 rounded-full text-xs font-semibold transition cursor-pointer ${
+              appMode === "remix" ? "bg-white text-ink shadow-xs" : "text-mute hover:text-ink"
+            }`}
+          >
+            Remix
+          </button>
+        </div>
+
+        {/* Right: Sleek Overflow Menu */}
+        <div className="relative">
+          <button
+            onClick={() => setShowOverflowMenu(!showOverflowMenu)}
+            className="w-8 h-8 rounded-full flex items-center justify-center text-mute hover:text-ink hover:bg-secondary-bg/80 transition cursor-pointer"
+            aria-label="More options"
+          >
+            <MoreHorizontal className="w-4 h-4" />
+          </button>
+
+          {showOverflowMenu && (
+            <div className="absolute right-0 mt-2 w-52 bg-white/95 backdrop-blur-xl rounded-2xl border border-black/[0.08] shadow-lg p-2 z-50 animate-fade-in text-xs space-y-1">
+              <div className="px-3 py-2 border-b border-hairline/60 flex items-center justify-between">
+                <span className="text-mute font-medium">Backend API</span>
+                <span className="inline-flex items-center gap-1.5 text-emerald-600 font-semibold">
+                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
+                  Port 8001
+                </span>
+              </div>
+              <button
+                onClick={() => {
+                  setShowOverflowMenu(false);
+                  fetchPipelineData("g1_product_ad");
+                  setAppMode("autopsy");
+                }}
+                className="w-full text-left px-3 py-2 rounded-xl hover:bg-secondary-bg/60 text-ink font-medium transition cursor-pointer"
+              >
+                Load Sample Video Autopsy
+              </button>
+              {pipelineData && (
+                <button
+                  onClick={() => {
+                    setShowOverflowMenu(false);
+                    setPipelineData(null);
+                    setVideoId(null);
+                    setPipelineProgress(null);
+                  }}
+                  className="w-full text-left px-3 py-2 rounded-xl hover:bg-secondary-bg/60 text-ink font-medium transition cursor-pointer"
+                >
+                  Analyze New Video
+                </button>
+              )}
+            </div>
+          )}
         </div>
       </header>
 
       {/* 2. Main Content Body */}
-      <main className="flex-1 max-w-7xl mx-auto px-6 py-12 w-full">
+      <main className="flex-1 max-w-5xl mx-auto px-6 py-10 w-full">
         {/* MODE A: AUTOPSY ENGINE */}
         {appMode === "autopsy" && (
           <div>
-            <div className="text-center max-w-3xl mx-auto mb-10">
-              <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-surface-card border border-hairline text-xs font-bold text-ink mb-4 shadow-xs">
-                <Sparkles className="w-3.5 h-3.5 text-primary" />
-                <span>ReelBrain • AI Video Analyst for Reels &amp; TikTok</span>
-              </div>
 
-              <h1 className="text-4xl md:text-5xl font-extrabold text-ink tracking-display leading-[1.15] mb-4">
-                Autopsy any viral reel. <br />
-                <span className="text-primary">See why it hooks people.</span>
-              </h1>
+            {/* Centered Spotlight Dropzone (Only visible when no video is loaded) */}
+            {!pipelineData && (
+              <div className="max-w-xl mx-auto py-12 md:py-20 text-center animate-fade-in">
+                <h1 className="text-3xl md:text-4xl font-semibold tracking-tight text-ink mb-2">
+                  Drop a video to analyze
+                </h1>
+                <p className="text-sm text-mute mb-8 font-normal">
+                  Pacing, hook psychology, and original remix
+                </p>
 
-              <p className="text-base md:text-lg text-mute font-normal max-w-2xl mx-auto leading-relaxed">
-                Watch videos frame by frame. Get a 3-line autopsy, exact scroll-stopping timestamps,
-                and a 1-click original script for your brand.
-              </p>
-            </div>
-
-            {/* Ingest Card + 30-Second Explainer Card (A1 & A3) */}
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 mb-12 items-stretch">
-              {/* Left Column: Clean Upload Dropzone (7 cols) */}
-              <div className="lg:col-span-7 bg-surface-card rounded-pin-lg p-6 md:p-8 border border-hairline/80 shadow-sm flex flex-col justify-between">
-                <div>
-                  <div className="flex items-center justify-between mb-6">
-                    <div>
-                      <h2 className="text-lg md:text-xl font-bold text-ink">1. Drop Video Here</h2>
-                      <p className="text-xs text-mute mt-0.5">Supports vertical 9:16 or landscape ads (up to 3 min)</p>
-                    </div>
-                    <div className="flex bg-secondary-bg p-1 rounded-full">
-                      <button
-                        type="button"
-                        onClick={() => {
-                          setSourceType("upload");
-                          setErrorMessage(null);
-                        }}
-                        className={`px-3.5 py-1.5 rounded-full text-xs font-bold transition cursor-pointer ${
-                          sourceType === "upload" ? "bg-white text-ink shadow-xs" : "text-mute hover:text-ink"
-                        }`}
-                      >
-                        File Upload
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => {
-                          setSourceType("youtube");
-                          setErrorMessage(null);
-                        }}
-                        className={`px-3.5 py-1.5 rounded-full text-xs font-bold transition cursor-pointer ${
-                          sourceType === "youtube" ? "bg-white text-ink shadow-xs" : "text-mute hover:text-ink"
-                        }`}
-                      >
-                        Link URL
-                      </button>
-                    </div>
+                <div className="bg-white rounded-3xl p-8 border border-black/[0.06] shadow-sm text-left">
+                  {/* Segmented Mode Selector: Upload File or Link */}
+                  <div className="flex bg-secondary-bg/50 p-1 rounded-full w-fit mx-auto mb-6 border border-black/[0.04]">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setSourceType("upload");
+                        setErrorMessage(null);
+                      }}
+                      className={`px-4 py-1.5 rounded-full text-xs font-semibold transition cursor-pointer ${
+                        sourceType === "upload" ? "bg-white text-ink shadow-xs" : "text-mute hover:text-ink"
+                      }`}
+                    >
+                      File Upload
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setSourceType("youtube");
+                        setErrorMessage(null);
+                      }}
+                      className={`px-4 py-1.5 rounded-full text-xs font-semibold transition cursor-pointer ${
+                        sourceType === "youtube" ? "bg-white text-ink shadow-xs" : "text-mute hover:text-ink"
+                      }`}
+                    >
+                      Video Link
+                    </button>
                   </div>
 
                   <form onSubmit={handleStartAnalysis} className="space-y-5">
@@ -518,33 +524,33 @@ export default function Home() {
                             onDragOver={handleDragOver}
                             onDragLeave={handleDragLeave}
                             onDrop={handleDrop}
-                            className={`border-2 border-dashed rounded-pin p-8 text-center transition cursor-pointer flex flex-col items-center justify-center min-h-[160px] ${
+                            className={`border border-dashed rounded-2xl p-8 text-center transition cursor-pointer flex flex-col items-center justify-center min-h-[160px] ${
                               isDragging
                                 ? "border-primary bg-primary/5"
-                                : "border-stone bg-white/70 hover:bg-white"
+                                : "border-stone/80 bg-surface-card/40 hover:bg-surface-card/80 hover:border-ink/20"
                             }`}
                           >
-                            <div className="w-12 h-12 rounded-full bg-surface-card flex items-center justify-center text-primary mb-3 shadow-xs">
-                              <Upload className="w-6 h-6" />
+                            <div className="w-10 h-10 rounded-full bg-secondary-bg flex items-center justify-center text-ink mb-3 shadow-xs">
+                              <Upload className="w-5 h-5" />
                             </div>
-                            <div className="text-sm font-bold text-ink mb-1">
-                              Drag &amp; drop video here, or <span className="text-primary underline">browse</span>
+                            <div className="text-sm font-semibold text-ink mb-1">
+                              Drop video here, or <span className="text-primary hover:underline">browse</span>
                             </div>
                             <p className="text-xs text-mute">
-                              MP4, MOV, WebM up to 500 MB
+                              MP4, MOV, or WebM
                             </p>
                           </div>
                         ) : (
-                          <div className="p-4 bg-white rounded-pin border border-hairline flex items-center justify-between">
+                          <div className="p-4 bg-surface-card/60 rounded-2xl border border-hairline/60 flex items-center justify-between">
                             <div className="flex items-center gap-3">
-                              <div className="w-10 h-10 rounded-full bg-secondary-bg flex items-center justify-center text-primary">
-                                <FileVideo className="w-5 h-5" />
+                              <div className="w-9 h-9 rounded-full bg-white flex items-center justify-center text-primary shadow-xs">
+                                <FileVideo className="w-4 h-4" />
                               </div>
                               <div>
-                                <div className="text-sm font-bold text-ink max-w-xs truncate">
+                                <div className="text-xs font-semibold text-ink max-w-xs truncate">
                                   {selectedFile.name}
                                 </div>
-                                <div className="text-xs text-mute">
+                                <div className="text-[11px] text-mute">
                                   {formatFileSize(selectedFile.size)}
                                 </div>
                               </div>
@@ -552,7 +558,7 @@ export default function Home() {
                             <button
                               type="button"
                               onClick={() => setSelectedFile(null)}
-                              className="p-1.5 rounded-full hover:bg-secondary-bg text-mute hover:text-ink transition cursor-pointer"
+                              className="p-1 rounded-full hover:bg-secondary-bg text-mute hover:text-ink transition cursor-pointer"
                             >
                               <X className="w-4 h-4" />
                             </button>
@@ -561,86 +567,75 @@ export default function Home() {
                       </div>
                     ) : (
                       <div>
-                        <label className="block text-xs font-bold text-mute uppercase tracking-wider mb-2">
-                          Paste Video URL (YouTube, TikTok, Reels)
-                        </label>
                         <div className="relative">
                           <LinkIcon className="w-4 h-4 text-mute absolute left-4 top-3.5" />
                           <input
                             type="url"
                             value={videoUrl}
                             onChange={(e) => setVideoUrl(e.target.value)}
-                            placeholder="https://www.youtube.com/watch?v=..."
-                            className="w-full bg-white border border-stone rounded-pin py-3 pl-11 pr-4 text-sm text-ink outline-none focus:border-primary transition"
+                            placeholder="Paste YouTube, TikTok, or Reels link"
+                            className="w-full bg-surface-card/40 border border-stone/80 rounded-2xl py-3 pl-11 pr-4 text-xs font-medium text-ink outline-none focus:border-primary transition"
                           />
                         </div>
                       </div>
                     )}
 
-                    {/* Mandatory Rights Checkbox (Rule 5 & FR-4) */}
-                    <div className="flex items-start gap-3 p-3.5 bg-white rounded-pin border border-hairline">
+                    {/* Minimalist 1-line Rights Checkbox */}
+                    <div className="flex items-center gap-2.5 pt-1">
                       <input
                         type="checkbox"
                         id="rights"
                         checked={rightsConfirmed}
                         onChange={(e) => setRightsConfirmed(e.target.checked)}
-                        className="mt-0.5 h-4 w-4 rounded text-primary focus:ring-primary border-stone cursor-pointer"
+                        className="h-3.5 w-3.5 rounded text-primary focus:ring-primary border-stone cursor-pointer"
                       />
-                      <label htmlFor="rights" className="text-xs text-body leading-relaxed cursor-pointer select-none">
-                        <strong className="text-ink font-semibold">Rights confirmation:</strong> I certify that I own this video or have permission to analyze its structural pacing.
+                      <label htmlFor="rights" className="text-xs text-mute cursor-pointer select-none">
+                        I have permission to analyze this video.
                       </label>
                     </div>
 
                     <button
                       type="submit"
                       disabled={isSubmitting || !isFormValid}
-                      className={`w-full h-12 rounded-pin font-bold text-sm flex items-center justify-center gap-2 transition ${
+                      className={`w-full h-11 rounded-2xl font-semibold text-xs flex items-center justify-center gap-2 transition ${
                         isFormValid && !isSubmitting
-                          ? "bg-primary hover:bg-primary-pressed text-white cursor-pointer shadow-sm"
-                          : "bg-stone/50 text-ash cursor-not-allowed border border-hairline"
+                          ? "bg-primary hover:bg-primary-pressed text-white cursor-pointer shadow-xs active:scale-[0.99]"
+                          : "bg-secondary-bg text-mute cursor-not-allowed border border-hairline/60"
                       }`}
                     >
-                      <Sparkles className="w-4 h-4" />
-                      <span>{isSubmitting ? "Uploading Video..." : "Start Video Autopsy (Watch & Measure)"}</span>
+                      <Sparkles className="w-3.5 h-3.5" />
+                      <span>{isSubmitting ? "Uploading Video..." : "Analyze Video"}</span>
                     </button>
 
-                    {/* Live Pipeline Progress (SSE) */}
+                    {/* Minimal SSE Pipeline Progress */}
                     {pipelineProgress && (
-                      <div className="p-4 bg-white rounded-pin border border-hairline space-y-3">
-                        <div className="flex items-center justify-between text-xs font-bold text-ink">
+                      <div className="p-4 bg-surface-card/50 rounded-2xl border border-hairline/60 space-y-2.5 animate-fade-in">
+                        <div className="flex items-center justify-between text-xs font-semibold text-ink">
                           <span className="flex items-center gap-2">
-                        <Activity className="w-4 h-4 text-primary animate-spin" />
-                        <span>Stage: <span className="uppercase text-primary font-mono">{pipelineProgress.stage}</span></span>
-                      </span>
-                      <span>{pipelineProgress.progress_pct}%</span>
-                    </div>
-                    <div className="w-full h-2 bg-secondary-bg rounded-full overflow-hidden">
-                      <div
-                        className="h-full bg-primary transition-all duration-300"
-                        style={{ width: `${pipelineProgress.progress_pct}%` }}
-                      />
-                    </div>
-                    <p className="text-xs text-mute font-medium">
-                      {pipelineProgress.message}
-                    </p>
-                  </div>
-                )}
+                            <Activity className="w-3.5 h-3.5 text-primary animate-spin" />
+                            <span className="capitalize">{pipelineProgress.stage.replace(/_/g, " ")}</span>
+                          </span>
+                          <span className="font-mono text-mute">{pipelineProgress.progress_pct}%</span>
+                        </div>
+                        <div className="w-full h-1.5 bg-secondary-bg rounded-full overflow-hidden">
+                          <div
+                            className="h-full bg-primary transition-all duration-300"
+                            style={{ width: `${pipelineProgress.progress_pct}%` }}
+                          />
+                        </div>
+                      </div>
+                    )}
 
-                {errorMessage && (
-                  <div className="p-3 bg-semantic-error/10 border border-semantic-error/20 rounded-pin text-xs text-semantic-error font-medium flex items-center gap-2">
-                    <AlertCircle className="w-4 h-4 flex-shrink-0" />
-                    <span>{errorMessage}</span>
-                  </div>
-                )}
-              </form>
-            </div>
-          </div>
-
-          {/* Right Column: 15-Second Animated Explainer Card (5 cols) */}
-          <div className="lg:col-span-5 flex flex-col">
-            <StepExplainerCard />
-          </div>
-            </div>
+                    {errorMessage && (
+                      <div className="p-3 bg-rose-50 text-rose-800 text-xs font-medium rounded-xl border border-rose-200 flex items-center gap-2">
+                        <AlertCircle className="w-4 h-4 flex-shrink-0" />
+                        <span>{errorMessage}</span>
+                      </div>
+                    )}
+                  </form>
+                </div>
+              </div>
+            )}
 
             {/* Active Video Results Section */}
             {pipelineData && (

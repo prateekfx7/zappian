@@ -189,60 +189,47 @@ export function RemixStudio({ sourceVideoId, onGenerationReady }: RemixStudioPro
   };
 
   return (
-    <div className="space-y-8 animate-fade-in">
+    <div className="space-y-6 animate-fade-in">
       {/* 1. Header Banner */}
-      <div className="bg-white rounded-pin-lg p-8 border border-hairline shadow-sm">
-        <div className="flex flex-col md:flex-row md:items-center justify-between pb-6 border-b border-hairline gap-4 mb-6">
+      <div className="bg-white rounded-3xl p-6 md:p-8 border border-black/[0.06] shadow-sm">
+        <div className="flex items-center justify-between pb-6 border-b border-black/[0.06] mb-6">
           <div>
-            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-primary/10 text-primary mb-2">
-              <Sparkles className="w-3.5 h-3.5" />
-              <span>Phase 4: Structure Remix &amp; Originality Check</span>
-            </div>
-            <h2 className="text-2xl md:text-3xl font-extrabold text-ink tracking-tight">
-              Remix Concept Studio
+            <h2 className="text-xl md:text-2xl font-semibold tracking-tight text-ink">
+              Remix Studio
             </h2>
-            <p className="text-xs text-mute font-mono">
-              Extracting structure &amp; pacing from source video: {sourceVideoId.slice(0, 8)}...
+            <p className="text-xs text-mute mt-0.5">
+              Reuses pacing and psychological structure for your brand
             </p>
-          </div>
-
-          <div className="flex items-center gap-2">
-            <span className="pill-overlay text-xs flex items-center gap-1.5">
-              <ShieldCheck className="w-3.5 h-3.5 text-emerald-600" />
-              <span>Rule 4: Not A Copy</span>
-            </span>
           </div>
         </div>
 
         {/* Concept Input Form */}
-        <form onSubmit={handleGenerateConcept} className="space-y-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <form onSubmit={handleGenerateConcept} className="space-y-5">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
             <div>
-              <label className="block text-xs font-bold uppercase tracking-wider text-ink mb-1.5">
-                What is your product or service?
+              <label className="block text-xs font-semibold text-ink mb-1.5">
+                Product or Service
               </label>
-              <p className="text-[11px] text-mute mb-2">The offering you want to advertise in this new video</p>
               <input
                 type="text"
                 value={productOrTopic}
                 onChange={(e) => setProductOrTopic(e.target.value)}
                 placeholder="e.g. Minimalist Ceramic Coffee Tumbler"
-                className="w-full bg-surface-card border border-stone rounded-xl py-3 px-4 text-xs font-semibold text-ink outline-none focus:border-primary transition"
+                className="w-full bg-surface-card/50 border border-stone/80 rounded-2xl py-3 px-4 text-xs font-medium text-ink outline-none focus:border-primary transition"
                 required
               />
             </div>
 
             <div>
-              <label className="block text-xs font-bold uppercase tracking-wider text-ink mb-1.5">
-                Who is your target customer?
+              <label className="block text-xs font-semibold text-ink mb-1.5">
+                Target Customer
               </label>
-              <p className="text-[11px] text-mute mb-2">Their persona, daily pain points, or interests</p>
               <input
                 type="text"
                 value={targetAudience}
                 onChange={(e) => setTargetAudience(e.target.value)}
                 placeholder="e.g. Busy commuters and coffee lovers"
-                className="w-full bg-surface-card border border-stone rounded-xl py-3 px-4 text-xs font-semibold text-ink outline-none focus:border-primary transition"
+                className="w-full bg-surface-card/50 border border-stone/80 rounded-2xl py-3 px-4 text-xs font-medium text-ink outline-none focus:border-primary transition"
               />
             </div>
           </div>
@@ -347,18 +334,14 @@ export function RemixStudio({ sourceVideoId, onGenerationReady }: RemixStudioPro
             )}
           </div>
 
-          <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-2 border-t border-hairline">
-            <span className="text-xs text-mute">
-              Reuses winning pacing and beat triggers. 100% original narrative &amp; spoken script.
-            </span>
-
+          <div className="flex items-center justify-end pt-2 border-t border-black/[0.06]">
             <button
               type="submit"
               disabled={isGenerating || !productOrTopic.trim()}
-              className="btn-primary flex items-center gap-2 cursor-pointer disabled:opacity-50 text-sm font-bold py-3 px-6 shadow-sm hover:shadow"
+              className="btn-primary text-xs h-10 px-6 rounded-full font-semibold shadow-xs disabled:opacity-50 cursor-pointer"
             >
-              <Sparkles className="w-4 h-4 text-amber-300" />
-              <span>{isGenerating ? "Writing Original Script & Shots..." : "⚡ 1-Click Remix (Write Original Script)"}</span>
+              <Sparkles className="w-3.5 h-3.5 mr-1.5" />
+              <span>{isGenerating ? "Writing Original Script..." : "Write Original Script"}</span>
             </button>
           </div>
 

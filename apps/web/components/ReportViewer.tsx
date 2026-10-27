@@ -93,10 +93,9 @@ export function ReportViewer({
   onOpenStatsDrawer,
   onOpenRemix,
 }: ReportViewerProps) {
-  // Simplification States (A2 & A4)
-  const [isProMode, setIsProMode] = useState<boolean>(false);
-  const [isWhyItWorksOpen, setIsWhyItWorksOpen] = useState<boolean>(true);
-  const [isBlueprintOpen, setIsBlueprintOpen] = useState<boolean>(true);
+  // Progressive disclosure: drawers closed by default
+  const [isWhyItWorksOpen, setIsWhyItWorksOpen] = useState<boolean>(false);
+  const [isBlueprintOpen, setIsBlueprintOpen] = useState<boolean>(false);
   const [isFixesOpen, setIsFixesOpen] = useState<boolean>(false);
   const [isDesignOpen, setIsDesignOpen] = useState<boolean>(false);
   const [isStatsOpen, setIsStatsOpen] = useState<boolean>(false);
@@ -109,18 +108,6 @@ export function ReportViewer({
     const m = Math.floor(totalSec / 60);
     const s = totalSec % 60;
     return `${m.toString().padStart(2, "0")}:${s.toString().padStart(2, "0")}`;
-  };
-
-  const getScoreColor = (score: number) => {
-    if (score >= 85) return "text-semantic-successDeep bg-semantic-successPale border-semantic-successDeep/20";
-    if (score >= 70) return "text-amber-800 bg-amber-100 border-amber-300";
-    return "text-semantic-errorDeep bg-rose-100 border-semantic-errorDeep/20";
-  };
-
-  const getScoreBarColor = (score: number) => {
-    if (score >= 85) return "bg-emerald-600";
-    if (score >= 70) return "bg-amber-500";
-    return "bg-primary";
   };
 
   const categories = ["all", "growth", "retention", "emotion", "sales", "shareability"];
@@ -138,231 +125,149 @@ export function ReportViewer({
   const verdictDropoff = verdictParts[1] || "Viewer momentum holds steady across key narrative beats.";
   const verdictFit = verdictParts[2] || "Best fit: TikTok and Instagram Reels paid social ad.";
 
-  return (
-    <div className="space-y-8 animate-fade-in">
-      {/* ========================================================= */}
-      {/* 1. EXECUTIVE SUMMARY CARD (A4: Summary-First Presentation) */}
-      {/* ========================================================= */}
-      <div className="bg-white rounded-pin-lg p-6 md:p-8 border border-hairline shadow-sm relative overflow-hidden">
-        <div className="absolute top-0 right-0 w-80 h-80 bg-primary/5 rounded-full blur-3xl pointer-events-none" />
+  // Calculate composite viral performance score
+  const compositeScore = Math.min(
+    99,
+    Math.max(
+      10,
+      Math.round(
+        report.scores.hook * 0.35 +
+        report.scores.retention * 0.25 +
+        report.scores.emotion * 0.15 +
+        report.scores.clarity * 0.15 +
+        report.scores.shareability * 0.10
+      )
+    )
+  );
 
-        {/* Top Bar with Mode Toggle */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-6 border-b border-hairline gap-4 mb-6">
+  return (
+    <div className="space-y-6 animate-fade-in">
+      {/* ========================================================= */}
+      {/* APPLE-STYLE UNIFIED CARD (Single Score Ring + 3 Crisp Bullets) */}
+      {/* ========================================================= */}
+      <div className="bg-white rounded-3xl p-6 md:p-8 border border-black/[0.06] shadow-sm">
+        {/* Top Header */}
+        <div className="flex items-center justify-between pb-6 border-b border-black/[0.06] mb-6">
           <div>
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-bold bg-semantic-successPale text-semantic-successDeep mb-2">
-              <CheckCircle2 className="w-3.5 h-3.5" />
-              <span>Autopsy Verified with Frame Evidence</span>
-            </div>
-            <h2 className="text-2xl md:text-3xl font-extrabold text-ink tracking-tight">
-              Video Ad Autopsy
+            <h2 className="text-xl md:text-2xl font-semibold tracking-tight text-ink">
+              Autopsy Overview
             </h2>
-            <p className="text-xs text-mute">
-              {isProMode ? `Video ID: ${videoId} • Schema v${report.schema_version}` : "Plain-English creator summary"}
+            <p className="text-xs text-mute mt-0.5">
+              Verified with frame-by-frame evidence
             </p>
           </div>
 
           <div className="flex items-center gap-3">
-            {/* Pro Mode Toggle (A2) */}
-            <button
-              type="button"
-              onClick={() => setIsProMode(!isProMode)}
-              className={`px-3 py-1.5 rounded-full text-xs font-bold flex items-center gap-1.5 border transition cursor-pointer ${
-                isProMode
-                  ? "bg-ink text-white border-ink shadow-xs"
-                  : "bg-surface-card hover:bg-white text-mute hover:text-ink border-hairline"
-              }`}
-            >
-              <SlidersHorizontal className="w-3.5 h-3.5" />
-              <span>{isProMode ? "Pro Editor Mode Active" : "Show Pro Details"}</span>
-            </button>
-
             {onOpenRemix && (
               <button
                 type="button"
                 onClick={onOpenRemix}
-                className="btn-primary gap-1.5 text-xs h-9 cursor-pointer"
+                className="btn-primary text-xs h-9 px-4 rounded-full"
               >
-                <Zap className="w-3.5 h-3.5" />
-                <span>1-Click Remix</span>
+                1-Click Remix
               </button>
             )}
           </div>
         </div>
 
-        {/* 3-Line Verdict Box */}
-        <div className="p-6 bg-surface-card rounded-pin border border-hairline/80 mb-6 space-y-3">
-          <div className="flex items-center justify-between">
-            <span className="text-xs font-bold uppercase tracking-wider text-primary flex items-center gap-1.5">
-              <Sparkles className="w-4 h-4" />
-              <span>The 3-Line Verdict</span>
+        {/* Main Content: Left Score Ring, Right 3 Crisp Bullets */}
+        <div className="grid grid-cols-1 md:grid-cols-12 gap-8 items-center">
+          {/* Left Column: Clean Score Ring (4 cols) */}
+          <div className="md:col-span-4 flex flex-col items-center justify-center p-6 bg-surface-card/50 rounded-2xl border border-hairline/40">
+            <div className="relative w-36 h-36 flex items-center justify-center">
+              <svg className="w-full h-full -rotate-90" viewBox="0 0 100 100">
+                <circle
+                  cx="50"
+                  cy="50"
+                  r="42"
+                  fill="transparent"
+                  stroke="#e5e5e0"
+                  strokeWidth="7"
+                />
+                <circle
+                  cx="50"
+                  cy="50"
+                  r="42"
+                  fill="transparent"
+                  stroke="#e60023"
+                  strokeWidth="7"
+                  strokeDasharray="263.89"
+                  strokeDashoffset={263.89 - (compositeScore / 100) * 263.89}
+                  strokeLinecap="round"
+                  className="transition-all duration-1000 ease-out"
+                />
+              </svg>
+              <div className="absolute inset-0 flex flex-col items-center justify-center text-center">
+                <span className="text-3xl font-extrabold tracking-tight text-ink">
+                  {compositeScore}
+                </span>
+                <span className="text-[10px] font-semibold text-mute uppercase tracking-wider">
+                  Out of 100
+                </span>
+              </div>
+            </div>
+            <span className="text-xs font-bold text-ink mt-3">
+              Performance Score
             </span>
-            <span className="text-[11px] text-mute font-medium">Scannable Creator Summary</span>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 pt-1">
-            <div className="bg-white p-4 rounded-xl border border-hairline/60">
-              <div className="text-[11px] font-bold text-semantic-successDeep uppercase tracking-wider mb-1">
-                ✓ What It Does Best
-              </div>
-              <p className="text-sm font-semibold text-ink leading-snug">{verdictBest}</p>
-            </div>
-
-            <div className="bg-white p-4 rounded-xl border border-hairline/60">
-              <div className="text-[11px] font-bold text-amber-800 uppercase tracking-wider mb-1">
-                ⚠ Where Viewers Drop Off
-              </div>
-              <p className="text-sm font-semibold text-ink leading-snug">{verdictDropoff}</p>
-            </div>
-
-            <div className="bg-white p-4 rounded-xl border border-hairline/60">
-              <div className="text-[11px] font-bold text-primary uppercase tracking-wider mb-1">
-                📱 Best Platform Fit
-              </div>
-              <p className="text-sm font-semibold text-ink leading-snug">{verdictFit}</p>
+            <div className="flex items-center gap-3 mt-2 text-[11px] text-mute">
+              <span>Hook <strong className="text-ink font-semibold">{report.scores.hook}</strong></span>
+              <span>•</span>
+              <span>Pacing <strong className="text-ink font-semibold">{report.scores.retention}</strong></span>
+              <span>•</span>
+              <span>Emotion <strong className="text-ink font-semibold">{report.scores.emotion}</strong></span>
             </div>
           </div>
-        </div>
 
-        {/* Top 3 Quick Fixes Callout (Right inside Summary) */}
-        {report.fixes && report.fixes.length > 0 && (
-          <div className="p-6 bg-rose-50/50 rounded-pin border border-rose-200/80 mb-6">
-            <div className="flex items-center justify-between mb-3">
-              <span className="text-xs font-bold uppercase tracking-wider text-rose-800 flex items-center gap-1.5">
-                <Lightbulb className="w-4 h-4 text-primary" />
-                <span>Top 3 Actionable Fixes (Ranked by Retention Lift)</span>
-              </span>
-              <span className="text-[11px] text-rose-700 font-semibold">Immediate Wins</span>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-              {report.fixes.slice(0, 3).map((fix) => (
-                <div key={fix.rank} className="bg-white p-3.5 rounded-xl border border-rose-200/60 flex flex-col justify-between">
-                  <div>
-                    <div className="flex items-center justify-between mb-1.5">
-                      <span className="text-[10px] font-black uppercase tracking-wider px-2 py-0.5 rounded-full bg-rose-100 text-rose-800">
-                        Fix #{fix.rank}
-                      </span>
-                      <button
-                        onClick={() => onSelectTimestamp && onSelectTimestamp(fix.t_ms)}
-                        className="text-[11px] font-mono font-bold text-primary hover:underline flex items-center gap-1"
-                      >
-                        <Clock className="w-3 h-3" />
-                        <span>{formatMs(fix.t_ms)}</span>
-                      </button>
-                    </div>
-                    <p className="text-xs font-bold text-ink leading-snug">{fix.change}</p>
-                  </div>
-                  <div className="text-[10px] text-semantic-successDeep font-bold mt-2">
-                    +{fix.expected_impact.toUpperCase()} RETENTION IMPACT
-                  </div>
+          {/* Right Column: 3 Crisp Bullet Points (8 cols) */}
+          <div className="md:col-span-8 space-y-5">
+            {/* 1. Hook Strength */}
+            <div className="flex items-start gap-3.5">
+              <div className="w-2.5 h-2.5 rounded-full bg-emerald-500 mt-1.5 flex-shrink-0" />
+              <div>
+                <div className="text-[11px] font-bold text-mute uppercase tracking-wider mb-0.5">
+                  Hook Strength
                 </div>
-              ))}
-            </div>
-          </div>
-        )}
-
-        {/* Six Creator Score Badges (A2: Plain-English terms) */}
-        <div>
-          <div className="flex items-center justify-between mb-3">
-            <h3 className="text-sm font-bold text-ink">Creator Scorecard</h3>
-            <span className="text-[11px] text-mute">Normalized 0–100 estimates</span>
-          </div>
-
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
-            {/* Hook */}
-            <div className="card-pin p-3.5 flex flex-col justify-between">
-              <div className="flex items-center justify-between mb-1">
-                <span className="text-[11px] font-bold text-mute uppercase flex items-center gap-1">
-                  <Flame className="w-3 h-3 text-primary" /> Stop Scroll
-                </span>
-                <span className={`text-[11px] font-black px-1.5 py-0.5 rounded-full border ${getScoreColor(report.scores.hook)}`}>
-                  {report.scores.hook}
-                </span>
+                <p className="text-sm font-semibold text-ink leading-relaxed">
+                  {verdictBest}
+                </p>
               </div>
-              <div className="w-full h-1.5 bg-stone/30 rounded-full overflow-hidden mt-1">
-                <div className={`h-full ${getScoreBarColor(report.scores.hook)}`} style={{ width: `${report.scores.hook}%` }} />
-              </div>
-              <span className="text-[10px] text-mute mt-1.5">0–3s Hook</span>
             </div>
 
-            {/* Retention */}
-            <div className="card-pin p-3.5 flex flex-col justify-between">
-              <div className="flex items-center justify-between mb-1">
-                <span className="text-[11px] font-bold text-mute uppercase flex items-center gap-1">
-                  <Activity className="w-3 h-3 text-emerald-600" /> Pacing
-                </span>
-                <span className={`text-[11px] font-black px-1.5 py-0.5 rounded-full border ${getScoreColor(report.scores.retention)}`}>
-                  {report.scores.retention}
-                </span>
+            {/* 2. Drop-off Risk */}
+            <div className="flex items-start gap-3.5">
+              <div className="w-2.5 h-2.5 rounded-full bg-amber-500 mt-1.5 flex-shrink-0" />
+              <div>
+                <div className="flex items-center gap-2 mb-0.5">
+                  <span className="text-[11px] font-bold text-mute uppercase tracking-wider">
+                    Drop-off Risk
+                  </span>
+                  {report.fixes && report.fixes[0] && (
+                    <button
+                      type="button"
+                      onClick={() => onSelectTimestamp && onSelectTimestamp(report.fixes[0].t_ms)}
+                      className="text-[11px] font-mono font-bold text-primary hover:underline cursor-pointer"
+                    >
+                      @{formatMs(report.fixes[0].t_ms)}
+                    </button>
+                  )}
+                </div>
+                <p className="text-sm font-semibold text-ink leading-relaxed">
+                  {verdictDropoff}
+                </p>
               </div>
-              <div className="w-full h-1.5 bg-stone/30 rounded-full overflow-hidden mt-1">
-                <div className={`h-full ${getScoreBarColor(report.scores.retention)}`} style={{ width: `${report.scores.retention}%` }} />
-              </div>
-              <span className="text-[10px] text-mute mt-1.5">Cut Rhythm</span>
             </div>
 
-            {/* Emotion */}
-            <div className="card-pin p-3.5 flex flex-col justify-between">
-              <div className="flex items-center justify-between mb-1">
-                <span className="text-[11px] font-bold text-mute uppercase flex items-center gap-1">
-                  <Heart className="w-3 h-3 text-rose-500" /> Emotion
-                </span>
-                <span className={`text-[11px] font-black px-1.5 py-0.5 rounded-full border ${getScoreColor(report.scores.emotion)}`}>
-                  {report.scores.emotion}
-                </span>
+            {/* 3. Primary Actionable Fix */}
+            <div className="flex items-start gap-3.5">
+              <div className="w-2.5 h-2.5 rounded-full bg-primary mt-1.5 flex-shrink-0" />
+              <div>
+                <div className="text-[11px] font-bold text-mute uppercase tracking-wider mb-0.5">
+                  Primary Fix
+                </div>
+                <p className="text-sm font-semibold text-ink leading-relaxed">
+                  {report.fixes && report.fixes[0] ? report.fixes[0].change : "Optimize cut rhythm during product demonstration to sustain watch time."}
+                </p>
               </div>
-              <div className="w-full h-1.5 bg-stone/30 rounded-full overflow-hidden mt-1">
-                <div className={`h-full ${getScoreBarColor(report.scores.emotion)}`} style={{ width: `${report.scores.emotion}%` }} />
-              </div>
-              <span className="text-[10px] text-mute mt-1.5">Relatability</span>
-            </div>
-
-            {/* Clarity */}
-            <div className="card-pin p-3.5 flex flex-col justify-between">
-              <div className="flex items-center justify-between mb-1">
-                <span className="text-[11px] font-bold text-mute uppercase flex items-center gap-1">
-                  <Eye className="w-3 h-3 text-blue-500" /> Clarity
-                </span>
-                <span className={`text-[11px] font-black px-1.5 py-0.5 rounded-full border ${getScoreColor(report.scores.clarity)}`}>
-                  {report.scores.clarity}
-                </span>
-              </div>
-              <div className="w-full h-1.5 bg-stone/30 rounded-full overflow-hidden mt-1">
-                <div className={`h-full ${getScoreBarColor(report.scores.clarity)}`} style={{ width: `${report.scores.clarity}%` }} />
-              </div>
-              <span className="text-[10px] text-mute mt-1.5">Value Pitch</span>
-            </div>
-
-            {/* CTA */}
-            <div className="card-pin p-3.5 flex flex-col justify-between">
-              <div className="flex items-center justify-between mb-1">
-                <span className="text-[11px] font-bold text-mute uppercase flex items-center gap-1">
-                  <Zap className="w-3 h-3 text-amber-500" /> Next Action
-                </span>
-                <span className={`text-[11px] font-black px-1.5 py-0.5 rounded-full border ${getScoreColor(report.scores.cta)}`}>
-                  {report.scores.cta}
-                </span>
-              </div>
-              <div className="w-full h-1.5 bg-stone/30 rounded-full overflow-hidden mt-1">
-                <div className={`h-full ${getScoreBarColor(report.scores.cta)}`} style={{ width: `${report.scores.cta}%` }} />
-              </div>
-              <span className="text-[10px] text-mute mt-1.5">Conversion</span>
-            </div>
-
-            {/* Shareability */}
-            <div className="card-pin p-3.5 flex flex-col justify-between">
-              <div className="flex items-center justify-between mb-1">
-                <span className="text-[11px] font-bold text-mute uppercase flex items-center gap-1">
-                  <TrendingUp className="w-3 h-3 text-indigo-500" /> Share Potential
-                </span>
-                <span className={`text-[11px] font-black px-1.5 py-0.5 rounded-full border ${getScoreColor(report.scores.shareability)}`}>
-                  {report.scores.shareability}
-                </span>
-              </div>
-              <div className="w-full h-1.5 bg-stone/30 rounded-full overflow-hidden mt-1">
-                <div className={`h-full ${getScoreBarColor(report.scores.shareability)}`} style={{ width: `${report.scores.shareability}%` }} />
-              </div>
-              <span className="text-[10px] text-mute mt-1.5">Send to Friend</span>
             </div>
           </div>
         </div>

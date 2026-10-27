@@ -42,6 +42,7 @@ out/
 
 # Media & Storage
 /storage/
+/data/
 *.mp4
 *.mov
 *.webm

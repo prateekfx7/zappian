@@ -47,8 +47,9 @@ FRAMES_DIR = STORAGE_DIR / "frames"
 THUMBS_DIR = STORAGE_DIR / "thumbs"
 AUDIO_DIR = STORAGE_DIR / "audio"
 ANALYSES_DIR = STORAGE_DIR / "analyses"
+COMPARES_DIR = ANALYSES_DIR / "compares"
 
-for d in [ORIGINALS_DIR, PROXIES_DIR, FRAMES_DIR, THUMBS_DIR, AUDIO_DIR, ANALYSES_DIR]:
+for d in [ORIGINALS_DIR, PROXIES_DIR, FRAMES_DIR, THUMBS_DIR, AUDIO_DIR, ANALYSES_DIR, COMPARES_DIR]:
     d.mkdir(parents=True, exist_ok=True)
 
 # Mount local storage for serving proxy videos and frame thumbnails to frontend
@@ -60,6 +61,17 @@ class HealthResponse(BaseModel):
     environment: str
     version: str
     timestamp: datetime
+
+
+class StatInput(BaseModel):
+    metric: str
+    value: float
+    source: str = "manual"
+
+
+class CompareRequest(BaseModel):
+    video_a_id: str
+    video_b_id: str
 
 
 class VideoCreateRequest(BaseModel):
@@ -304,6 +316,125 @@ async def trigger_analysis(video_id: str) -> dict[str, Any]:
 
     cache_file.write_text(json.dumps(pipeline_data, indent=2), encoding="utf-8")
     return analysis_res["report"]
+
+
+@app.get("/v1/videos/{video_id}/stats", tags=["Stats"])
+async def get_video_stats(video_id: str) -> list[dict[str, Any]]:
+    """Retrieves all source-labeled stats for a video."""
+    cache_file = ANALYSES_DIR / video_id / "pipeline_data.json"
+    if not cache_file.exists():
+        raise HTTPException(status_code=404, detail="Video analysis not found")
+    data = json.loads(cache_file.read_text(encoding="utf-8"))
+    return data.get("analysis", {}).get("stats", [])
+
+
+@app.post("/v1/videos/{video_id}/stats", tags=["Stats"])
+async def add_manual_stat(video_id: str, payload: StatInput) -> list[dict[str, Any]]:
+    """Adds a verified, source-labeled stat to a video per Rule 2."""
+    from packages.providers.stats import ALLOWED_SOURCES
+
+    if payload.source not in ALLOWED_SOURCES:
+        raise HTTPException(
+            status_code=400,
+            detail=f"Invalid source '{payload.source}'. Allowed: {', '.join(sorted(ALLOWED_SOURCES))}",
+        )
+
+    cache_file = ANALYSES_DIR / video_id / "pipeline_data.json"
+    if not cache_file.exists():
+        raise HTTPException(status_code=404, detail="Video analysis not found")
+
+    data = json.loads(cache_file.read_text(encoding="utf-8"))
+    stat_item = {
+        "metric": payload.metric.lower().replace(" ", "_"),
+        "value": payload.value,
+        "source": payload.source,
+        "fetched_at": datetime.now(UTC).isoformat(),
+    }
+
+    if "analysis" not in data:
+        data["analysis"] = {}
+    if "stats" not in data["analysis"]:
+        data["analysis"]["stats"] = []
+
+    # Update or append
+    existing = [s for s in data["analysis"]["stats"] if s["metric"] != stat_item["metric"]]
+    existing.append(stat_item)
+    data["analysis"]["stats"] = existing
+    data["stats"] = existing
+
+    cache_file.write_text(json.dumps(data, indent=2), encoding="utf-8")
+    return existing
+
+
+@app.post("/v1/videos/{video_id}/stats/csv", tags=["Stats"])
+async def upload_stats_csv(video_id: str, file: UploadFile = File(...)) -> list[dict[str, Any]]:  # noqa: B008
+    """Parses user CSV metrics and attaches source-labeled stats."""
+    from packages.providers.stats import CSVStatsParser
+
+    cache_file = ANALYSES_DIR / video_id / "pipeline_data.json"
+    if not cache_file.exists():
+        raise HTTPException(status_code=404, detail="Video analysis not found")
+
+    content = (await file.read()).decode("utf-8", errors="replace")
+    parsed_stats = CSVStatsParser.parse_csv_content(content)
+
+    if not parsed_stats:
+        raise HTTPException(status_code=400, detail="No valid metrics found in CSV.")
+
+    data = json.loads(cache_file.read_text(encoding="utf-8"))
+    if "analysis" not in data:
+        data["analysis"] = {}
+    if "stats" not in data["analysis"]:
+        data["analysis"]["stats"] = []
+
+    # Merge by metric name
+    stats_dict = {s["metric"]: s for s in data["analysis"]["stats"]}
+    for s in parsed_stats:
+        stats_dict[s["metric"]] = s
+
+    merged = list(stats_dict.values())
+    data["analysis"]["stats"] = merged
+    data["stats"] = merged
+
+    cache_file.write_text(json.dumps(data, indent=2), encoding="utf-8")
+    return merged
+
+
+@app.post("/v1/compare", tags=["Compare"])
+async def compare_video_pair(payload: CompareRequest) -> dict[str, Any]:
+    """
+    Performs blueprint alignment and 'Why Winner Won' autopsy diff
+    citing timestamps from both videos per Rule 1 and Phase 3 acceptance criteria.
+    """
+    from workers.analysis.compare import compare_videos
+
+    cache_a = ANALYSES_DIR / payload.video_a_id / "pipeline_data.json"
+    cache_b = ANALYSES_DIR / payload.video_b_id / "pipeline_data.json"
+
+    if not cache_a.exists():
+        raise HTTPException(status_code=404, detail=f"Video A '{payload.video_a_id}' not found or not analyzed.")
+    if not cache_b.exists():
+        raise HTTPException(status_code=404, detail=f"Video B '{payload.video_b_id}' not found or not analyzed.")
+
+    data_a = json.loads(cache_a.read_text(encoding="utf-8"))
+    data_b = json.loads(cache_b.read_text(encoding="utf-8"))
+
+    report = compare_videos(data_a, data_b)
+
+    compare_file = COMPARES_DIR / f"{report['compare_id']}.json"
+    compare_file.write_text(json.dumps(report, indent=2), encoding="utf-8")
+
+    return report
+
+
+@app.get("/v1/compare/{compare_id}", tags=["Compare"])
+async def get_compare_report(compare_id: str) -> dict[str, Any]:
+    """Retrieves a previously computed comparison diff report."""
+    compare_file = COMPARES_DIR / f"{compare_id}.json"
+    if not compare_file.exists():
+        raise HTTPException(status_code=404, detail=f"Compare report '{compare_id}' not found.")
+    return json.loads(compare_file.read_text(encoding="utf-8"))
+
 
 
 

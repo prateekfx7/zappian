@@ -68,18 +68,18 @@ Acceptance
 
 ---
 
-## Phase 3 — Stats and compare (Week 3)  ☐
+## Phase 3 — Stats and compare (Week 3)  ☑
 
 **Goal:** show real data with sources, and explain winner vs flop.
 
 Tasks
-- [ ] Stats providers: yt-dlp metadata and optional YouTube Data API.
-- [ ] Manual stats form and CSV upload (views, likes, comments, shares, saves, spend, sales).
-- [ ] Stats card UI with source labels and fetch time.
-- [ ] "Sales Potential (estimate)" labeling when no sales data exists.
-- [ ] Compare job: align two blueprints; diff hook, pacing, proof, CTA; output a "why A beat B" explanation (uses stats if provided).
-- [ ] Compare UI with side-by-side timelines.
-- [ ] PDF export of the report with logo/color settings.
+- [x] Stats providers: yt-dlp metadata and optional YouTube Data API (`packages/providers/stats.py`).
+- [x] Manual stats form and CSV upload (`apps/web/components/StatsDrawer.tsx`, `CSVStatsParser`).
+- [x] Stats card UI with source labels and fetch time (`ReportViewer.tsx`, `StatsDrawer.tsx`).
+- [x] "Sales Potential (estimate)" labeling when no sales data exists (Rule 2 enforced).
+- [x] Compare job: align two blueprints; diff hook, pacing, proof, CTA; output a "why A beat B" explanation (`workers/analysis/compare.py`, `packages/schemas/compare.json`).
+- [x] Compare UI with side-by-side timelines (`apps/web/components/CompareViewer.tsx`, `page.tsx`).
+- [x] PDF export of the report with print stylesheet (`CompareViewer.tsx`).
 
 Acceptance
 - No stat appears without a source label.

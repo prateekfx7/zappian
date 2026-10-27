@@ -77,6 +77,7 @@ interface ReportViewerProps {
   durationMs?: number;
   onSelectTimestamp?: (t_ms: number) => void;
   selectedTimestamp?: number | null;
+  onOpenStatsDrawer?: () => void;
 }
 
 export function ReportViewer({
@@ -85,6 +86,7 @@ export function ReportViewer({
   durationMs = 30000,
   onSelectTimestamp,
   selectedTimestamp,
+  onOpenStatsDrawer,
 }: ReportViewerProps) {
   const [selectedCategory, setSelectedCategory] = useState<string>("all");
   const [activeBeatIndex, setActiveBeatIndex] = useState<number | null>(null);
@@ -607,21 +609,31 @@ export function ReportViewer({
       </div>
 
       {/* 7. Source-Labeled Stats (Rule 2) */}
-      {report.stats && report.stats.length > 0 && (
-        <div className="bg-white rounded-pin-lg p-8 border border-hairline shadow-sm">
-          <div className="flex items-center justify-between mb-4">
-            <div>
-              <h3 className="text-lg font-bold text-ink flex items-center gap-2">
-                <BarChart3 className="w-4 h-4 text-primary" />
-                <span>Source-Labeled Platform Metrics</span>
-              </h3>
-              <p className="text-xs text-mute">
-                Strict Rule 2 compliance: stats are never hallucinated from video frames.
-              </p>
-            </div>
-            <span className="pill-overlay text-xs">Rule 2 Verified</span>
+      <div className="bg-white rounded-pin-lg p-8 border border-hairline shadow-sm">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-4 gap-3">
+          <div>
+            <h3 className="text-lg font-bold text-ink flex items-center gap-2">
+              <BarChart3 className="w-4 h-4 text-primary" />
+              <span>Source-Labeled Platform Metrics</span>
+            </h3>
+            <p className="text-xs text-mute">
+              Strict Rule 2 compliance: stats are never hallucinated from video frames.
+            </p>
           </div>
+          <div className="flex items-center gap-2">
+            <span className="pill-overlay text-xs">Rule 2 Verified</span>
+            {onOpenStatsDrawer && (
+              <button
+                onClick={onOpenStatsDrawer}
+                className="px-3.5 py-1.5 rounded-full text-xs font-bold bg-primary text-white hover:bg-primary-pressed transition cursor-pointer"
+              >
+                + Add / Upload Stats (CSV)
+              </button>
+            )}
+          </div>
+        </div>
 
+        {report.stats && report.stats.length > 0 ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
             {report.stats.map((st, sIdx) => (
               <div key={sIdx} className="p-4 bg-surface-card rounded-pin border border-hairline">
@@ -641,8 +653,22 @@ export function ReportViewer({
               </div>
             ))}
           </div>
-        </div>
-      )}
+        ) : (
+          <div className="p-6 bg-surface-card rounded-pin border border-hairline text-center space-y-2">
+            <p className="text-xs text-mute font-medium">
+              No verified platform metrics uploaded for this clip yet. Displaying modeled "Sales Potential (estimate)".
+            </p>
+            {onOpenStatsDrawer && (
+              <button
+                onClick={onOpenStatsDrawer}
+                className="text-xs font-bold text-primary hover:underline cursor-pointer"
+              >
+                Upload CSV or enter manual metrics &rarr;
+              </button>
+            )}
+          </div>
+        )}
+      </div>
     </div>
   );
 }

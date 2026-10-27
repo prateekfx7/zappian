@@ -1,0 +1,113 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "CompareReport",
+  "type": "object",
+  "required": [
+    "compare_id",
+    "video_a_id",
+    "video_b_id",
+    "winner_video_id",
+    "verdict",
+    "score_diff",
+    "structural_diff",
+    "why_winner_won",
+    "pacing_comparison",
+    "recommendations"
+  ],
+  "properties": {
+    "compare_id": { "type": "string" },
+    "video_a_id": { "type": "string" },
+    "video_b_id": { "type": "string" },
+    "winner_video_id": { "type": "string" },
+    "verdict": { "type": "string" },
+    "score_diff": {
+      "type": "object",
+      "required": [
+        "hook_delta",
+        "retention_delta",
+        "clarity_delta",
+        "cta_delta",
+        "emotion_delta"
+      ],
+      "properties": {
+        "hook_delta": { "type": "number" },
+        "retention_delta": { "type": "number" },
+        "clarity_delta": { "type": "number" },
+        "cta_delta": { "type": "number" },
+        "emotion_delta": { "type": "number" }
+      },
+      "additionalProperties": false
+    },
+    "structural_diff": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "beat_role",
+          "t_a_ms",
+          "t_b_ms",
+          "video_a_technique",
+          "video_b_technique",
+          "impact"
+        ],
+        "properties": {
+          "beat_role": { "type": "string" },
+          "t_a_ms": { "type": "integer", "minimum": 0 },
+          "t_b_ms": { "type": "integer", "minimum": 0 },
+          "video_a_technique": { "type": "string" },
+          "video_b_technique": { "type": "string" },
+          "impact": { "type": "string" }
+        },
+        "additionalProperties": false
+      }
+    },
+    "why_winner_won": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "category",
+          "reason",
+          "t_a_ms",
+          "t_b_ms",
+          "advantage"
+        ],
+        "properties": {
+          "category": {
+            "type": "string",
+            "enum": ["hook", "pacing", "proof", "cta", "emotion", "sales"]
+          },
+          "reason": { "type": "string" },
+          "t_a_ms": { "type": "integer", "minimum": 0 },
+          "t_b_ms": { "type": "integer", "minimum": 0 },
+          "advantage": {
+            "type": "string",
+            "enum": ["video_a", "video_b", "tie"]
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "pacing_comparison": {
+      "type": "object",
+      "required": [
+        "video_a_cuts_per_minute",
+        "video_b_cuts_per_minute",
+        "video_a_silence_ratio",
+        "video_b_silence_ratio"
+      ],
+      "properties": {
+        "video_a_cuts_per_minute": { "type": "number" },
+        "video_b_cuts_per_minute": { "type": "number" },
+        "video_a_silence_ratio": { "type": "number" },
+        "video_b_silence_ratio": { "type": "number" }
+      },
+      "additionalProperties": false
+    },
+    "recommendations": {
+      "type": "array",
+      "items": { "type": "string" }
+    }
+  },
+  "additionalProperties": false
+}

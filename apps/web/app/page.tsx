@@ -24,8 +24,12 @@ import {
   BarChart3,
   Flame,
   ArrowRight,
+  GitCompare,
+  Trophy,
 } from "lucide-react";
 import { ReportViewer, AnalysisReport } from "../components/ReportViewer";
+import { CompareViewer, CompareReport } from "../components/CompareViewer";
+import { StatsDrawer } from "../components/StatsDrawer";
 
 interface PipelineProgress {
   stage: string;
@@ -79,6 +83,7 @@ interface PipelineData {
 }
 
 export default function Home() {
+  const [appMode, setAppMode] = useState<"autopsy" | "compare">("autopsy");
   const [sourceType, setSourceType] = useState<"upload" | "youtube">("upload");
   const [videoUrl, setVideoUrl] = useState("");
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
@@ -93,6 +98,13 @@ export default function Home() {
   const [selectedFrame, setSelectedFrame] = useState<FrameItem | null>(null);
   const [selectedTimestamp, setSelectedTimestamp] = useState<number | null>(null);
   const [activeTab, setActiveTab] = useState<"autopsy" | "assets">("autopsy");
+
+  // Phase 3 State: Stats Drawer & Compare Engine
+  const [showStatsDrawer, setShowStatsDrawer] = useState(false);
+  const [compareVideoIdA, setCompareVideoIdA] = useState("");
+  const [compareVideoIdB, setCompareVideoIdB] = useState("");
+  const [isComparing, setIsComparing] = useState(false);
+  const [compareReport, setCompareReport] = useState<CompareReport | null>(null);
 
   const fileInputRef = useRef<HTMLInputElement>(null);
   const inspectorRef = useRef<HTMLDivElement>(null);
@@ -121,7 +133,6 @@ export default function Home() {
     });
 
     eventSource.onerror = () => {
-      // Retry or poll after brief delay if connection dropped
       setTimeout(() => {
         if (videoId) fetchPipelineData(videoId);
       }, 3000);
@@ -144,6 +155,8 @@ export default function Home() {
         if (data.analysis) {
           setActiveTab("autopsy");
         }
+        // Pre-fill compare field
+        if (!compareVideoIdA) setCompareVideoIdA(vid);
       }
     } catch (err) {
       console.error("Error loading pipeline data", err);
@@ -228,6 +241,53 @@ export default function Home() {
     }
   };
 
+  const handleStatsUpdated = (newStats: any[]) => {
+    setPipelineData((prev) => {
+      if (!prev || !prev.analysis) return prev;
+      return {
+        ...prev,
+        analysis: {
+          ...prev.analysis,
+          stats: newStats,
+        },
+      };
+    });
+  };
+
+  const handleRunCompare = async (e?: React.FormEvent) => {
+    if (e) e.preventDefault();
+    if (!compareVideoIdA || !compareVideoIdB) {
+      setErrorMessage("Please enter both Video A and Video B IDs to compare.");
+      return;
+    }
+
+    setIsComparing(true);
+    setErrorMessage(null);
+
+    try {
+      const res = await fetch("http://localhost:8000/v1/compare", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          video_a_id: compareVideoIdA.trim(),
+          video_b_id: compareVideoIdB.trim(),
+        }),
+      });
+
+      if (!res.ok) {
+        const errData = await res.json().catch(() => ({}));
+        throw new Error(errData.detail || "Comparison failed. Verify both video IDs have been analyzed.");
+      }
+
+      const report: CompareReport = await res.json();
+      setCompareReport(report);
+    } catch (err: any) {
+      setErrorMessage(err.message || "Could not complete comparison.");
+    } finally {
+      setIsComparing(false);
+    }
+  };
+
   const handleStartAnalysis = async (e: React.FormEvent) => {
     e.preventDefault();
     setErrorMessage(null);
@@ -269,6 +329,7 @@ export default function Home() {
 
         const data = await response.json();
         setVideoId(data.id);
+        setCompareVideoIdA(data.id);
       } else {
         const response = await fetch("http://localhost:8000/v1/videos", {
           method: "POST",
@@ -287,6 +348,7 @@ export default function Home() {
 
         const data = await response.json();
         setVideoId(data.id);
+        setCompareVideoIdA(data.id);
       }
     } catch (err: any) {
       setErrorMessage(err.message || "Could not connect to API server. Ensure it is running.");
@@ -305,7 +367,10 @@ export default function Home() {
       {/* 1. Pinterest-inspired Sticky Navigation */}
       <header className="sticky top-0 z-50 bg-white/95 backdrop-blur-md border-b border-hairline h-16 px-6 flex items-center justify-between">
         <div className="flex items-center gap-6">
-          <div className="flex items-center gap-2 cursor-pointer">
+          <div
+            onClick={() => setAppMode("autopsy")}
+            className="flex items-center gap-2 cursor-pointer"
+          >
             <div className="w-9 h-9 rounded-full bg-primary flex items-center justify-center text-white font-black text-xl shadow-sm">
               F
             </div>
@@ -313,14 +378,25 @@ export default function Home() {
           </div>
 
           <div className="hidden md:flex items-center gap-2">
-            <button className="px-4 py-2 rounded-full font-semibold text-sm bg-ink text-white">
+            <button
+              onClick={() => setAppMode("autopsy")}
+              className={`px-4 py-2 rounded-full font-semibold text-sm transition ${
+                appMode === "autopsy" ? "bg-ink text-white" : "text-ink hover:bg-secondary-bg"
+              }`}
+            >
               Autopsy
+            </button>
+            <button
+              onClick={() => setAppMode("compare")}
+              className={`px-4 py-2 rounded-full font-semibold text-sm transition flex items-center gap-1.5 ${
+                appMode === "compare" ? "bg-ink text-white" : "text-ink hover:bg-secondary-bg"
+              }`}
+            >
+              <GitCompare className="w-3.5 h-3.5" />
+              <span>Compare (Phase 3)</span>
             </button>
             <button className="px-4 py-2 rounded-full font-semibold text-sm text-ink hover:bg-secondary-bg transition">
               Blueprints
-            </button>
-            <button className="px-4 py-2 rounded-full font-semibold text-sm text-ink hover:bg-secondary-bg transition">
-              Remix
             </button>
           </div>
         </div>
@@ -341,7 +417,10 @@ export default function Home() {
             Docs
           </button>
           <button
-            onClick={() => window.scrollTo({ top: 300, behavior: "smooth" })}
+            onClick={() => {
+              setAppMode("autopsy");
+              window.scrollTo({ top: 300, behavior: "smooth" });
+            }}
             className="btn-primary"
           >
             New Autopsy
@@ -349,632 +428,516 @@ export default function Home() {
         </div>
       </header>
 
-      {/* 2. Hero Section */}
+      {/* 2. Main Content Body */}
       <main className="flex-1 max-w-7xl mx-auto px-6 py-12 w-full">
-        <div className="text-center max-w-3xl mx-auto mb-12">
-          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-surface-card border border-hairline text-xs font-semibold text-ink mb-6 shadow-xs">
-            <Sparkles className="w-3.5 h-3.5 text-primary" />
-            <span>Phase 2 Live — Frame-Grounded Autopsy &amp; Structure Analysis</span>
-          </div>
+        {/* MODE A: AUTOPSY ENGINE */}
+        {appMode === "autopsy" && (
+          <div>
+            <div className="text-center max-w-3xl mx-auto mb-12">
+              <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-surface-card border border-hairline text-xs font-semibold text-ink mb-6 shadow-xs">
+                <Sparkles className="w-3.5 h-3.5 text-primary" />
+                <span>Phase 3 Live — Stats Ingestion, Source Labels &amp; Compare Diff</span>
+              </div>
 
-          <h1 className="text-4xl md:text-6xl font-extrabold text-ink tracking-display leading-[1.1] mb-6">
-            Autopsy any viral video. <br />
-            <span className="text-primary">Extract the structure</span> frame by frame.
-          </h1>
+              <h1 className="text-4xl md:text-6xl font-extrabold text-ink tracking-display leading-[1.1] mb-6">
+                Autopsy any viral video. <br />
+                <span className="text-primary">Extract the structure</span> frame by frame.
+              </h1>
 
-          <p className="text-lg text-mute font-normal leading-relaxed">
-            Proof, a diff, and a rebuild. Frame-by-frame breakdown explaining <em>why</em> it works
-            with timestamped evidence, source-labeled metrics, and zero hallucination.
-          </p>
-        </div>
-
-        {/* 3. Ingest Card */}
-        <div className="max-w-2xl mx-auto bg-surface-card rounded-pin-lg p-8 border border-hairline/80 shadow-sm mb-12">
-          <div className="flex items-center justify-between mb-6">
-            <h2 className="text-xl font-bold text-ink">Submit Video for Autopsy</h2>
-            <div className="flex bg-secondary-bg p-1 rounded-full">
-              <button
-                type="button"
-                onClick={() => {
-                  setSourceType("upload");
-                  setErrorMessage(null);
-                }}
-                className={`px-4 py-1.5 rounded-full text-xs font-bold transition ${
-                  sourceType === "upload" ? "bg-white text-ink shadow-xs" : "text-mute"
-                }`}
-              >
-                Upload File
-              </button>
-              <button
-                type="button"
-                onClick={() => {
-                  setSourceType("youtube");
-                  setErrorMessage(null);
-                }}
-                className={`px-4 py-1.5 rounded-full text-xs font-bold transition ${
-                  sourceType === "youtube" ? "bg-white text-ink shadow-xs" : "text-mute"
-                }`}
-              >
-                YouTube Link
-              </button>
+              <p className="text-lg text-mute font-normal leading-relaxed">
+                Proof, a diff, and a rebuild. Frame-by-frame breakdown explaining <em>why</em> it works
+                with timestamped evidence, verified source metrics, and side-by-side comparison.
+              </p>
             </div>
-          </div>
 
-          <form onSubmit={handleStartAnalysis} className="space-y-6">
-            {sourceType === "upload" ? (
-              <div>
-                <input
-                  type="file"
-                  ref={fileInputRef}
-                  onChange={handleFileChange}
-                  accept="video/mp4,video/quicktime,video/webm,video/x-matroska"
-                  className="hidden"
-                />
-
-                {!selectedFile ? (
-                  <div
-                    onClick={() => fileInputRef.current?.click()}
-                    onDragOver={handleDragOver}
-                    onDragLeave={handleDragLeave}
-                    onDrop={handleDrop}
-                    className={`border-2 border-dashed rounded-pin p-8 text-center transition cursor-pointer flex flex-col items-center justify-center ${
-                      isDragging
-                        ? "border-primary bg-primary/5"
-                        : "border-stone bg-white/60 hover:bg-white"
+            {/* Ingest Card */}
+            <div className="max-w-2xl mx-auto bg-surface-card rounded-pin-lg p-8 border border-hairline/80 shadow-sm mb-12">
+              <div className="flex items-center justify-between mb-6">
+                <h2 className="text-xl font-bold text-ink">Submit Video for Autopsy</h2>
+                <div className="flex bg-secondary-bg p-1 rounded-full">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setSourceType("upload");
+                      setErrorMessage(null);
+                    }}
+                    className={`px-4 py-1.5 rounded-full text-xs font-bold transition ${
+                      sourceType === "upload" ? "bg-white text-ink shadow-xs" : "text-mute"
                     }`}
                   >
-                    <div className="w-12 h-12 rounded-full bg-surface-card flex items-center justify-center text-primary mb-3 shadow-xs">
-                      <Upload className="w-6 h-6" />
-                    </div>
-                    <div className="text-sm font-semibold text-ink mb-1">
-                      Drag &amp; drop your video file here, or <span className="text-primary underline">browse</span>
-                    </div>
-                    <p className="text-xs text-mute">
-                      Supports MP4, MOV, WebM up to 500 MB (up to 3 minutes)
-                    </p>
-                  </div>
-                ) : (
-                  <div className="p-4 bg-white rounded-pin border border-hairline flex items-center justify-between">
-                    <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 rounded-full bg-secondary-bg flex items-center justify-center text-primary">
-                        <FileVideo className="w-5 h-5" />
-                      </div>
-                      <div>
-                        <div className="text-sm font-bold text-ink max-w-xs truncate">
-                          {selectedFile.name}
-                        </div>
-                        <div className="text-xs text-mute">
-                          {formatFileSize(selectedFile.size)}
-                        </div>
-                      </div>
-                    </div>
-                    <button
-                      type="button"
-                      onClick={() => setSelectedFile(null)}
-                      className="p-1.5 rounded-full hover:bg-secondary-bg text-mute hover:text-ink transition"
-                    >
-                      <X className="w-4 h-4" />
-                    </button>
-                  </div>
-                )}
-              </div>
-            ) : (
-              <div>
-                <label className="block text-xs font-bold text-mute uppercase tracking-wider mb-2">
-                  Paste Video URL
-                </label>
-                <div className="relative">
-                  <LinkIcon className="w-4 h-4 text-mute absolute left-4 top-3.5" />
-                  <input
-                    type="url"
-                    value={videoUrl}
-                    onChange={(e) => setVideoUrl(e.target.value)}
-                    placeholder="https://www.youtube.com/watch?v=..."
-                    className="w-full bg-white border border-stone rounded-pin py-3 pl-11 pr-4 text-sm text-ink outline-none focus:border-primary transition"
-                  />
-                </div>
-              </div>
-            )}
-
-            {/* Mandatory Rights Checkbox (Rule 5 & FR-4) */}
-            <div className="flex items-start gap-3 p-4 bg-white rounded-pin border border-hairline">
-              <input
-                type="checkbox"
-                id="rights"
-                checked={rightsConfirmed}
-                onChange={(e) => setRightsConfirmed(e.target.checked)}
-                className="mt-1 h-4 w-4 rounded text-primary focus:ring-primary border-stone cursor-pointer"
-              />
-              <label htmlFor="rights" className="text-xs text-body leading-relaxed cursor-pointer select-none">
-                <strong className="text-ink font-semibold">Rights confirmation:</strong> I certify that I own this video or have authorized permission to analyse its structural elements.
-              </label>
-            </div>
-
-            <button
-              type="submit"
-              disabled={isSubmitting || !isFormValid}
-              className={`w-full h-12 rounded-pin font-bold text-sm flex items-center justify-center gap-2 transition ${
-                isFormValid && !isSubmitting
-                  ? "bg-primary hover:bg-primary-pressed text-white cursor-pointer shadow-sm"
-                  : "bg-stone/50 text-ash cursor-not-allowed border border-hairline"
-              }`}
-            >
-              <Sparkles className="w-4 h-4" />
-              <span>{isSubmitting ? "Uploading Video..." : "Run Autopsy Pipeline & Frame Extraction"}</span>
-            </button>
-
-            {/* Live Pipeline Progress (SSE) */}
-            {pipelineProgress && (
-              <div className="p-4 bg-white rounded-pin border border-hairline space-y-3">
-                <div className="flex items-center justify-between text-xs font-bold text-ink">
-                  <span className="flex items-center gap-2">
-                    <Activity className="w-4 h-4 text-primary animate-spin" />
-                    <span>Stage: <span className="uppercase text-primary font-mono">{pipelineProgress.stage}</span></span>
-                  </span>
-                  <span>{pipelineProgress.progress_pct}%</span>
-                </div>
-                <div className="w-full h-2 bg-secondary-bg rounded-full overflow-hidden">
-                  <div
-                    className="h-full bg-primary transition-all duration-300"
-                    style={{ width: `${pipelineProgress.progress_pct}%` }}
-                  />
-                </div>
-                <p className="text-xs text-mute font-medium">
-                  {pipelineProgress.message}
-                </p>
-              </div>
-            )}
-
-            {errorMessage && (
-              <div className="p-3 bg-semantic-error/10 border border-semantic-error/20 rounded-pin text-xs text-semantic-error font-medium flex items-center gap-2">
-                <AlertCircle className="w-4 h-4 flex-shrink-0" />
-                <span>{errorMessage}</span>
-              </div>
-            )}
-          </form>
-        </div>
-
-        {/* 4. Active Video Results Section (Phase 1 & Phase 2) */}
-        {pipelineData && (
-          <div className="space-y-8">
-            {/* View Switcher Bar */}
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between bg-surface-card p-3 rounded-pin border border-hairline gap-3">
-              <div className="flex bg-white p-1 rounded-full border border-hairline">
-                <button
-                  onClick={() => setActiveTab("autopsy")}
-                  className={`px-5 py-2 rounded-full text-xs font-bold transition flex items-center gap-2 ${
-                    activeTab === "autopsy"
-                      ? "bg-primary text-white shadow-xs"
-                      : "text-ink hover:bg-secondary-bg"
-                  }`}
-                >
-                  <Sparkles className="w-3.5 h-3.5" />
-                  <span>Executive Autopsy (Phase 2)</span>
-                </button>
-                <button
-                  onClick={() => setActiveTab("assets")}
-                  className={`px-5 py-2 rounded-full text-xs font-bold transition flex items-center gap-2 ${
-                    activeTab === "assets"
-                      ? "bg-ink text-white shadow-xs"
-                      : "text-ink hover:bg-secondary-bg"
-                  }`}
-                >
-                  <Film className="w-3.5 h-3.5" />
-                  <span>Raw Pipeline Assets (Phase 1)</span>
-                </button>
-              </div>
-
-              <div className="flex items-center gap-3">
-                {!pipelineData.analysis && (
-                  <button
-                    onClick={handleRunAnalysis}
-                    disabled={isAnalyzing}
-                    className="btn-primary text-xs flex items-center gap-1.5"
-                  >
-                    <Sparkles className="w-3.5 h-3.5" />
-                    <span>{isAnalyzing ? "Synthesizing Report..." : "Run Analysis Engine"}</span>
+                    Upload File
                   </button>
-                )}
-                <span className="text-xs font-mono text-mute px-2">
-                  {pipelineData.frames.length} frames • {pipelineData.metadata.duration_s}s
-                </span>
-              </div>
-            </div>
-
-            {/* Frame Focus Inspector Card (Active when any timestamp is clicked) */}
-            <div
-              ref={inspectorRef}
-              className="bg-white rounded-pin-lg p-6 border border-hairline shadow-sm flex flex-col md:flex-row items-center gap-6"
-            >
-              <div className="relative w-48 aspect-[9/16] bg-surface-dark rounded-pin overflow-hidden flex-shrink-0 shadow-sm">
-                {selectedFrame ? (
-                  <img
-                    src={`http://localhost:8000/storage/thumbs/${pipelineData.video_id}/${selectedFrame.t_ms}.jpg`}
-                    alt={`Frame at ${selectedFrame.t_ms}ms`}
-                    className="w-full h-full object-cover"
-                    onError={(e) => {
-                      (e.target as HTMLElement).style.display = "none";
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setSourceType("youtube");
+                      setErrorMessage(null);
                     }}
-                  />
-                ) : (
-                  <div className="w-full h-full flex items-center justify-center text-white/50 text-xs">
-                    No Frame
-                  </div>
-                )}
-                <div className="absolute top-2 left-2 pill-overlay text-[10px] py-0.5 px-2">
-                  {selectedFrame ? formatMs(selectedFrame.t_ms) : "00:00.000"}
-                </div>
-                {selectedFrame?.is_keyframe && (
-                  <div className="absolute bottom-2 right-2 bg-primary text-white text-[9px] font-bold px-1.5 py-0.5 rounded-full">
-                    Keyframe
-                  </div>
-                )}
-              </div>
-
-              <div className="flex-1 space-y-3">
-                <div className="flex items-center gap-2">
-                  <span className="px-2.5 py-0.5 rounded-full text-[10px] font-extrabold uppercase bg-primary text-white">
-                    Grounded Visual Evidence
-                  </span>
-                  <span className="text-xs font-mono text-mute">
-                    Frame Timestamp: {selectedFrame ? `${selectedFrame.t_ms} ms (${formatMs(selectedFrame.t_ms)})` : "0 ms"}
-                  </span>
-                </div>
-
-                <h4 className="text-lg font-bold text-ink">
-                  Synchronized Frame &amp; Audio Snapshot
-                </h4>
-
-                <p className="text-xs text-mute leading-relaxed">
-                  Every score and structural critique in FrameDNA is anchored to concrete visual or acoustic evidence at this millisecond mark.
-                </p>
-
-                {/* Closest transcript or OCR info */}
-                <div className="pt-2 flex flex-wrap gap-2 text-xs">
-                  <div className="p-2.5 bg-surface-card rounded-pin border border-hairline">
-                    <span className="text-[10px] font-bold uppercase tracking-wider text-mute block mb-0.5">
-                      Spoken Audio Around Timestamp
-                    </span>
-                    <span className="font-medium text-ink">
-                      {pipelineData.transcript?.words && selectedFrame
-                        ? pipelineData.transcript.words
-                            .filter(
-                              (w) =>
-                                Math.abs(w.start_ms - selectedFrame.t_ms) <= 2500 ||
-                                (w.start_ms <= selectedFrame.t_ms && w.end_ms >= selectedFrame.t_ms)
-                            )
-                            .map((w) => w.w)
-                            .join(" ") || "No dialogue active at this moment."
-                        : "No audio transcript available."}
-                    </span>
-                  </div>
-
-                  {pipelineData.ocr && selectedFrame && (
-                    <div className="p-2.5 bg-surface-card rounded-pin border border-hairline">
-                      <span className="text-[10px] font-bold uppercase tracking-wider text-mute block mb-0.5">
-                        On-Screen Keyframe OCR Text
-                      </span>
-                      <span className="font-medium text-ink">
-                        {pipelineData.ocr
-                          .filter((item) => Math.abs(item.keyframe_ms - selectedFrame.t_ms) <= 1500)
-                          .flatMap((item) => item.texts.map((t) => t.text))
-                          .join(" • ") || "No OCR overlay text detected."}
-                      </span>
-                    </div>
-                  )}
+                    className={`px-4 py-1.5 rounded-full text-xs font-bold transition ${
+                      sourceType === "youtube" ? "bg-white text-ink shadow-xs" : "text-mute"
+                    }`}
+                  >
+                    YouTube Link
+                  </button>
                 </div>
               </div>
-            </div>
 
-            {/* TAB 1: EXECUTIVE AUTOPSY (Phase 2 Deliverable) */}
-            {activeTab === "autopsy" && (
-              <div>
-                {pipelineData.analysis ? (
-                  <ReportViewer
-                    videoId={pipelineData.video_id}
-                    report={pipelineData.analysis}
-                    durationMs={pipelineData.metadata.duration_ms}
-                    onSelectTimestamp={handleSelectTimestamp}
-                    selectedTimestamp={selectedTimestamp}
-                  />
-                ) : (
-                  <div className="p-12 bg-white rounded-pin-lg border border-hairline text-center space-y-4">
-                    <div className="w-14 h-14 rounded-full bg-surface-card flex items-center justify-center text-primary mx-auto shadow-xs">
-                      <Sparkles className="w-7 h-7" />
-                    </div>
-                    <h3 className="text-xl font-bold text-ink">
-                      Autopsy Analysis Engine Ready
-                    </h3>
-                    <p className="text-sm text-mute max-w-md mx-auto">
-                      All media frames, transcript words, and acoustic curves are extracted. Click below to synthesize the 7-score matrix, timestamped evidence, and structural blueprint.
-                    </p>
-                    <button
-                      onClick={handleRunAnalysis}
-                      disabled={isAnalyzing}
-                      className="btn-primary"
-                    >
-                      {isAnalyzing ? "Running Analysis..." : "Generate Autopsy Report Now"}
-                    </button>
-                  </div>
-                )}
-              </div>
-            )}
-
-            {/* TAB 2: RAW ASSETS INSPECTOR (Phase 1 Deliverable) */}
-            {activeTab === "assets" && (
-              <section className="bg-white rounded-pin-lg p-8 border border-hairline mb-12 shadow-sm animate-fade-in">
-                <div className="flex flex-col md:flex-row md:items-center justify-between pb-6 border-b border-hairline gap-4 mb-8">
+              <form onSubmit={handleStartAnalysis} className="space-y-6">
+                {sourceType === "upload" ? (
                   <div>
-                    <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-semantic-successPale text-semantic-successDeep mb-2">
-                      <CheckCircle2 className="w-3.5 h-3.5" />
-                      <span>Pipeline Completed (100%)</span>
-                    </div>
-                    <h2 className="text-2xl font-bold text-ink">
-                      Extracted Media Assets &amp; Timestamps
-                    </h2>
-                    <p className="text-xs text-mute">
-                      ID: <span className="font-mono text-ink font-semibold">{pipelineData.video_id}</span> • {pipelineData.metadata.duration_s}s duration • {pipelineData.metadata.width}x{pipelineData.metadata.height} @ {pipelineData.metadata.fps}fps
-                    </p>
-                  </div>
-                </div>
+                    <input
+                      type="file"
+                      ref={fileInputRef}
+                      onChange={handleFileChange}
+                      accept="video/mp4,video/quicktime,video/webm,video/x-matroska"
+                      className="hidden"
+                    />
 
-                {/* Grid of Extracted Frames */}
-                <div className="mb-8">
-                  <div className="flex items-center justify-between mb-4">
-                    <h3 className="text-sm font-bold text-ink flex items-center gap-2">
-                      <Film className="w-4 h-4 text-primary" />
-                      <span>1 FPS Extracted Frames ({pipelineData.frames.length} total)</span>
-                    </h3>
-                    <span className="text-xs text-mute">Click any frame to inspect timestamp</span>
-                  </div>
-
-                  <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-3 overflow-x-auto pb-2">
-                    {pipelineData.frames.map((frame, idx) => (
+                    {!selectedFile ? (
                       <div
-                        key={idx}
-                        onClick={() => handleSelectTimestamp(frame.t_ms)}
-                        className={`card-pin p-1 cursor-pointer transition border-2 ${
-                          selectedFrame?.t_ms === frame.t_ms
-                            ? "border-primary shadow-sm"
-                            : "border-transparent hover:border-stone"
+                        onClick={() => fileInputRef.current?.click()}
+                        onDragOver={handleDragOver}
+                        onDragLeave={handleDragLeave}
+                        onDrop={handleDrop}
+                        className={`border-2 border-dashed rounded-pin p-8 text-center transition cursor-pointer flex flex-col items-center justify-center ${
+                          isDragging
+                            ? "border-primary bg-primary/5"
+                            : "border-stone bg-white/60 hover:bg-white"
                         }`}
                       >
-                        <div className="relative aspect-[9/16] bg-surface-dark rounded-xl overflow-hidden flex items-center justify-center">
-                          <img
-                            src={`http://localhost:8000/storage/thumbs/${pipelineData.video_id}/${frame.t_ms}.jpg`}
-                            alt={`Frame at ${frame.t_ms}ms`}
-                            className="w-full h-full object-cover"
-                            onError={(e) => {
-                              (e.target as HTMLElement).style.display = "none";
-                            }}
-                          />
-                          <div className="absolute top-2 left-2 pill-overlay text-[10px] py-0.5 px-2">
-                            {formatMs(frame.t_ms)}
-                          </div>
-                          {frame.is_keyframe && (
-                            <div className="absolute bottom-2 right-2 bg-primary text-white text-[9px] font-bold px-1.5 py-0.5 rounded-full">
-                              Cut
-                            </div>
-                          )}
+                        <div className="w-12 h-12 rounded-full bg-surface-card flex items-center justify-center text-primary mb-3 shadow-xs">
+                          <Upload className="w-6 h-6" />
                         </div>
+                        <div className="text-sm font-semibold text-ink mb-1">
+                          Drag &amp; drop your video file here, or <span className="text-primary underline">browse</span>
+                        </div>
+                        <p className="text-xs text-mute">
+                          Supports MP4, MOV, WebM up to 500 MB (up to 3 minutes)
+                        </p>
                       </div>
-                    ))}
+                    ) : (
+                      <div className="p-4 bg-white rounded-pin border border-hairline flex items-center justify-between">
+                        <div className="flex items-center gap-3">
+                          <div className="w-10 h-10 rounded-full bg-secondary-bg flex items-center justify-center text-primary">
+                            <FileVideo className="w-5 h-5" />
+                          </div>
+                          <div>
+                            <div className="text-sm font-bold text-ink max-w-xs truncate">
+                              {selectedFile.name}
+                            </div>
+                            <div className="text-xs text-mute">
+                              {formatFileSize(selectedFile.size)}
+                            </div>
+                          </div>
+                        </div>
+                        <button
+                          type="button"
+                          onClick={() => setSelectedFile(null)}
+                          className="p-1.5 rounded-full hover:bg-secondary-bg text-mute hover:text-ink transition"
+                        >
+                          <X className="w-4 h-4" />
+                        </button>
+                      </div>
+                    )}
+                  </div>
+                ) : (
+                  <div>
+                    <label className="block text-xs font-bold text-mute uppercase tracking-wider mb-2">
+                      Paste Video URL
+                    </label>
+                    <div className="relative">
+                      <LinkIcon className="w-4 h-4 text-mute absolute left-4 top-3.5" />
+                      <input
+                        type="url"
+                        value={videoUrl}
+                        onChange={(e) => setVideoUrl(e.target.value)}
+                        placeholder="https://www.youtube.com/watch?v=..."
+                        className="w-full bg-white border border-stone rounded-pin py-3 pl-11 pr-4 text-sm text-ink outline-none focus:border-primary transition"
+                      />
+                    </div>
+                  </div>
+                )}
+
+                {/* Mandatory Rights Checkbox (Rule 5 & FR-4) */}
+                <div className="flex items-start gap-3 p-4 bg-white rounded-pin border border-hairline">
+                  <input
+                    type="checkbox"
+                    id="rights"
+                    checked={rightsConfirmed}
+                    onChange={(e) => setRightsConfirmed(e.target.checked)}
+                    className="mt-1 h-4 w-4 rounded text-primary focus:ring-primary border-stone cursor-pointer"
+                  />
+                  <label htmlFor="rights" className="text-xs text-body leading-relaxed cursor-pointer select-none">
+                    <strong className="text-ink font-semibold">Rights confirmation:</strong> I certify that I own this video or have authorized permission to analyse its structural elements.
+                  </label>
+                </div>
+
+                <button
+                  type="submit"
+                  disabled={isSubmitting || !isFormValid}
+                  className={`w-full h-12 rounded-pin font-bold text-sm flex items-center justify-center gap-2 transition ${
+                    isFormValid && !isSubmitting
+                      ? "bg-primary hover:bg-primary-pressed text-white cursor-pointer shadow-sm"
+                      : "bg-stone/50 text-ash cursor-not-allowed border border-hairline"
+                  }`}
+                >
+                  <Sparkles className="w-4 h-4" />
+                  <span>{isSubmitting ? "Uploading Video..." : "Run Autopsy Pipeline & Frame Extraction"}</span>
+                </button>
+
+                {/* Live Pipeline Progress (SSE) */}
+                {pipelineProgress && (
+                  <div className="p-4 bg-white rounded-pin border border-hairline space-y-3">
+                    <div className="flex items-center justify-between text-xs font-bold text-ink">
+                      <span className="flex items-center gap-2">
+                        <Activity className="w-4 h-4 text-primary animate-spin" />
+                        <span>Stage: <span className="uppercase text-primary font-mono">{pipelineProgress.stage}</span></span>
+                      </span>
+                      <span>{pipelineProgress.progress_pct}%</span>
+                    </div>
+                    <div className="w-full h-2 bg-secondary-bg rounded-full overflow-hidden">
+                      <div
+                        className="h-full bg-primary transition-all duration-300"
+                        style={{ width: `${pipelineProgress.progress_pct}%` }}
+                      />
+                    </div>
+                    <p className="text-xs text-mute font-medium">
+                      {pipelineProgress.message}
+                    </p>
+                  </div>
+                )}
+
+                {errorMessage && (
+                  <div className="p-3 bg-semantic-error/10 border border-semantic-error/20 rounded-pin text-xs text-semantic-error font-medium flex items-center gap-2">
+                    <AlertCircle className="w-4 h-4 flex-shrink-0" />
+                    <span>{errorMessage}</span>
+                  </div>
+                )}
+              </form>
+            </div>
+
+            {/* Active Video Results Section */}
+            {pipelineData && (
+              <div className="space-y-8">
+                {/* View Switcher Bar */}
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between bg-surface-card p-3 rounded-pin border border-hairline gap-3">
+                  <div className="flex bg-white p-1 rounded-full border border-hairline">
+                    <button
+                      onClick={() => setActiveTab("autopsy")}
+                      className={`px-5 py-2 rounded-full text-xs font-bold transition flex items-center gap-2 ${
+                        activeTab === "autopsy"
+                          ? "bg-primary text-white shadow-xs"
+                          : "text-ink hover:bg-secondary-bg"
+                      }`}
+                    >
+                      <Sparkles className="w-3.5 h-3.5" />
+                      <span>Executive Autopsy (Phase 2)</span>
+                    </button>
+                    <button
+                      onClick={() => setActiveTab("assets")}
+                      className={`px-5 py-2 rounded-full text-xs font-bold transition flex items-center gap-2 ${
+                        activeTab === "assets"
+                          ? "bg-ink text-white shadow-xs"
+                          : "text-ink hover:bg-secondary-bg"
+                      }`}
+                    >
+                      <Film className="w-3.5 h-3.5" />
+                      <span>Raw Pipeline Assets (Phase 1)</span>
+                    </button>
+                  </div>
+
+                  <div className="flex items-center gap-2">
+                    <button
+                      onClick={() => setShowStatsDrawer(true)}
+                      className="px-3.5 py-2 rounded-full text-xs font-bold bg-white hover:bg-secondary-bg border border-hairline text-ink flex items-center gap-1.5 transition cursor-pointer"
+                    >
+                      <BarChart3 className="w-3.5 h-3.5 text-primary" />
+                      <span>Manage Stats ({pipelineData.analysis?.stats?.length || 0})</span>
+                    </button>
+
+                    <button
+                      onClick={() => {
+                        setCompareVideoIdA(pipelineData.video_id);
+                        setAppMode("compare");
+                      }}
+                      className="px-3.5 py-2 rounded-full text-xs font-bold bg-ink text-white hover:bg-ink/80 flex items-center gap-1.5 transition cursor-pointer"
+                    >
+                      <GitCompare className="w-3.5 h-3.5" />
+                      <span>Compare Diff</span>
+                    </button>
                   </div>
                 </div>
 
-                {/* Two Column Asset Inspection: Transcript & Audio Energy */}
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                  {/* Left: Word-level Transcript */}
-                  <div className="bg-surface-card rounded-pin p-6 border border-hairline">
-                    <div className="flex items-center justify-between mb-4">
-                      <h3 className="text-sm font-bold text-ink flex items-center gap-2">
-                        <FileText className="w-4 h-4 text-primary" />
-                        <span>Whisper Word Timestamps</span>
-                      </h3>
-                      <span className="pill-overlay text-xs">
-                        {pipelineData.transcript?.words?.length || 0} Words Detected
-                      </span>
-                    </div>
-
-                    {pipelineData.transcript?.words && pipelineData.transcript.words.length > 0 ? (
-                      <div className="flex flex-wrap gap-1.5 max-h-56 overflow-y-auto p-1">
-                        {pipelineData.transcript.words.map((w, i) => (
-                          <span
-                            key={i}
-                            onClick={() => handleSelectTimestamp(w.start_ms)}
-                            className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs bg-white border border-hairline hover:border-primary transition cursor-pointer"
-                            title={`${formatMs(w.start_ms)} → ${formatMs(w.end_ms)}`}
-                          >
-                            <span className="font-semibold text-ink">{w.w}</span>
-                            <span className="text-[10px] text-mute font-mono">
-                              {formatMs(w.start_ms)}
-                            </span>
-                          </span>
-                        ))}
-                      </div>
+                {/* Frame Focus Inspector Card */}
+                <div
+                  ref={inspectorRef}
+                  className="bg-white rounded-pin-lg p-6 border border-hairline shadow-sm flex flex-col md:flex-row items-center gap-6"
+                >
+                  <div className="relative w-48 aspect-[9/16] bg-surface-dark rounded-pin overflow-hidden flex-shrink-0 shadow-sm">
+                    {selectedFrame ? (
+                      <img
+                        src={`http://localhost:8000/storage/thumbs/${pipelineData.video_id}/${selectedFrame.t_ms}.jpg`}
+                        alt={`Frame at ${selectedFrame.t_ms}ms`}
+                        className="w-full h-full object-cover"
+                        onError={(e) => {
+                          (e.target as HTMLElement).style.display = "none";
+                        }}
+                      />
                     ) : (
-                      <p className="text-xs text-mute italic p-4 bg-white/60 rounded-pin text-center">
-                        No spoken words detected in audio track (music or instrumental audio).
-                      </p>
+                      <div className="w-full h-full flex items-center justify-center text-white/50 text-xs">
+                        No Frame
+                      </div>
+                    )}
+                    <div className="absolute top-2 left-2 pill-overlay text-[10px] py-0.5 px-2">
+                      {selectedFrame ? formatMs(selectedFrame.t_ms) : "00:00.000"}
+                    </div>
+                    {selectedFrame?.is_keyframe && (
+                      <div className="absolute bottom-2 right-2 bg-primary text-white text-[9px] font-bold px-1.5 py-0.5 rounded-full">
+                        Keyframe
+                      </div>
                     )}
                   </div>
 
-                  {/* Right: Audio Energy & Silence Gaps */}
-                  <div className="bg-surface-card rounded-pin p-6 border border-hairline">
-                    <div className="flex items-center justify-between mb-4">
-                      <h3 className="text-sm font-bold text-ink flex items-center gap-2">
-                        <Volume2 className="w-4 h-4 text-primary" />
-                        <span>Audio Features &amp; Pacing</span>
-                      </h3>
-                      <span className="pill-overlay text-xs">
-                        Mean Energy: {pipelineData.audio_features?.mean_energy || 0}
+                  <div className="flex-1 space-y-3">
+                    <div className="flex items-center gap-2">
+                      <span className="px-2.5 py-0.5 rounded-full text-[10px] font-extrabold uppercase bg-primary text-white">
+                        Grounded Visual Evidence
+                      </span>
+                      <span className="text-xs font-mono text-mute">
+                        Frame Timestamp: {selectedFrame ? `${selectedFrame.t_ms} ms (${formatMs(selectedFrame.t_ms)})` : "0 ms"}
                       </span>
                     </div>
 
-                    <div className="space-y-4">
-                      <div>
-                        <div className="text-xs font-semibold text-ink mb-1 flex items-center justify-between">
-                          <span>Detected Silence Gaps (&gt; 500ms):</span>
-                          <span className="font-bold text-primary">
-                            {pipelineData.audio_features?.silence_gaps?.length || 0} Gaps
-                          </span>
-                        </div>
-                        {pipelineData.audio_features?.silence_gaps &&
-                        pipelineData.audio_features.silence_gaps.length > 0 ? (
-                          <div className="space-y-1.5">
-                            {pipelineData.audio_features.silence_gaps.map((gap, i) => (
-                              <div
-                                key={i}
-                                onClick={() => handleSelectTimestamp(gap.start_ms)}
-                                className="p-2 bg-white rounded-pin border border-hairline text-xs flex items-center justify-between cursor-pointer hover:border-primary transition"
-                              >
-                                <span className="font-mono text-ink">
-                                  {formatMs(gap.start_ms)} → {formatMs(gap.end_ms)}
-                                </span>
-                                <span className="font-bold text-mute">
-                                  {gap.duration_ms}ms gap
-                                </span>
-                              </div>
-                            ))}
-                          </div>
-                        ) : (
-                          <p className="text-xs text-mute italic p-3 bg-white/60 rounded-pin">
-                            Continuous audio pace — zero long silence pauses.
-                          </p>
-                        )}
+                    <h4 className="text-lg font-bold text-ink">
+                      Synchronized Frame &amp; Audio Snapshot
+                    </h4>
+
+                    <p className="text-xs text-mute leading-relaxed">
+                      Every score and structural critique in FrameDNA is anchored to concrete visual or acoustic evidence at this millisecond mark.
+                    </p>
+
+                    <div className="pt-2 flex flex-wrap gap-2 text-xs">
+                      <div className="p-2.5 bg-surface-card rounded-pin border border-hairline">
+                        <span className="text-[10px] font-bold uppercase tracking-wider text-mute block mb-0.5">
+                          Spoken Audio Around Timestamp
+                        </span>
+                        <span className="font-medium text-ink">
+                          {pipelineData.transcript?.words && selectedFrame
+                            ? pipelineData.transcript.words
+                                .filter(
+                                  (w) =>
+                                    Math.abs(w.start_ms - selectedFrame.t_ms) <= 2500 ||
+                                    (w.start_ms <= selectedFrame.t_ms && w.end_ms >= selectedFrame.t_ms)
+                                )
+                                .map((w) => w.w)
+                                .join(" ") || "No dialogue active at this moment."
+                            : "No audio transcript available."}
+                        </span>
                       </div>
 
-                      <div>
-                        <div className="text-xs font-semibold text-ink mb-1">
-                          Scene Transitions ({pipelineData.scenes.length} cuts detected)
+                      {pipelineData.ocr && selectedFrame && (
+                        <div className="p-2.5 bg-surface-card rounded-pin border border-hairline">
+                          <span className="text-[10px] font-bold uppercase tracking-wider text-mute block mb-0.5">
+                            On-Screen Keyframe OCR Text
+                          </span>
+                          <span className="font-medium text-ink">
+                            {pipelineData.ocr
+                              .filter((item) => Math.abs(item.keyframe_ms - selectedFrame.t_ms) <= 1500)
+                              .flatMap((item) => item.texts.map((t) => t.text))
+                              .join(" • ") || "No OCR overlay text detected."}
+                          </span>
                         </div>
-                        <div className="flex flex-wrap gap-1">
-                          {pipelineData.scenes.map((sc, i) => (
-                            <button
-                              key={i}
-                              onClick={() => handleSelectTimestamp(sc.start_ms)}
-                              className="px-2 py-0.5 rounded-full text-[11px] font-mono bg-white border border-hairline text-ink hover:border-primary transition"
-                            >
-                              Cut {sc.scene_index + 1}: {formatMs(sc.start_ms)}
-                            </button>
-                          ))}
-                        </div>
-                      </div>
+                      )}
                     </div>
                   </div>
                 </div>
-              </section>
+
+                {/* TAB 1: EXECUTIVE AUTOPSY */}
+                {activeTab === "autopsy" && (
+                  <div>
+                    {pipelineData.analysis ? (
+                      <ReportViewer
+                        videoId={pipelineData.video_id}
+                        report={pipelineData.analysis}
+                        durationMs={pipelineData.metadata.duration_ms}
+                        onSelectTimestamp={handleSelectTimestamp}
+                        selectedTimestamp={selectedTimestamp}
+                        onOpenStatsDrawer={() => setShowStatsDrawer(true)}
+                      />
+                    ) : (
+                      <div className="p-12 bg-white rounded-pin-lg border border-hairline text-center space-y-4">
+                        <div className="w-14 h-14 rounded-full bg-surface-card flex items-center justify-center text-primary mx-auto shadow-xs">
+                          <Sparkles className="w-7 h-7" />
+                        </div>
+                        <h3 className="text-xl font-bold text-ink">
+                          Autopsy Analysis Engine Ready
+                        </h3>
+                        <p className="text-sm text-mute max-w-md mx-auto">
+                          All media frames, transcript words, and acoustic curves are extracted. Click below to synthesize the 7-score matrix, timestamped evidence, and structural blueprint.
+                        </p>
+                        <button
+                          onClick={handleRunAnalysis}
+                          disabled={isAnalyzing}
+                          className="btn-primary"
+                        >
+                          {isAnalyzing ? "Running Analysis..." : "Generate Autopsy Report Now"}
+                        </button>
+                      </div>
+                    )}
+                  </div>
+                )}
+
+                {/* TAB 2: RAW ASSETS INSPECTOR */}
+                {activeTab === "assets" && (
+                  <section className="bg-white rounded-pin-lg p-8 border border-hairline mb-12 shadow-sm animate-fade-in">
+                    <div className="flex flex-col md:flex-row md:items-center justify-between pb-6 border-b border-hairline gap-4 mb-8">
+                      <div>
+                        <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-semantic-successPale text-semantic-successDeep mb-2">
+                          <CheckCircle2 className="w-3.5 h-3.5" />
+                          <span>Pipeline Completed (100%)</span>
+                        </div>
+                        <h2 className="text-2xl font-bold text-ink">
+                          Extracted Media Assets &amp; Timestamps
+                        </h2>
+                        <p className="text-xs text-mute">
+                          ID: <span className="font-mono text-ink font-semibold">{pipelineData.video_id}</span> • {pipelineData.metadata.duration_s}s duration • {pipelineData.metadata.width}x{pipelineData.metadata.height} @ {pipelineData.metadata.fps}fps
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className="mb-8">
+                      <div className="flex items-center justify-between mb-4">
+                        <h3 className="text-sm font-bold text-ink flex items-center gap-2">
+                          <Film className="w-4 h-4 text-primary" />
+                          <span>1 FPS Extracted Frames ({pipelineData.frames.length} total)</span>
+                        </h3>
+                        <span className="text-xs text-mute">Click any frame to inspect timestamp</span>
+                      </div>
+
+                      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-3 overflow-x-auto pb-2">
+                        {pipelineData.frames.map((frame, idx) => (
+                          <div
+                            key={idx}
+                            onClick={() => handleSelectTimestamp(frame.t_ms)}
+                            className={`card-pin p-1 cursor-pointer transition border-2 ${
+                              selectedFrame?.t_ms === frame.t_ms
+                                ? "border-primary shadow-sm"
+                                : "border-transparent hover:border-stone"
+                            }`}
+                          >
+                            <div className="relative aspect-[9/16] bg-surface-dark rounded-xl overflow-hidden flex items-center justify-center">
+                              <img
+                                src={`http://localhost:8000/storage/thumbs/${pipelineData.video_id}/${frame.t_ms}.jpg`}
+                                alt={`Frame at ${frame.t_ms}ms`}
+                                className="w-full h-full object-cover"
+                                onError={(e) => {
+                                  (e.target as HTMLElement).style.display = "none";
+                                }}
+                              />
+                              <div className="absolute top-2 left-2 pill-overlay text-[10px] py-0.5 px-2">
+                                {formatMs(frame.t_ms)}
+                              </div>
+                              {frame.is_keyframe && (
+                                <div className="absolute bottom-2 right-2 bg-primary text-white text-[9px] font-bold px-1.5 py-0.5 rounded-full">
+                                  Cut
+                                </div>
+                              )}
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  </section>
+                )}
+              </div>
             )}
           </div>
         )}
 
-        {/* 5. Pinterest-style Masonry Showcase Preview */}
-        <section className="mt-12">
-          <div className="flex items-center justify-between mb-8">
-            <div>
-              <h2 className="text-2xl font-bold tracking-tight text-ink">
-                Evidence In Action
+        {/* MODE B: COMPARE STUDIO (Phase 3 Deliverable) */}
+        {appMode === "compare" && (
+          <div className="space-y-8 animate-fade-in">
+            <div className="text-center max-w-3xl mx-auto mb-10">
+              <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-surface-card border border-hairline text-xs font-semibold text-ink mb-4 shadow-xs">
+                <GitCompare className="w-3.5 h-3.5 text-primary" />
+                <span>Phase 3 Feature: Side-by-Side Blueprint Diff Engine</span>
+              </div>
+              <h2 className="text-3xl md:text-5xl font-extrabold text-ink tracking-tight mb-4">
+                Compare Winner vs Flop
               </h2>
-              <p className="text-sm text-mute">
-                Every claim linked to a timestamp and keyframe. Reusable blueprints, zero guesswork.
+              <p className="text-sm md:text-base text-mute">
+                Align narrative beats, score deltas, and pacing velocity. Every claim cites exact timestamps from both clips.
               </p>
             </div>
-            <div className="flex gap-2">
-              <span className="pill-overlay">7 Golden Samples</span>
-              <span className="pill-overlay">100% Evidence Rule</span>
+
+            {/* Compare Input Form Card */}
+            <div className="max-w-3xl mx-auto bg-surface-card rounded-pin-lg p-8 border border-hairline shadow-sm">
+              <form onSubmit={handleRunCompare} className="space-y-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div>
+                    <label className="block text-xs font-bold uppercase tracking-wider text-ink mb-2">
+                      Video A ID (Baseline or Winner)
+                    </label>
+                    <input
+                      type="text"
+                      value={compareVideoIdA}
+                      onChange={(e) => setCompareVideoIdA(e.target.value)}
+                      placeholder="e.g. 7481ba93-..."
+                      className="w-full bg-white border border-stone rounded-xl py-3 px-4 text-xs font-mono text-ink outline-none focus:border-primary transition"
+                      required
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-bold uppercase tracking-wider text-ink mb-2">
+                      Video B ID (Comparison Concept)
+                    </label>
+                    <input
+                      type="text"
+                      value={compareVideoIdB}
+                      onChange={(e) => setCompareVideoIdB(e.target.value)}
+                      placeholder="e.g. 81a942df-..."
+                      className="w-full bg-white border border-stone rounded-xl py-3 px-4 text-xs font-mono text-ink outline-none focus:border-primary transition"
+                      required
+                    />
+                  </div>
+                </div>
+
+                <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-2">
+                  <span className="text-xs text-mute">
+                    Both videos must be ingested and analyzed before running blueprint diff.
+                  </span>
+
+                  <button
+                    type="submit"
+                    disabled={isComparing || !compareVideoIdA || !compareVideoIdB}
+                    className="btn-primary flex items-center gap-2 cursor-pointer disabled:opacity-50"
+                  >
+                    <GitCompare className="w-4 h-4" />
+                    <span>{isComparing ? "Aligning Blueprints..." : "Run Diff Comparison"}</span>
+                  </button>
+                </div>
+              </form>
             </div>
+
+            {/* Render Comparison Report */}
+            {compareReport && (
+              <CompareViewer report={compareReport} />
+            )}
           </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {/* Card 1 */}
-            <div className="card-pin p-5 flex flex-col justify-between">
-              <div>
-                <div className="relative aspect-[9/12] bg-surface-dark rounded-pin overflow-hidden mb-4 flex items-center justify-center">
-                  <div className="absolute top-3 left-3 pill-overlay flex items-center gap-1.5">
-                    <Clock className="w-3 h-3 text-primary" />
-                    <span>00:01.200</span>
-                  </div>
-                  <div className="text-center p-6 text-white/90">
-                    <Play className="w-10 h-10 mx-auto mb-2 text-primary" />
-                    <span className="text-xs uppercase tracking-wider font-bold">Product Hook Beat</span>
-                  </div>
-                </div>
-                <div className="inline-block px-2.5 py-1 rounded-full text-xs font-bold bg-semantic-successPale text-semantic-successDeep mb-2">
-                  Retention +28% vs Niche
-                </div>
-                <h3 className="text-base font-bold text-ink mb-1">
-                  Fast Problem Cut + Visual Shock
-                </h3>
-                <p className="text-xs text-mute leading-relaxed">
-                  Subject introduces tension before dialogue starts, cutting at 1.2s to establish urgency.
-                </p>
-              </div>
-              <div className="mt-4 pt-3 border-t border-hairline flex items-center justify-between text-xs font-semibold text-ink">
-                <span>Hook Score: 92/100</span>
-                <span className="text-primary flex items-center gap-1">Blueprint <ChevronRight className="w-3 h-3" /></span>
-              </div>
-            </div>
-
-            {/* Card 2 */}
-            <div className="card-pin p-5 flex flex-col justify-between">
-              <div>
-                <div className="relative aspect-[9/12] bg-stone/40 rounded-pin overflow-hidden mb-4 flex items-center justify-center">
-                  <div className="absolute top-3 left-3 pill-overlay flex items-center gap-1.5">
-                    <Clock className="w-3 h-3 text-primary" />
-                    <span>00:14.500</span>
-                  </div>
-                  <div className="text-center p-6 text-charcoal">
-                    <Layers className="w-10 h-10 mx-auto mb-2 text-mute" />
-                    <span className="text-xs uppercase tracking-wider font-bold">Mechanism Demo</span>
-                  </div>
-                </div>
-                <div className="inline-block px-2.5 py-1 rounded-full text-xs font-bold bg-primary/10 text-primary mb-2">
-                  Originality Check: 98% Pass
-                </div>
-                <h3 className="text-base font-bold text-ink mb-1">
-                  Split-Screen Texture Comparison
-                </h3>
-                <p className="text-xs text-mute leading-relaxed">
-                  Macro close-up with pacing synced to bass drop, validating product claim without speaking.
-                </p>
-              </div>
-              <div className="mt-4 pt-3 border-t border-hairline flex items-center justify-between text-xs font-semibold text-ink">
-                <span>Clarity Score: 95/100</span>
-                <span className="text-primary flex items-center gap-1">Remix <ChevronRight className="w-3 h-3" /></span>
-              </div>
-            </div>
-
-            {/* Card 3 */}
-            <div className="card-pin p-5 flex flex-col justify-between">
-              <div>
-                <div className="relative aspect-[9/12] bg-surface-dark rounded-pin overflow-hidden mb-4 flex items-center justify-center">
-                  <div className="absolute top-3 left-3 pill-overlay flex items-center gap-1.5">
-                    <Clock className="w-3 h-3 text-primary" />
-                    <span>00:28.000</span>
-                  </div>
-                  <div className="text-center p-6 text-white/90">
-                    <TrendingUp className="w-10 h-10 mx-auto mb-2 text-semantic-successPale" />
-                    <span className="text-xs uppercase tracking-wider font-bold">CTA Framing</span>
-                  </div>
-                </div>
-                <div className="inline-block px-2.5 py-1 rounded-full text-xs font-bold bg-secondary-bg text-ink mb-2">
-                  Sales Potential: High (Estimate)
-                </div>
-                <h3 className="text-base font-bold text-ink mb-1">
-                  Single Flowing Voiceover Script
-                </h3>
-                <p className="text-xs text-mute leading-relaxed">
-                  Direct call-to-action without abrupt transition labels; single continuous audio paragraph.
-                </p>
-              </div>
-              <div className="mt-4 pt-3 border-t border-hairline flex items-center justify-between text-xs font-semibold text-ink">
-                <span>CTA Score: 89/100</span>
-                <span className="text-primary flex items-center gap-1">Audited <ChevronRight className="w-3 h-3" /></span>
-              </div>
-            </div>
-          </div>
-        </section>
+        )}
       </main>
+
+      {/* Global Stats Drawer Modal */}
+      {pipelineData && (
+        <StatsDrawer
+          isOpen={showStatsDrawer}
+          onClose={() => setShowStatsDrawer(false)}
+          videoId={pipelineData.video_id}
+          stats={pipelineData.analysis?.stats || []}
+          onStatsUpdated={handleStatsUpdated}
+        />
+      )}
 
       {/* 6. Clean Footer */}
       <footer className="border-t border-hairline py-8 px-6 bg-white mt-16 text-center text-xs text-mute">

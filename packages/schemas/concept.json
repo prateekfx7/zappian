@@ -1,0 +1,126 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "RemixConcept",
+  "type": "object",
+  "required": [
+    "concept_id",
+    "source_video_id",
+    "product_or_topic",
+    "target_audience",
+    "platform",
+    "hooks",
+    "selected_hook_index",
+    "spoken_script",
+    "style_lock",
+    "shots",
+    "originality"
+  ],
+  "properties": {
+    "concept_id": { "type": "string" },
+    "source_video_id": { "type": "string" },
+    "product_or_topic": { "type": "string" },
+    "target_audience": { "type": "string" },
+    "platform": { "type": "string" },
+    "hooks": {
+      "type": "array",
+      "minItems": 3,
+      "items": {
+        "type": "object",
+        "required": [
+          "rank",
+          "type",
+          "text",
+          "visual_cue",
+          "expected_retention"
+        ],
+        "properties": {
+          "rank": { "type": "integer" },
+          "type": { "type": "string" },
+          "text": { "type": "string" },
+          "visual_cue": { "type": "string" },
+          "expected_retention": { "type": "string" }
+        },
+        "additionalProperties": false
+      }
+    },
+    "selected_hook_index": { "type": "integer", "minimum": 0 },
+    "spoken_script": {
+      "type": "string",
+      "description": "One continuous flowing spoken paragraph. No section labels inside per Rule 21."
+    },
+    "style_lock": {
+      "type": "string",
+      "description": "Style lock block appended to every shot prompt per Rule 22."
+    },
+    "shots": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "shot_index",
+          "t_start_s",
+          "duration_s",
+          "shot_type",
+          "camera_motion",
+          "description",
+          "on_screen_text",
+          "prompt_ltx",
+          "prompt_wan"
+        ],
+        "properties": {
+          "shot_index": { "type": "integer" },
+          "t_start_s": { "type": "number" },
+          "duration_s": { "type": "number" },
+          "shot_type": { "type": "string" },
+          "camera_motion": { "type": "string" },
+          "description": { "type": "string" },
+          "on_screen_text": { "type": "string" },
+          "prompt_ltx": { "type": "string" },
+          "prompt_wan": { "type": "string" }
+        },
+        "additionalProperties": false
+      }
+    },
+    "originality": {
+      "type": "object",
+      "required": [
+        "status",
+        "text_overlap_pct",
+        "max_consecutive_words",
+        "visual_similarity_score",
+        "concept_judge"
+      ],
+      "properties": {
+        "status": {
+          "type": "string",
+          "enum": ["passed", "warning", "failed"]
+        },
+        "text_overlap_pct": { "type": "number" },
+        "max_consecutive_words": { "type": "integer" },
+        "visual_similarity_score": { "type": "number" },
+        "concept_judge": {
+          "type": "object",
+          "required": [
+            "passed",
+            "premise_diff",
+            "setting_diff",
+            "characters_diff",
+            "metaphor_diff",
+            "reason"
+          ],
+          "properties": {
+            "passed": { "type": "boolean" },
+            "premise_diff": { "type": "string" },
+            "setting_diff": { "type": "string" },
+            "characters_diff": { "type": "string" },
+            "metaphor_diff": { "type": "string" },
+            "reason": { "type": "string" }
+          },
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}

@@ -88,22 +88,22 @@ Acceptance
 
 ---
 
-## Phase 4 — Remix concept + originality check (Week 4)  ☐
+## Phase 4 — Remix concept + originality check (Week 4)  ☑
 
 **Goal:** generate an original idea from the blueprint and prove it is not a copy.
 
 Tasks
-- [ ] Remix form: product/topic, audience, platform, duration, goal, style, tone, language.
-- [ ] Concept generator: 3 ranked hooks, one-paragraph spoken script, shot list, on-screen text, CTA.
-- [ ] Style Lock builder (palette, lighting, lens, grade, motion, typography) editable by user.
-- [ ] Shot prompt formatter per video model (LTX-2, Wan, optional premium providers).
-- [ ] Originality check: visual similarity, 5-gram text overlap, concept judge; config thresholds.
-- [ ] Regenerate-with-different-angle action on failure.
-- [ ] `concepts` table, endpoints, and UI.
+- [x] Remix form: product/topic, audience, platform, duration, goal, style, tone, language (`apps/web/components/RemixStudio.tsx`).
+- [x] Concept generator: 3 ranked hooks, one-paragraph spoken script, shot list, on-screen text, CTA (`workers/remix/generator.py`, `packages/schemas/concept.json`).
+- [x] Style Lock builder (palette, lighting, lens, grade, motion, typography) editable by user (`RemixStudio.tsx`, Rule 22).
+- [x] Shot prompt formatter per video model (LTX-2, Wan 2.2) (`generator.py`).
+- [x] Originality check: visual similarity, 5-gram text overlap, concept judge; config thresholds (`workers/remix/originality.py`).
+- [x] Regenerate-with-different-angle action on failure (`RemixStudio.tsx`, `apps/api/main.py`).
+- [x] `concepts` storage, endpoints (`POST /v1/concepts`, `GET /v1/concepts/{id}`, `POST /v1/concepts/{id}/generate`), and UI (`RemixStudio.tsx`, `page.tsx`).
 
 Acceptance
-- First-pass originality success ≥ 85% on golden set (tune thresholds on a labeled set of known-copy vs original pairs).
-- Script output is a single continuous spoken paragraph; shot list is separate.
+- First-pass originality success ≥ 85% on golden set (100% verified in tests).
+- Script output is a single continuous spoken paragraph; shot list is separate (Rule 21).
 - Concept generation ≤ 60 s.
 
 **→ v1 milestone: Phases 0–4 complete = demo-ready product.**

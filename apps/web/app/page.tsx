@@ -26,10 +26,12 @@ import {
   ArrowRight,
   GitCompare,
   Trophy,
+  Wand2,
 } from "lucide-react";
 import { ReportViewer, AnalysisReport } from "../components/ReportViewer";
 import { CompareViewer, CompareReport } from "../components/CompareViewer";
 import { StatsDrawer } from "../components/StatsDrawer";
+import { RemixStudio } from "../components/RemixStudio";
 
 interface PipelineProgress {
   stage: string;
@@ -83,7 +85,7 @@ interface PipelineData {
 }
 
 export default function Home() {
-  const [appMode, setAppMode] = useState<"autopsy" | "compare">("autopsy");
+  const [appMode, setAppMode] = useState<"autopsy" | "compare" | "remix">("autopsy");
   const [sourceType, setSourceType] = useState<"upload" | "youtube">("upload");
   const [videoUrl, setVideoUrl] = useState("");
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
@@ -99,7 +101,7 @@ export default function Home() {
   const [selectedTimestamp, setSelectedTimestamp] = useState<number | null>(null);
   const [activeTab, setActiveTab] = useState<"autopsy" | "assets">("autopsy");
 
-  // Phase 3 State: Stats Drawer & Compare Engine
+  // Phase 3 & 4 State: Stats Drawer, Compare Engine & Remix
   const [showStatsDrawer, setShowStatsDrawer] = useState(false);
   const [compareVideoIdA, setCompareVideoIdA] = useState("");
   const [compareVideoIdB, setCompareVideoIdB] = useState("");
@@ -393,10 +395,16 @@ export default function Home() {
               }`}
             >
               <GitCompare className="w-3.5 h-3.5" />
-              <span>Compare (Phase 3)</span>
+              <span>Compare</span>
             </button>
-            <button className="px-4 py-2 rounded-full font-semibold text-sm text-ink hover:bg-secondary-bg transition">
-              Blueprints
+            <button
+              onClick={() => setAppMode("remix")}
+              className={`px-4 py-2 rounded-full font-semibold text-sm transition flex items-center gap-1.5 ${
+                appMode === "remix" ? "bg-ink text-white" : "text-ink hover:bg-secondary-bg"
+              }`}
+            >
+              <Wand2 className="w-3.5 h-3.5" />
+              <span>Remix (Phase 4)</span>
             </button>
           </div>
         </div>
@@ -436,7 +444,7 @@ export default function Home() {
             <div className="text-center max-w-3xl mx-auto mb-12">
               <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-surface-card border border-hairline text-xs font-semibold text-ink mb-6 shadow-xs">
                 <Sparkles className="w-3.5 h-3.5 text-primary" />
-                <span>Phase 3 Live — Stats Ingestion, Source Labels &amp; Compare Diff</span>
+                <span>Phase 4 Live — Originality Audit &amp; Structure Remix Studio</span>
               </div>
 
               <h1 className="text-4xl md:text-6xl font-extrabold text-ink tracking-display leading-[1.1] mb-6">
@@ -631,7 +639,7 @@ export default function Home() {
                       }`}
                     >
                       <Sparkles className="w-3.5 h-3.5" />
-                      <span>Executive Autopsy (Phase 2)</span>
+                      <span>Executive Autopsy</span>
                     </button>
                     <button
                       onClick={() => setActiveTab("assets")}
@@ -642,7 +650,7 @@ export default function Home() {
                       }`}
                     >
                       <Film className="w-3.5 h-3.5" />
-                      <span>Raw Pipeline Assets (Phase 1)</span>
+                      <span>Raw Assets</span>
                     </button>
                   </div>
 
@@ -652,7 +660,7 @@ export default function Home() {
                       className="px-3.5 py-2 rounded-full text-xs font-bold bg-white hover:bg-secondary-bg border border-hairline text-ink flex items-center gap-1.5 transition cursor-pointer"
                     >
                       <BarChart3 className="w-3.5 h-3.5 text-primary" />
-                      <span>Manage Stats ({pipelineData.analysis?.stats?.length || 0})</span>
+                      <span>Stats ({pipelineData.analysis?.stats?.length || 0})</span>
                     </button>
 
                     <button
@@ -660,10 +668,18 @@ export default function Home() {
                         setCompareVideoIdA(pipelineData.video_id);
                         setAppMode("compare");
                       }}
-                      className="px-3.5 py-2 rounded-full text-xs font-bold bg-ink text-white hover:bg-ink/80 flex items-center gap-1.5 transition cursor-pointer"
+                      className="px-3.5 py-2 rounded-full text-xs font-bold bg-white hover:bg-secondary-bg border border-hairline text-ink flex items-center gap-1.5 transition cursor-pointer"
                     >
                       <GitCompare className="w-3.5 h-3.5" />
-                      <span>Compare Diff</span>
+                      <span>Compare</span>
+                    </button>
+
+                    <button
+                      onClick={() => setAppMode("remix")}
+                      className="btn-primary text-xs flex items-center gap-1.5 cursor-pointer shadow-xs"
+                    >
+                      <Wand2 className="w-3.5 h-3.5" />
+                      <span>Remix Concept</span>
                     </button>
                   </div>
                 </div>
@@ -854,7 +870,7 @@ export default function Home() {
           </div>
         )}
 
-        {/* MODE B: COMPARE STUDIO (Phase 3 Deliverable) */}
+        {/* MODE B: COMPARE STUDIO (Phase 3) */}
         {appMode === "compare" && (
           <div className="space-y-8 animate-fade-in">
             <div className="text-center max-w-3xl mx-auto mb-10">
@@ -870,7 +886,6 @@ export default function Home() {
               </p>
             </div>
 
-            {/* Compare Input Form Card */}
             <div className="max-w-3xl mx-auto bg-surface-card rounded-pin-lg p-8 border border-hairline shadow-sm">
               <form onSubmit={handleRunCompare} className="space-y-6">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -920,11 +935,17 @@ export default function Home() {
               </form>
             </div>
 
-            {/* Render Comparison Report */}
             {compareReport && (
               <CompareViewer report={compareReport} />
             )}
           </div>
+        )}
+
+        {/* MODE C: REMIX CONCEPT STUDIO (Phase 4) */}
+        {appMode === "remix" && (
+          <RemixStudio
+            sourceVideoId={pipelineData?.video_id || compareVideoIdA || "g1_product_ad"}
+          />
         )}
       </main>
 
@@ -939,7 +960,7 @@ export default function Home() {
         />
       )}
 
-      {/* 6. Clean Footer */}
+      {/* Clean Footer */}
       <footer className="border-t border-hairline py-8 px-6 bg-white mt-16 text-center text-xs text-mute">
         <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
           <div className="flex items-center gap-2">

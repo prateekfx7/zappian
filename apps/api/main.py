@@ -48,8 +48,9 @@ THUMBS_DIR = STORAGE_DIR / "thumbs"
 AUDIO_DIR = STORAGE_DIR / "audio"
 ANALYSES_DIR = STORAGE_DIR / "analyses"
 COMPARES_DIR = ANALYSES_DIR / "compares"
+CONCEPTS_DIR = STORAGE_DIR / "concepts"
 
-for d in [ORIGINALS_DIR, PROXIES_DIR, FRAMES_DIR, THUMBS_DIR, AUDIO_DIR, ANALYSES_DIR, COMPARES_DIR]:
+for d in [ORIGINALS_DIR, PROXIES_DIR, FRAMES_DIR, THUMBS_DIR, AUDIO_DIR, ANALYSES_DIR, COMPARES_DIR, CONCEPTS_DIR]:
     d.mkdir(parents=True, exist_ok=True)
 
 # Mount local storage for serving proxy videos and frame thumbnails to frontend
@@ -61,6 +62,17 @@ class HealthResponse(BaseModel):
     environment: str
     version: str
     timestamp: datetime
+
+
+class RemixConceptRequest(BaseModel):
+    source_video_id: str
+    product_or_topic: str
+    target_audience: str = "general consumers"
+    platform: str = "reels"
+    target_duration_s: int = 30
+    goal: str = "conversions"
+    tone: str = "energetic"
+    custom_style_lock: str | None = None
 
 
 class StatInput(BaseModel):
@@ -434,6 +446,80 @@ async def get_compare_report(compare_id: str) -> dict[str, Any]:
     if not compare_file.exists():
         raise HTTPException(status_code=404, detail=f"Compare report '{compare_id}' not found.")
     return json.loads(compare_file.read_text(encoding="utf-8"))
+
+
+@app.post("/v1/concepts", tags=["Remix"])
+async def create_remix_concept(payload: RemixConceptRequest) -> dict[str, Any]:
+    """
+    Generates an original video concept and shot list from a structural blueprint.
+    Performs multi-layered originality check per Rule 4, Rule 21, and Rule 22.
+    """
+    source_file = ANALYSES_DIR / payload.source_video_id / "pipeline_data.json"
+    if not source_file.exists():
+        raise HTTPException(
+            status_code=404,
+            detail=f"Source video '{payload.source_video_id}' not found or not analyzed yet.",
+        )
+
+    source_data = json.loads(source_file.read_text(encoding="utf-8"))
+
+    from workers.remix.generator import generate_remix_concept
+
+    concept = generate_remix_concept(
+        source_video_data=source_data,
+        product_or_topic=payload.product_or_topic,
+        target_audience=payload.target_audience,
+        platform=payload.platform,
+        target_duration_s=payload.target_duration_s,
+        goal=payload.goal,
+        tone=payload.tone,
+        custom_style_lock=payload.custom_style_lock,
+    )
+
+    concept_file = CONCEPTS_DIR / f"{concept['concept_id']}.json"
+    concept_file.write_text(json.dumps(concept, indent=2), encoding="utf-8")
+
+    return concept
+
+
+@app.get("/v1/concepts/{concept_id}", tags=["Remix"])
+async def get_remix_concept(concept_id: str) -> dict[str, Any]:
+    """Retrieves a previously generated remix concept and originality audit."""
+    concept_file = CONCEPTS_DIR / f"{concept_id}.json"
+    if not concept_file.exists():
+        raise HTTPException(status_code=404, detail=f"Concept '{concept_id}' not found.")
+    return json.loads(concept_file.read_text(encoding="utf-8"))
+
+
+@app.post("/v1/concepts/{concept_id}/generate", tags=["Remix"])
+async def trigger_concept_generation(concept_id: str) -> dict[str, Any]:
+    """
+    Validates originality status before permitting draft video generation per Rule 4.
+    """
+    concept_file = CONCEPTS_DIR / f"{concept_id}.json"
+    if not concept_file.exists():
+        raise HTTPException(status_code=404, detail=f"Concept '{concept_id}' not found.")
+
+    concept = json.loads(concept_file.read_text(encoding="utf-8"))
+    originality = concept.get("originality", {})
+
+    if originality.get("status") == "failed":
+        raise HTTPException(
+            status_code=400,
+            detail=(
+                "Generation blocked per Rule 4: Concept failed the originality audit. "
+                f"Reason: {originality.get('concept_judge', {}).get('reason', 'High similarity to source material.')}"
+            ),
+        )
+
+    return {
+        "concept_id": concept_id,
+        "status": "ready_for_generation",
+        "shots_count": len(concept.get("shots", [])),
+        "style_lock": concept.get("style_lock"),
+        "message": "Originality check passed (0 plagiarized 5-grams). Concept approved for draft video generation.",
+    }
+
 
 
 

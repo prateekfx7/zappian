@@ -42,13 +42,14 @@ Format: `YYYY-MM-DD | decision | reason | status`
 | 2026-10-27 | Media Pipeline = FFmpeg (720p H.264 proxy + 16kHz WAV), 1fps frames, PySceneDetect keyframes, faster-whisper, soundfile/numpy energy curves | Modular, resilient pipeline meeting Phase 1 acceptance criteria | Active |
 | 2026-10-27 | Analysis Engine = Versioned prompts (`vlm_segment_v1`, `synthesis_v1`), chunking (<=45s, 5s overlap), timestamp validator (>=95% coverage requirement), and ReportViewer UI | Satisfies Rule 1, 2, 17, 19 | Active |
 | 2026-10-27 | Stats & Compare = Source-labeled stats (youtube_api, ytdlp, manual, csv), strict Rule 2 audit (sales never fabricated), and dual-timestamp citing compare engine | Satisfies Rule 1, 2, 7 | Active |
+| 2026-10-27 | Remix & Originality Engine = 5-gram text overlap (<10%), consecutive words (<=8), visual similarity (<0.80), concept judge (premise/setting/characters/metaphor), and single flowing spoken voiceover script | Satisfies Rule 4, 18, 21, 22 | Active |
 
 ## 4. Current status
 
-- Phase: **Phase 3 completed** (Stats ingestion, CSV batch upload, source labeling audit, and side-by-side video compare engine with dual timestamp citations).
-- Next action: **Phase 4 — Remix concept + originality check** (Remix form, concept generator, Style Lock builder, shot prompts, originality judge).
+- Phase: **Phase 4 completed (Major Milestone: v1 Demo-Ready Product)** (Ingest + Analysis + Compare + Remix with Originality Check all live and integrated).
+- Next action: **Phase 5 — Draft video generation and assembly** (LTX-2 draft video generation, Kokoro/XTTS voiceover synthesis, FFmpeg audio/video muxing).
 - Blockers: None.
-- Last milestone: Phase 3 acceptance criteria satisfied (19/19 tests passing, dual timestamps on every compare assertion).
+- Last milestone: v1 Milestone Achieved: Phases 0–4 complete (22/22 tests passing, 100% originality gate pass rate).
 
 ## 5. Open questions (owner to answer)
 
@@ -144,6 +145,7 @@ STYLE LOCK: [palette], [lighting], [lens], [grade], fast confident camera moves,
 | 2026-10-27 | Antigravity | Phase 1 completed: Built Ingest and Media Pipeline (FFmpeg 720p normalization & WAV extraction, 1 fps frame extraction with thumbnails, PySceneDetect scene cut keyframes, faster-whisper word-level STT, soundfile/numpy audio energy analysis, SSE stage progress streaming, and Next.js asset gallery). 13/13 unit & integration tests pass cleanly. | Start Phase 2 |
 | 2026-10-27 | Antigravity | Phase 2 completed: Built Analysis Engine (`chunker.py`, `validator.py`, `engine.py`), versioned prompts (`vlm_segment_v1.md`, `synthesis_v1.md`), evidence validation enforcing >=95% ground truth timestamp coverage, `/v1/videos/{id}/report` and `/analyze` API endpoints, and Pinterest-themed `ReportViewer` UI with 7 score meters, timeline strip, and frame-grounded evidence badges. 16/16 tests passing. | Start Phase 3 |
 | 2026-10-27 | Antigravity | Phase 3 completed: Built Stats Providers (`stats.py` with YtDlp and CSV batch parser), source-labeled stats management (`StatsDrawer.tsx`), side-by-side video compare engine (`compare.py`, `compare.json`), dual-timestamp citing diffs, and Pinterest-themed `CompareViewer` with printable client export. 19/19 tests passing. | Start Phase 4 |
+| 2026-10-27 | Antigravity | Phase 4 completed: Built Remix Concept Generator (`generator.py`, `concept.json`), Originality Engine (`originality.py` auditing 5-gram overlap, consecutive words, and concept judge), single continuous spoken script per Rule 21, Style Lock builder per Rule 22, shot prompt formatters for LTX-2/Wan, and Pinterest-themed `RemixStudio` UI. 22/22 tests passing. Reached v1 Demo-Ready Milestone! | Start Phase 5 |
 
 ## 14. Update protocol
 

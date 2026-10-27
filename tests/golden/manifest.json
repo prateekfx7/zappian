@@ -1,0 +1,40 @@
+{
+  "version": "1.0",
+  "videos": [
+    {
+      "id": "g1",
+      "filename": "g1_product_ad.mp4",
+      "category": "product_ad",
+      "description": "D2C physical product ad with immediate problem hook and demo",
+      "expected_beats": ["hook", "problem", "demo", "offer", "cta"]
+    },
+    {
+      "id": "g2",
+      "filename": "g2_ugc_reel.mp4",
+      "category": "ugc_reel",
+      "description": "Selfie camera UGC style testimonial with high emotional energy",
+      "expected_beats": ["hook", "problem", "social_proof", "cta"]
+    },
+    {
+      "id": "g3",
+      "filename": "g3_talking_head.mp4",
+      "category": "talking_head",
+      "description": "Creator educational talking head with fast cuts and punch-ins",
+      "expected_beats": ["hook", "insight", "proof", "cta"]
+    },
+    {
+      "id": "g4",
+      "filename": "g4_screen_demo.mp4",
+      "category": "screen_demo",
+      "description": "SaaS application UI recording with cursor motion and voiceover",
+      "expected_beats": ["hook", "demo", "proof", "cta"]
+    },
+    {
+      "id": "g5",
+      "filename": "g5_music_edit.mp4",
+      "category": "music_edit",
+      "description": "Music-synced rhythmic montage with text cards and fast cuts",
+      "expected_beats": ["hook", "transition", "demo", "cta"]
+    }
+  ]
+}

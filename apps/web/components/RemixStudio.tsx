@@ -16,6 +16,9 @@ import {
   AlertTriangle,
   Lightbulb,
   CheckCircle2,
+  ChevronDown,
+  ChevronUp,
+  SlidersHorizontal,
 } from "lucide-react";
 import { DraftPlayer, DraftData } from "./DraftPlayer";
 import { API_BASE_URL } from "../lib/api";
@@ -76,6 +79,7 @@ export function RemixStudio({ sourceVideoId, onGenerationReady }: RemixStudioPro
   const [goal, setGoal] = useState("conversions");
   const [tone, setTone] = useState("energetic");
   const [customStyleLock, setCustomStyleLock] = useState("");
+  const [showAdvancedOptions, setShowAdvancedOptions] = useState(false);
 
   const [isGenerating, setIsGenerating] = useState(false);
   const [concept, setConcept] = useState<RemixConcept | null>(null);
@@ -214,9 +218,10 @@ export function RemixStudio({ sourceVideoId, onGenerationReady }: RemixStudioPro
         <form onSubmit={handleGenerateConcept} className="space-y-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
-              <label className="block text-xs font-bold uppercase tracking-wider text-ink mb-2">
-                New Product or Topic to Sell
+              <label className="block text-xs font-bold uppercase tracking-wider text-ink mb-1.5">
+                What is your product or service?
               </label>
+              <p className="text-[11px] text-mute mb-2">The offering you want to advertise in this new video</p>
               <input
                 type="text"
                 value={productOrTopic}
@@ -228,9 +233,10 @@ export function RemixStudio({ sourceVideoId, onGenerationReady }: RemixStudioPro
             </div>
 
             <div>
-              <label className="block text-xs font-bold uppercase tracking-wider text-ink mb-2">
-                Target Audience &amp; Persona
+              <label className="block text-xs font-bold uppercase tracking-wider text-ink mb-1.5">
+                Who is your target customer?
               </label>
+              <p className="text-[11px] text-mute mb-2">Their persona, daily pain points, or interests</p>
               <input
                 type="text"
                 value={targetAudience}
@@ -241,82 +247,118 @@ export function RemixStudio({ sourceVideoId, onGenerationReady }: RemixStudioPro
             </div>
           </div>
 
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-            <div>
-              <label className="block text-[10px] font-bold uppercase tracking-wider text-mute mb-1">
-                Platform
-              </label>
-              <select
-                value={platform}
-                onChange={(e) => setPlatform(e.target.value as any)}
-                className="w-full bg-surface-card border border-stone rounded-xl py-2 px-3 text-xs text-ink outline-none focus:border-primary font-medium"
-              >
-                <option value="reels">Instagram Reels (9:16)</option>
-                <option value="tiktok">TikTok (9:16)</option>
-                <option value="youtube_shorts">YouTube Shorts (9:16)</option>
-              </select>
-            </div>
+          {/* Collapsible Fine-Tuning Drawer */}
+          <div className="border border-hairline rounded-xl overflow-hidden bg-secondary-bg/30">
+            <button
+              type="button"
+              onClick={() => setShowAdvancedOptions(!showAdvancedOptions)}
+              className="w-full px-4 py-2.5 flex items-center justify-between text-xs font-bold text-mute hover:text-ink transition cursor-pointer"
+            >
+              <span className="flex items-center gap-2">
+                <SlidersHorizontal className="w-3.5 h-3.5" />
+                <span>Fine-Tuning Options (Platform, Duration, Tone, Goal)</span>
+              </span>
+              {showAdvancedOptions ? (
+                <ChevronUp className="w-4 h-4" />
+              ) : (
+                <ChevronDown className="w-4 h-4" />
+              )}
+            </button>
 
-            <div>
-              <label className="block text-[10px] font-bold uppercase tracking-wider text-mute mb-1">
-                Duration
-              </label>
-              <select
-                value={durationS}
-                onChange={(e) => setDurationS(parseInt(e.target.value))}
-                className="w-full bg-surface-card border border-stone rounded-xl py-2 px-3 text-xs text-ink outline-none focus:border-primary font-medium"
-              >
-                <option value={15}>15 Seconds (Rapid)</option>
-                <option value={30}>30 Seconds (Standard)</option>
-                <option value={45}>45 Seconds (Deep Demo)</option>
-                <option value={60}>60 Seconds (Full Pitch)</option>
-              </select>
-            </div>
+            {showAdvancedOptions && (
+              <div className="p-4 pt-1 border-t border-hairline/60 space-y-4 animate-fade-in bg-white">
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+                  <div>
+                    <label className="block text-[10px] font-bold uppercase tracking-wider text-mute mb-1">
+                      Platform
+                    </label>
+                    <select
+                      value={platform}
+                      onChange={(e) => setPlatform(e.target.value as any)}
+                      className="w-full bg-surface-card border border-stone rounded-xl py-2 px-3 text-xs text-ink outline-none focus:border-primary font-medium"
+                    >
+                      <option value="reels">Instagram Reels (9:16)</option>
+                      <option value="tiktok">TikTok (9:16)</option>
+                      <option value="youtube_shorts">YouTube Shorts (9:16)</option>
+                    </select>
+                  </div>
 
-            <div>
-              <label className="block text-[10px] font-bold uppercase tracking-wider text-mute mb-1">
-                Primary Goal
-              </label>
-              <select
-                value={goal}
-                onChange={(e) => setGoal(e.target.value)}
-                className="w-full bg-surface-card border border-stone rounded-xl py-2 px-3 text-xs text-ink outline-none focus:border-primary font-medium"
-              >
-                <option value="conversions">Direct Sales / Conversions</option>
-                <option value="awareness">Brand Viral Awareness</option>
-                <option value="lead_gen">Waitlist / Lead Gen</option>
-              </select>
-            </div>
+                  <div>
+                    <label className="block text-[10px] font-bold uppercase tracking-wider text-mute mb-1">
+                      Duration
+                    </label>
+                    <select
+                      value={durationS}
+                      onChange={(e) => setDurationS(parseInt(e.target.value))}
+                      className="w-full bg-surface-card border border-stone rounded-xl py-2 px-3 text-xs text-ink outline-none focus:border-primary font-medium"
+                    >
+                      <option value={15}>15 Seconds (Rapid)</option>
+                      <option value={30}>30 Seconds (Standard)</option>
+                      <option value={45}>45 Seconds (Deep Demo)</option>
+                      <option value={60}>60 Seconds (Full Pitch)</option>
+                    </select>
+                  </div>
 
-            <div>
-              <label className="block text-[10px] font-bold uppercase tracking-wider text-mute mb-1">
-                Tone &amp; Vibe
-              </label>
-              <select
-                value={tone}
-                onChange={(e) => setTone(e.target.value)}
-                className="w-full bg-surface-card border border-stone rounded-xl py-2 px-3 text-xs text-ink outline-none focus:border-primary font-medium"
-              >
-                <option value="energetic">Energetic &amp; Snappy</option>
-                <option value="minimalist">Minimalist &amp; Clean</option>
-                <option value="humorous">Humorous &amp; Relatable</option>
-                <option value="premium">Ultra Premium &amp; Luxury</option>
-              </select>
-            </div>
+                  <div>
+                    <label className="block text-[10px] font-bold uppercase tracking-wider text-mute mb-1">
+                      Primary Goal
+                    </label>
+                    <select
+                      value={goal}
+                      onChange={(e) => setGoal(e.target.value)}
+                      className="w-full bg-surface-card border border-stone rounded-xl py-2 px-3 text-xs text-ink outline-none focus:border-primary font-medium"
+                    >
+                      <option value="conversions">Direct Sales / Conversions</option>
+                      <option value="awareness">Brand Viral Awareness</option>
+                      <option value="lead_gen">Waitlist / Lead Gen</option>
+                    </select>
+                  </div>
+
+                  <div>
+                    <label className="block text-[10px] font-bold uppercase tracking-wider text-mute mb-1">
+                      Tone &amp; Vibe
+                    </label>
+                    <select
+                      value={tone}
+                      onChange={(e) => setTone(e.target.value)}
+                      className="w-full bg-surface-card border border-stone rounded-xl py-2 px-3 text-xs text-ink outline-none focus:border-primary font-medium"
+                    >
+                      <option value="energetic">Energetic &amp; Snappy</option>
+                      <option value="minimalist">Minimalist &amp; Clean</option>
+                      <option value="humorous">Humorous &amp; Relatable</option>
+                      <option value="premium">Ultra Premium &amp; Luxury</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-[10px] font-bold uppercase tracking-wider text-mute mb-1">
+                    Custom Style Lock (Optional Prompt Prefix)
+                  </label>
+                  <input
+                    type="text"
+                    value={customStyleLock}
+                    onChange={(e) => setCustomStyleLock(e.target.value)}
+                    placeholder="e.g. Crisp 4K cinematic lighting, macro shallow depth of field, warm morning aesthetic"
+                    className="w-full bg-surface-card border border-stone rounded-xl py-2 px-3 text-xs text-ink outline-none focus:border-primary font-medium"
+                  />
+                </div>
+              </div>
+            )}
           </div>
 
           <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-2 border-t border-hairline">
             <span className="text-xs text-mute">
-              Reuses pacing and psychological beat triggers only. 100% original narrative and footage.
+              Reuses winning pacing and beat triggers. 100% original narrative &amp; spoken script.
             </span>
 
             <button
               type="submit"
               disabled={isGenerating || !productOrTopic.trim()}
-              className="btn-primary flex items-center gap-2 cursor-pointer disabled:opacity-50"
+              className="btn-primary flex items-center gap-2 cursor-pointer disabled:opacity-50 text-sm font-bold py-3 px-6 shadow-sm hover:shadow"
             >
-              <Sparkles className="w-4 h-4" />
-              <span>{isGenerating ? "Synthesizing Original Concept..." : "Generate Remix Concept"}</span>
+              <Sparkles className="w-4 h-4 text-amber-300" />
+              <span>{isGenerating ? "Writing Original Script & Shots..." : "⚡ 1-Click Remix (Write Original Script)"}</span>
             </button>
           </div>
 

@@ -32,6 +32,7 @@ import { ReportViewer, AnalysisReport } from "../components/ReportViewer";
 import { CompareViewer, CompareReport } from "../components/CompareViewer";
 import { StatsDrawer } from "../components/StatsDrawer";
 import { RemixStudio } from "../components/RemixStudio";
+import { StepExplainerCard } from "../components/StepExplainerCard";
 import { API_BASE_URL } from "../lib/api";
 
 interface PipelineProgress {
@@ -372,40 +373,43 @@ export default function Home() {
         <div className="flex items-center gap-6">
           <div
             onClick={() => setAppMode("autopsy")}
-            className="flex items-center gap-2 cursor-pointer"
+            className="flex items-center gap-2.5 cursor-pointer"
           >
-            <div className="w-9 h-9 rounded-full bg-primary flex items-center justify-center text-white font-black text-xl shadow-sm">
-              F
+            <div className="w-9 h-9 rounded-full bg-primary flex items-center justify-center text-white font-black text-lg shadow-sm">
+              R
             </div>
-            <span className="font-bold text-xl tracking-tight text-ink">FrameDNA</span>
+            <div>
+              <span className="font-extrabold text-xl tracking-tight text-ink block leading-none">ReelBrain</span>
+              <span className="text-[10px] text-mute font-medium block">AI Video Analyst</span>
+            </div>
           </div>
 
           <div className="hidden md:flex items-center gap-2">
             <button
               onClick={() => setAppMode("autopsy")}
-              className={`px-4 py-2 rounded-full font-semibold text-sm transition ${
+              className={`px-4 py-2 rounded-full font-bold text-xs transition cursor-pointer ${
                 appMode === "autopsy" ? "bg-ink text-white" : "text-ink hover:bg-secondary-bg"
               }`}
             >
-              Autopsy
+              1. Video Autopsy
             </button>
             <button
               onClick={() => setAppMode("compare")}
-              className={`px-4 py-2 rounded-full font-semibold text-sm transition flex items-center gap-1.5 ${
+              className={`px-4 py-2 rounded-full font-bold text-xs transition flex items-center gap-1.5 cursor-pointer ${
                 appMode === "compare" ? "bg-ink text-white" : "text-ink hover:bg-secondary-bg"
               }`}
             >
               <GitCompare className="w-3.5 h-3.5" />
-              <span>Compare</span>
+              <span>2. Compare Ads</span>
             </button>
             <button
               onClick={() => setAppMode("remix")}
-              className={`px-4 py-2 rounded-full font-semibold text-sm transition flex items-center gap-1.5 ${
+              className={`px-4 py-2 rounded-full font-bold text-xs transition flex items-center gap-1.5 cursor-pointer ${
                 appMode === "remix" ? "bg-ink text-white" : "text-ink hover:bg-secondary-bg"
               }`}
             >
               <Wand2 className="w-3.5 h-3.5" />
-              <span>Remix &amp; Draft (Phases 4-5)</span>
+              <span>3. 1-Click Remix</span>
             </button>
           </div>
         </div>
@@ -442,163 +446,169 @@ export default function Home() {
         {/* MODE A: AUTOPSY ENGINE */}
         {appMode === "autopsy" && (
           <div>
-            <div className="text-center max-w-3xl mx-auto mb-12">
-              <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-surface-card border border-hairline text-xs font-semibold text-ink mb-6 shadow-xs">
+            <div className="text-center max-w-3xl mx-auto mb-10">
+              <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-surface-card border border-hairline text-xs font-bold text-ink mb-4 shadow-xs">
                 <Sparkles className="w-3.5 h-3.5 text-primary" />
-                <span>Phase 4 Live — Originality Audit &amp; Structure Remix Studio</span>
+                <span>ReelBrain • AI Video Analyst for Reels &amp; TikTok</span>
               </div>
 
-              <h1 className="text-4xl md:text-6xl font-extrabold text-ink tracking-display leading-[1.1] mb-6">
-                Autopsy any viral video. <br />
-                <span className="text-primary">Extract the structure</span> frame by frame.
+              <h1 className="text-4xl md:text-5xl font-extrabold text-ink tracking-display leading-[1.15] mb-4">
+                Autopsy any viral reel. <br />
+                <span className="text-primary">See why it hooks people.</span>
               </h1>
 
-              <p className="text-lg text-mute font-normal leading-relaxed">
-                Proof, a diff, and a rebuild. Frame-by-frame breakdown explaining <em>why</em> it works
-                with timestamped evidence, verified source metrics, and side-by-side comparison.
+              <p className="text-base md:text-lg text-mute font-normal max-w-2xl mx-auto leading-relaxed">
+                Watch videos frame by frame. Get a 3-line autopsy, exact scroll-stopping timestamps,
+                and a 1-click original script for your brand.
               </p>
             </div>
 
-            {/* Ingest Card */}
-            <div className="max-w-2xl mx-auto bg-surface-card rounded-pin-lg p-8 border border-hairline/80 shadow-sm mb-12">
-              <div className="flex items-center justify-between mb-6">
-                <h2 className="text-xl font-bold text-ink">Submit Video for Autopsy</h2>
-                <div className="flex bg-secondary-bg p-1 rounded-full">
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setSourceType("upload");
-                      setErrorMessage(null);
-                    }}
-                    className={`px-4 py-1.5 rounded-full text-xs font-bold transition ${
-                      sourceType === "upload" ? "bg-white text-ink shadow-xs" : "text-mute"
-                    }`}
-                  >
-                    Upload File
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setSourceType("youtube");
-                      setErrorMessage(null);
-                    }}
-                    className={`px-4 py-1.5 rounded-full text-xs font-bold transition ${
-                      sourceType === "youtube" ? "bg-white text-ink shadow-xs" : "text-mute"
-                    }`}
-                  >
-                    YouTube Link
-                  </button>
-                </div>
-              </div>
-
-              <form onSubmit={handleStartAnalysis} className="space-y-6">
-                {sourceType === "upload" ? (
-                  <div>
-                    <input
-                      type="file"
-                      ref={fileInputRef}
-                      onChange={handleFileChange}
-                      accept="video/mp4,video/quicktime,video/webm,video/x-matroska"
-                      className="hidden"
-                    />
-
-                    {!selectedFile ? (
-                      <div
-                        onClick={() => fileInputRef.current?.click()}
-                        onDragOver={handleDragOver}
-                        onDragLeave={handleDragLeave}
-                        onDrop={handleDrop}
-                        className={`border-2 border-dashed rounded-pin p-8 text-center transition cursor-pointer flex flex-col items-center justify-center ${
-                          isDragging
-                            ? "border-primary bg-primary/5"
-                            : "border-stone bg-white/60 hover:bg-white"
+            {/* Ingest Card + 30-Second Explainer Card (A1 & A3) */}
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 mb-12 items-stretch">
+              {/* Left Column: Clean Upload Dropzone (7 cols) */}
+              <div className="lg:col-span-7 bg-surface-card rounded-pin-lg p-6 md:p-8 border border-hairline/80 shadow-sm flex flex-col justify-between">
+                <div>
+                  <div className="flex items-center justify-between mb-6">
+                    <div>
+                      <h2 className="text-lg md:text-xl font-bold text-ink">1. Drop Video Here</h2>
+                      <p className="text-xs text-mute mt-0.5">Supports vertical 9:16 or landscape ads (up to 3 min)</p>
+                    </div>
+                    <div className="flex bg-secondary-bg p-1 rounded-full">
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setSourceType("upload");
+                          setErrorMessage(null);
+                        }}
+                        className={`px-3.5 py-1.5 rounded-full text-xs font-bold transition cursor-pointer ${
+                          sourceType === "upload" ? "bg-white text-ink shadow-xs" : "text-mute hover:text-ink"
                         }`}
                       >
-                        <div className="w-12 h-12 rounded-full bg-surface-card flex items-center justify-center text-primary mb-3 shadow-xs">
-                          <Upload className="w-6 h-6" />
-                        </div>
-                        <div className="text-sm font-semibold text-ink mb-1">
-                          Drag &amp; drop your video file here, or <span className="text-primary underline">browse</span>
-                        </div>
-                        <p className="text-xs text-mute">
-                          Supports MP4, MOV, WebM up to 500 MB (up to 3 minutes)
-                        </p>
-                      </div>
-                    ) : (
-                      <div className="p-4 bg-white rounded-pin border border-hairline flex items-center justify-between">
-                        <div className="flex items-center gap-3">
-                          <div className="w-10 h-10 rounded-full bg-secondary-bg flex items-center justify-center text-primary">
-                            <FileVideo className="w-5 h-5" />
-                          </div>
-                          <div>
-                            <div className="text-sm font-bold text-ink max-w-xs truncate">
-                              {selectedFile.name}
-                            </div>
-                            <div className="text-xs text-mute">
-                              {formatFileSize(selectedFile.size)}
-                            </div>
-                          </div>
-                        </div>
-                        <button
-                          type="button"
-                          onClick={() => setSelectedFile(null)}
-                          className="p-1.5 rounded-full hover:bg-secondary-bg text-mute hover:text-ink transition"
-                        >
-                          <X className="w-4 h-4" />
-                        </button>
-                      </div>
-                    )}
-                  </div>
-                ) : (
-                  <div>
-                    <label className="block text-xs font-bold text-mute uppercase tracking-wider mb-2">
-                      Paste Video URL
-                    </label>
-                    <div className="relative">
-                      <LinkIcon className="w-4 h-4 text-mute absolute left-4 top-3.5" />
-                      <input
-                        type="url"
-                        value={videoUrl}
-                        onChange={(e) => setVideoUrl(e.target.value)}
-                        placeholder="https://www.youtube.com/watch?v=..."
-                        className="w-full bg-white border border-stone rounded-pin py-3 pl-11 pr-4 text-sm text-ink outline-none focus:border-primary transition"
-                      />
+                        File Upload
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setSourceType("youtube");
+                          setErrorMessage(null);
+                        }}
+                        className={`px-3.5 py-1.5 rounded-full text-xs font-bold transition cursor-pointer ${
+                          sourceType === "youtube" ? "bg-white text-ink shadow-xs" : "text-mute hover:text-ink"
+                        }`}
+                      >
+                        Link URL
+                      </button>
                     </div>
                   </div>
-                )}
 
-                {/* Mandatory Rights Checkbox (Rule 5 & FR-4) */}
-                <div className="flex items-start gap-3 p-4 bg-white rounded-pin border border-hairline">
-                  <input
-                    type="checkbox"
-                    id="rights"
-                    checked={rightsConfirmed}
-                    onChange={(e) => setRightsConfirmed(e.target.checked)}
-                    className="mt-1 h-4 w-4 rounded text-primary focus:ring-primary border-stone cursor-pointer"
-                  />
-                  <label htmlFor="rights" className="text-xs text-body leading-relaxed cursor-pointer select-none">
-                    <strong className="text-ink font-semibold">Rights confirmation:</strong> I certify that I own this video or have authorized permission to analyse its structural elements.
-                  </label>
-                </div>
+                  <form onSubmit={handleStartAnalysis} className="space-y-5">
+                    {sourceType === "upload" ? (
+                      <div>
+                        <input
+                          type="file"
+                          ref={fileInputRef}
+                          onChange={handleFileChange}
+                          accept="video/mp4,video/quicktime,video/webm,video/x-matroska"
+                          className="hidden"
+                        />
 
-                <button
-                  type="submit"
-                  disabled={isSubmitting || !isFormValid}
-                  className={`w-full h-12 rounded-pin font-bold text-sm flex items-center justify-center gap-2 transition ${
-                    isFormValid && !isSubmitting
-                      ? "bg-primary hover:bg-primary-pressed text-white cursor-pointer shadow-sm"
-                      : "bg-stone/50 text-ash cursor-not-allowed border border-hairline"
-                  }`}
-                >
-                  <Sparkles className="w-4 h-4" />
-                  <span>{isSubmitting ? "Uploading Video..." : "Run Autopsy Pipeline & Frame Extraction"}</span>
-                </button>
+                        {!selectedFile ? (
+                          <div
+                            onClick={() => fileInputRef.current?.click()}
+                            onDragOver={handleDragOver}
+                            onDragLeave={handleDragLeave}
+                            onDrop={handleDrop}
+                            className={`border-2 border-dashed rounded-pin p-8 text-center transition cursor-pointer flex flex-col items-center justify-center min-h-[160px] ${
+                              isDragging
+                                ? "border-primary bg-primary/5"
+                                : "border-stone bg-white/70 hover:bg-white"
+                            }`}
+                          >
+                            <div className="w-12 h-12 rounded-full bg-surface-card flex items-center justify-center text-primary mb-3 shadow-xs">
+                              <Upload className="w-6 h-6" />
+                            </div>
+                            <div className="text-sm font-bold text-ink mb-1">
+                              Drag &amp; drop video here, or <span className="text-primary underline">browse</span>
+                            </div>
+                            <p className="text-xs text-mute">
+                              MP4, MOV, WebM up to 500 MB
+                            </p>
+                          </div>
+                        ) : (
+                          <div className="p-4 bg-white rounded-pin border border-hairline flex items-center justify-between">
+                            <div className="flex items-center gap-3">
+                              <div className="w-10 h-10 rounded-full bg-secondary-bg flex items-center justify-center text-primary">
+                                <FileVideo className="w-5 h-5" />
+                              </div>
+                              <div>
+                                <div className="text-sm font-bold text-ink max-w-xs truncate">
+                                  {selectedFile.name}
+                                </div>
+                                <div className="text-xs text-mute">
+                                  {formatFileSize(selectedFile.size)}
+                                </div>
+                              </div>
+                            </div>
+                            <button
+                              type="button"
+                              onClick={() => setSelectedFile(null)}
+                              className="p-1.5 rounded-full hover:bg-secondary-bg text-mute hover:text-ink transition cursor-pointer"
+                            >
+                              <X className="w-4 h-4" />
+                            </button>
+                          </div>
+                        )}
+                      </div>
+                    ) : (
+                      <div>
+                        <label className="block text-xs font-bold text-mute uppercase tracking-wider mb-2">
+                          Paste Video URL (YouTube, TikTok, Reels)
+                        </label>
+                        <div className="relative">
+                          <LinkIcon className="w-4 h-4 text-mute absolute left-4 top-3.5" />
+                          <input
+                            type="url"
+                            value={videoUrl}
+                            onChange={(e) => setVideoUrl(e.target.value)}
+                            placeholder="https://www.youtube.com/watch?v=..."
+                            className="w-full bg-white border border-stone rounded-pin py-3 pl-11 pr-4 text-sm text-ink outline-none focus:border-primary transition"
+                          />
+                        </div>
+                      </div>
+                    )}
 
-                {/* Live Pipeline Progress (SSE) */}
-                {pipelineProgress && (
-                  <div className="p-4 bg-white rounded-pin border border-hairline space-y-3">
-                    <div className="flex items-center justify-between text-xs font-bold text-ink">
-                      <span className="flex items-center gap-2">
+                    {/* Mandatory Rights Checkbox (Rule 5 & FR-4) */}
+                    <div className="flex items-start gap-3 p-3.5 bg-white rounded-pin border border-hairline">
+                      <input
+                        type="checkbox"
+                        id="rights"
+                        checked={rightsConfirmed}
+                        onChange={(e) => setRightsConfirmed(e.target.checked)}
+                        className="mt-0.5 h-4 w-4 rounded text-primary focus:ring-primary border-stone cursor-pointer"
+                      />
+                      <label htmlFor="rights" className="text-xs text-body leading-relaxed cursor-pointer select-none">
+                        <strong className="text-ink font-semibold">Rights confirmation:</strong> I certify that I own this video or have permission to analyze its structural pacing.
+                      </label>
+                    </div>
+
+                    <button
+                      type="submit"
+                      disabled={isSubmitting || !isFormValid}
+                      className={`w-full h-12 rounded-pin font-bold text-sm flex items-center justify-center gap-2 transition ${
+                        isFormValid && !isSubmitting
+                          ? "bg-primary hover:bg-primary-pressed text-white cursor-pointer shadow-sm"
+                          : "bg-stone/50 text-ash cursor-not-allowed border border-hairline"
+                      }`}
+                    >
+                      <Sparkles className="w-4 h-4" />
+                      <span>{isSubmitting ? "Uploading Video..." : "Start Video Autopsy (Watch & Measure)"}</span>
+                    </button>
+
+                    {/* Live Pipeline Progress (SSE) */}
+                    {pipelineProgress && (
+                      <div className="p-4 bg-white rounded-pin border border-hairline space-y-3">
+                        <div className="flex items-center justify-between text-xs font-bold text-ink">
+                          <span className="flex items-center gap-2">
                         <Activity className="w-4 h-4 text-primary animate-spin" />
                         <span>Stage: <span className="uppercase text-primary font-mono">{pipelineProgress.stage}</span></span>
                       </span>
@@ -623,6 +633,13 @@ export default function Home() {
                   </div>
                 )}
               </form>
+            </div>
+          </div>
+
+          {/* Right Column: 15-Second Animated Explainer Card (5 cols) */}
+          <div className="lg:col-span-5 flex flex-col">
+            <StepExplainerCard />
+          </div>
             </div>
 
             {/* Active Video Results Section */}
@@ -780,6 +797,7 @@ export default function Home() {
                         onSelectTimestamp={handleSelectTimestamp}
                         selectedTimestamp={selectedTimestamp}
                         onOpenStatsDrawer={() => setShowStatsDrawer(true)}
+                        onOpenRemix={() => setAppMode("remix")}
                       />
                     ) : (
                       <div className="p-12 bg-white rounded-pin-lg border border-hairline text-center space-y-4">

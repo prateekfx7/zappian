@@ -1,12 +1,13 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import {
   Upload,
   Link as LinkIcon,
   CheckCircle2,
   Sparkles,
-  ShieldCheck,
+  FileVideo,
+  X,
   Play,
   Layers,
   ChevronRight,
@@ -18,43 +19,128 @@ import {
 export default function Home() {
   const [sourceType, setSourceType] = useState<"upload" | "youtube">("upload");
   const [videoUrl, setVideoUrl] = useState("");
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [isDragging, setIsDragging] = useState(false);
   const [rightsConfirmed, setRightsConfirmed] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [statusMessage, setStatusMessage] = useState<string | null>(null);
+  const [uploadProgress, setUploadProgress] = useState<string | null>(null);
+  const [uploadResult, setUploadResult] = useState<any | null>(null);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      setSelectedFile(e.target.files[0]);
+      setErrorMessage(null);
+    }
+  };
+
+  const handleDragOver = (e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDragging(true);
+  };
+
+  const handleDragLeave = (e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDragging(false);
+  };
+
+  const handleDrop = (e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDragging(false);
+    if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+      const file = e.dataTransfer.files[0];
+      if (file.type.startsWith("video/") || file.name.match(/\.(mp4|mov|webm|mkv)$/i)) {
+        setSelectedFile(file);
+        setErrorMessage(null);
+      } else {
+        setErrorMessage("Please drop a valid video file (MP4, MOV, WebM).");
+      }
+    }
+  };
+
+  const formatFileSize = (bytes: number) => {
+    if (bytes < 1024 * 1024) {
+      return `${(bytes / 1024).toFixed(1)} KB`;
+    }
+    return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
+  };
 
   const handleStartAnalysis = async (e: React.FormEvent) => {
     e.preventDefault();
+    setErrorMessage(null);
+    setUploadResult(null);
+
     if (!rightsConfirmed) {
-      alert("Please confirm rights ownership before proceeding.");
+      setErrorMessage("Please confirm rights ownership before proceeding.");
+      return;
+    }
+
+    if (sourceType === "upload" && !selectedFile) {
+      setErrorMessage("Please choose or drop a video file to upload.");
+      return;
+    }
+
+    if (sourceType === "youtube" && !videoUrl.trim()) {
+      setErrorMessage("Please paste a valid YouTube video URL.");
       return;
     }
 
     setIsSubmitting(true);
-    setStatusMessage("Validating rights and initializing pipeline...");
+    setUploadProgress("Transferring video payload to media pipeline...");
 
     try {
-      const response = await fetch("http://localhost:8000/v1/videos", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          source_type: sourceType,
-          source_url: sourceType === "youtube" ? videoUrl : undefined,
-          rights_confirmed: rightsConfirmed,
-        }),
-      });
+      if (sourceType === "upload" && selectedFile) {
+        const formData = new FormData();
+        formData.append("file", selectedFile);
+        formData.append("rights_confirmed", "true");
 
-      if (!response.ok) {
-        throw new Error("Failed to queue analysis. Make sure API is running.");
+        const response = await fetch("http://localhost:8000/v1/videos/upload", {
+          method: "POST",
+          body: formData,
+        });
+
+        if (!response.ok) {
+          const errData = await response.json().catch(() => ({ detail: "Upload failed" }));
+          throw new Error(errData.detail || "Upload rejected by media server.");
+        }
+
+        const data = await response.json();
+        setUploadResult(data);
+        setUploadProgress(null);
+      } else {
+        const response = await fetch("http://localhost:8000/v1/videos", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            source_type: "youtube",
+            source_url: videoUrl,
+            rights_confirmed: true,
+          }),
+        });
+
+        if (!response.ok) {
+          const errData = await response.json().catch(() => ({ detail: "Failed to queue URL" }));
+          throw new Error(errData.detail || "Server rejected YouTube ingest request.");
+        }
+
+        const data = await response.json();
+        setUploadResult(data);
+        setUploadProgress(null);
       }
-
-      const data = await response.json();
-      setStatusMessage(`Video queued successfully! ID: ${data.id.slice(0, 8)}... (Stage: ${data.stage})`);
     } catch (err: any) {
-      setStatusMessage(`API offline or simulated: Request prepared for ${sourceType}.`);
+      setErrorMessage(err.message || "Could not connect to API server. Ensure it is running.");
+      setUploadProgress(null);
     } finally {
       setIsSubmitting(false);
     }
   };
+
+  const isFormValid =
+    rightsConfirmed &&
+    ((sourceType === "upload" && selectedFile !== null) ||
+      (sourceType === "youtube" && videoUrl.trim().length > 0));
 
   return (
     <div className="min-h-screen flex flex-col bg-surface-canvas selection:bg-primary/20">
@@ -128,7 +214,10 @@ export default function Home() {
             <div className="flex bg-secondary-bg p-1 rounded-full">
               <button
                 type="button"
-                onClick={() => setSourceType("upload")}
+                onClick={() => {
+                  setSourceType("upload");
+                  setErrorMessage(null);
+                }}
                 className={`px-4 py-1.5 rounded-full text-xs font-bold transition ${
                   sourceType === "upload" ? "bg-white text-ink shadow-xs" : "text-mute"
                 }`}
@@ -137,7 +226,10 @@ export default function Home() {
               </button>
               <button
                 type="button"
-                onClick={() => setSourceType("youtube")}
+                onClick={() => {
+                  setSourceType("youtube");
+                  setErrorMessage(null);
+                }}
                 className={`px-4 py-1.5 rounded-full text-xs font-bold transition ${
                   sourceType === "youtube" ? "bg-white text-ink shadow-xs" : "text-mute"
                 }`}
@@ -149,16 +241,61 @@ export default function Home() {
 
           <form onSubmit={handleStartAnalysis} className="space-y-6">
             {sourceType === "upload" ? (
-              <div className="border-2 border-dashed border-stone rounded-pin p-8 text-center bg-white/60 hover:bg-white transition cursor-pointer flex flex-col items-center justify-center">
-                <div className="w-12 h-12 rounded-full bg-surface-card flex items-center justify-center text-primary mb-3">
-                  <Upload className="w-6 h-6" />
-                </div>
-                <div className="text-sm font-semibold text-ink mb-1">
-                  Drag and drop your video file here, or browse
-                </div>
-                <p className="text-xs text-mute">
-                  Supports MP4, MOV, WebM up to 500 MB (up to 3 minutes)
-                </p>
+              <div>
+                <input
+                  type="file"
+                  ref={fileInputRef}
+                  onChange={handleFileChange}
+                  accept="video/mp4,video/quicktime,video/webm,video/x-matroska"
+                  className="hidden"
+                />
+
+                {!selectedFile ? (
+                  <div
+                    onClick={() => fileInputRef.current?.click()}
+                    onDragOver={handleDragOver}
+                    onDragLeave={handleDragLeave}
+                    onDrop={handleDrop}
+                    className={`border-2 border-dashed rounded-pin p-8 text-center transition cursor-pointer flex flex-col items-center justify-center ${
+                      isDragging
+                        ? "border-primary bg-primary/5"
+                        : "border-stone bg-white/60 hover:bg-white"
+                    }`}
+                  >
+                    <div className="w-12 h-12 rounded-full bg-surface-card flex items-center justify-center text-primary mb-3 shadow-xs">
+                      <Upload className="w-6 h-6" />
+                    </div>
+                    <div className="text-sm font-semibold text-ink mb-1">
+                      Drag & drop your video file here, or <span className="text-primary underline">browse</span>
+                    </div>
+                    <p className="text-xs text-mute">
+                      Supports MP4, MOV, WebM up to 500 MB (up to 3 minutes)
+                    </p>
+                  </div>
+                ) : (
+                  <div className="p-4 bg-white rounded-pin border border-hairline flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                      <div className="w-10 h-10 rounded-full bg-secondary-bg flex items-center justify-center text-primary">
+                        <FileVideo className="w-5 h-5" />
+                      </div>
+                      <div>
+                        <div className="text-sm font-bold text-ink max-w-xs truncate">
+                          {selectedFile.name}
+                        </div>
+                        <div className="text-xs text-mute">
+                          {formatFileSize(selectedFile.size)}
+                        </div>
+                      </div>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => setSelectedFile(null)}
+                      className="p-1.5 rounded-full hover:bg-secondary-bg text-mute hover:text-ink transition"
+                    >
+                      <X className="w-4 h-4" />
+                    </button>
+                  </div>
+                )}
               </div>
             ) : (
               <div>
@@ -194,20 +331,45 @@ export default function Home() {
 
             <button
               type="submit"
-              disabled={isSubmitting || !rightsConfirmed}
+              disabled={isSubmitting || !isFormValid}
               className={`w-full h-12 rounded-pin font-bold text-sm flex items-center justify-center gap-2 transition ${
-                rightsConfirmed && !isSubmitting
-                  ? "bg-primary hover:bg-primary-pressed text-white cursor-pointer"
-                  : "bg-surface-card text-ash cursor-not-allowed border border-hairline"
+                isFormValid && !isSubmitting
+                  ? "bg-primary hover:bg-primary-pressed text-white cursor-pointer shadow-sm"
+                  : "bg-stone/50 text-ash cursor-not-allowed border border-hairline"
               }`}
             >
               <Sparkles className="w-4 h-4" />
-              <span>{isSubmitting ? "Queueing Pipeline..." : "Generate Evidence-Backed Autopsy"}</span>
+              <span>{isSubmitting ? "Processing Upload..." : "Generate Evidence-Backed Autopsy"}</span>
             </button>
 
-            {statusMessage && (
-              <div className="p-3 bg-secondary-bg/60 rounded-pin text-xs text-ink font-medium text-center">
-                {statusMessage}
+            {uploadProgress && (
+              <div className="p-3 bg-secondary-bg/60 rounded-pin text-xs text-ink font-medium text-center animate-pulse">
+                {uploadProgress}
+              </div>
+            )}
+
+            {uploadResult && (
+              <div className="p-4 bg-semantic-successPale/50 border border-semantic-successPale rounded-pin">
+                <div className="flex items-center gap-2 text-semantic-successDeep font-bold text-sm mb-1">
+                  <CheckCircle2 className="w-4 h-4" />
+                  <span>Video Successfully Stored & Ingested!</span>
+                </div>
+                <div className="text-xs text-charcoal space-y-1 font-mono">
+                  <div><strong>Video ID:</strong> {uploadResult.id}</div>
+                  <div><strong>Status:</strong> {uploadResult.status} (Stage: {uploadResult.stage})</div>
+                  {uploadResult.storage_key && (
+                    <div className="truncate"><strong>Storage:</strong> {uploadResult.storage_key}</div>
+                  )}
+                  {uploadResult.size_bytes && (
+                    <div><strong>Size:</strong> {formatFileSize(uploadResult.size_bytes)}</div>
+                  )}
+                </div>
+              </div>
+            )}
+
+            {errorMessage && (
+              <div className="p-3 bg-semantic-error/10 border border-semantic-error/20 rounded-pin text-xs text-semantic-error font-medium">
+                {errorMessage}
               </div>
             )}
           </form>
@@ -329,11 +491,11 @@ export default function Home() {
               F
             </div>
             <span className="font-bold text-ink">FrameDNA</span>
-            <span>&copy; 2026. Open-Source-First Video Autopsy & Structure Remix Engine.</span>
+            <span>&copy; 2026. Open-Source-First Video Autopsy &amp; Structure Remix Engine.</span>
           </div>
           <div className="flex items-center gap-6">
             <span className="hover:text-ink cursor-pointer">Rules</span>
-            <span className="hover:text-ink cursor-pointer">Privacy & Retention</span>
+            <span className="hover:text-ink cursor-pointer">Privacy &amp; Retention</span>
             <span className="hover:text-ink cursor-pointer">Originality Policy</span>
           </div>
         </div>

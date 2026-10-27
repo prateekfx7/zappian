@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import {
   Upload,
   Link as LinkIcon,
@@ -14,7 +14,58 @@ import {
   TrendingUp,
   Clock,
   Search,
+  Activity,
+  Volume2,
+  FileText,
+  Eye,
+  AlertCircle,
+  Film,
 } from "lucide-react";
+
+interface PipelineProgress {
+  stage: string;
+  progress_pct: number;
+  message: string;
+  error?: string | null;
+}
+
+interface FrameItem {
+  t_ms: number;
+  frame_path: string;
+  thumb_path: string;
+  is_keyframe: boolean;
+}
+
+interface TranscriptWord {
+  w: string;
+  start_ms: number;
+  end_ms: number;
+}
+
+interface PipelineData {
+  video_id: string;
+  metadata: {
+    width: number;
+    height: number;
+    fps: number;
+    duration_s: number;
+    duration_ms: number;
+  };
+  frames: FrameItem[];
+  scenes: { scene_index: number; start_ms: number; end_ms: number; duration_ms: number }[];
+  transcript?: {
+    language: string;
+    duration_s: number;
+    text: string;
+    words: TranscriptWord[];
+  };
+  audio_features?: {
+    duration_s: number;
+    mean_energy: number;
+    silence_gaps: { start_ms: number; end_ms: number; duration_ms: number }[];
+    energy_curve: { t_ms: number; rms: number }[];
+  };
+}
 
 export default function Home() {
   const [sourceType, setSourceType] = useState<"upload" | "youtube">("upload");
@@ -23,11 +74,63 @@ export default function Home() {
   const [isDragging, setIsDragging] = useState(false);
   const [rightsConfirmed, setRightsConfirmed] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [uploadProgress, setUploadProgress] = useState<string | null>(null);
-  const [uploadResult, setUploadResult] = useState<any | null>(null);
+  const [videoId, setVideoId] = useState<string | null>(null);
+  const [pipelineProgress, setPipelineProgress] = useState<PipelineProgress | null>(null);
+  const [pipelineData, setPipelineData] = useState<PipelineData | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [selectedFrame, setSelectedFrame] = useState<FrameItem | null>(null);
 
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  // SSE event stream listener for real-time progress
+  useEffect(() => {
+    if (!videoId) return;
+
+    const eventSource = new EventSource(`http://localhost:8000/v1/videos/${videoId}/events`);
+
+    eventSource.addEventListener("progress", (e) => {
+      try {
+        const data: PipelineProgress = JSON.parse(e.data);
+        setPipelineProgress(data);
+
+        if (data.stage === "ready") {
+          eventSource.close();
+          fetchPipelineData(videoId);
+        } else if (data.stage === "failed") {
+          eventSource.close();
+          setErrorMessage(data.message || "Pipeline execution failed.");
+        }
+      } catch (err) {
+        console.error("SSE parse error", err);
+      }
+    });
+
+    eventSource.onerror = () => {
+      // Retry or poll after brief delay if connection dropped
+      setTimeout(() => {
+        if (videoId) fetchPipelineData(videoId);
+      }, 3000);
+    };
+
+    return () => {
+      eventSource.close();
+    };
+  }, [videoId]);
+
+  const fetchPipelineData = async (vid: string) => {
+    try {
+      const res = await fetch(`http://localhost:8000/v1/videos/${vid}/pipeline`);
+      if (res.ok) {
+        const data: PipelineData = await res.json();
+        setPipelineData(data);
+        if (data.frames && data.frames.length > 0) {
+          setSelectedFrame(data.frames[0]);
+        }
+      }
+    } catch (err) {
+      console.error("Error loading pipeline data", err);
+    }
+  };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
@@ -67,10 +170,19 @@ export default function Home() {
     return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
   };
 
+  const formatMs = (ms: number) => {
+    const totalSec = Math.floor(ms / 1000);
+    const m = Math.floor(totalSec / 60);
+    const s = totalSec % 60;
+    const mill = Math.floor((ms % 1000) / 100);
+    return `${m.toString().padStart(2, "0")}:${s.toString().padStart(2, "0")}.${mill}00`;
+  };
+
   const handleStartAnalysis = async (e: React.FormEvent) => {
     e.preventDefault();
     setErrorMessage(null);
-    setUploadResult(null);
+    setPipelineData(null);
+    setPipelineProgress(null);
 
     if (!rightsConfirmed) {
       setErrorMessage("Please confirm rights ownership before proceeding.");
@@ -88,7 +200,6 @@ export default function Home() {
     }
 
     setIsSubmitting(true);
-    setUploadProgress("Transferring video payload to media pipeline...");
 
     try {
       if (sourceType === "upload" && selectedFile) {
@@ -107,8 +218,7 @@ export default function Home() {
         }
 
         const data = await response.json();
-        setUploadResult(data);
-        setUploadProgress(null);
+        setVideoId(data.id);
       } else {
         const response = await fetch("http://localhost:8000/v1/videos", {
           method: "POST",
@@ -126,12 +236,10 @@ export default function Home() {
         }
 
         const data = await response.json();
-        setUploadResult(data);
-        setUploadProgress(null);
+        setVideoId(data.id);
       }
     } catch (err: any) {
       setErrorMessage(err.message || "Could not connect to API server. Ensure it is running.");
-      setUploadProgress(null);
     } finally {
       setIsSubmitting(false);
     }
@@ -193,22 +301,22 @@ export default function Home() {
         <div className="text-center max-w-3xl mx-auto mb-12">
           <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-surface-card border border-hairline-soft text-xs font-semibold text-ink mb-6">
             <Sparkles className="w-3.5 h-3.5 text-primary" />
-            <span>Proof, a diff, and a rebuild — not just a score</span>
+            <span>Phase 1 — Ingest & Media Pipeline Live</span>
           </div>
 
           <h1 className="text-4xl md:text-6xl font-extrabold text-ink tracking-display leading-[1.1] mb-6">
             Autopsy any viral video. <br />
-            <span className="text-primary">Remix the DNA</span> legally.
+            <span className="text-primary">Extract the structure</span> frame by frame.
           </h1>
 
           <p className="text-lg text-mute font-normal leading-relaxed">
-            Frame-by-frame breakdown of why videos hold attention, sell, and grow. Every claim
-            is backed by timestamped evidence. Extract the blueprint and generate original variants.
+            Automatic 720p normalization, 1 fps frame extraction, scene cuts, Whisper word-level timestamps,
+            and keyframe OCR. Complete evidence-backed pipeline.
           </p>
         </div>
 
-        {/* 3. Ingest Card (Photo/Magazine styled) */}
-        <div className="max-w-2xl mx-auto bg-surface-card rounded-pin-lg p-8 border border-hairline/80 shadow-sm mb-16">
+        {/* 3. Ingest Card */}
+        <div className="max-w-2xl mx-auto bg-surface-card rounded-pin-lg p-8 border border-hairline/80 shadow-sm mb-12">
           <div className="flex items-center justify-between mb-6">
             <h2 className="text-xl font-bold text-ink">Submit Video for Autopsy</h2>
             <div className="flex bg-secondary-bg p-1 rounded-full">
@@ -339,43 +447,215 @@ export default function Home() {
               }`}
             >
               <Sparkles className="w-4 h-4" />
-              <span>{isSubmitting ? "Processing Upload..." : "Generate Evidence-Backed Autopsy"}</span>
+              <span>{isSubmitting ? "Uploading Video..." : "Run Media Pipeline & Frame Extraction"}</span>
             </button>
 
-            {uploadProgress && (
-              <div className="p-3 bg-secondary-bg/60 rounded-pin text-xs text-ink font-medium text-center animate-pulse">
-                {uploadProgress}
-              </div>
-            )}
-
-            {uploadResult && (
-              <div className="p-4 bg-semantic-successPale/50 border border-semantic-successPale rounded-pin">
-                <div className="flex items-center gap-2 text-semantic-successDeep font-bold text-sm mb-1">
-                  <CheckCircle2 className="w-4 h-4" />
-                  <span>Video Successfully Stored & Ingested!</span>
+            {/* Live Pipeline Progress (SSE) */}
+            {pipelineProgress && (
+              <div className="p-4 bg-white rounded-pin border border-hairline space-y-3">
+                <div className="flex items-center justify-between text-xs font-bold text-ink">
+                  <span className="flex items-center gap-2">
+                    <Activity className="w-4 h-4 text-primary animate-spin" />
+                    <span>Stage: <span className="uppercase text-primary font-mono">{pipelineProgress.stage}</span></span>
+                  </span>
+                  <span>{pipelineProgress.progress_pct}%</span>
                 </div>
-                <div className="text-xs text-charcoal space-y-1 font-mono">
-                  <div><strong>Video ID:</strong> {uploadResult.id}</div>
-                  <div><strong>Status:</strong> {uploadResult.status} (Stage: {uploadResult.stage})</div>
-                  {uploadResult.storage_key && (
-                    <div className="truncate"><strong>Storage:</strong> {uploadResult.storage_key}</div>
-                  )}
-                  {uploadResult.size_bytes && (
-                    <div><strong>Size:</strong> {formatFileSize(uploadResult.size_bytes)}</div>
-                  )}
+                <div className="w-full h-2 bg-secondary-bg rounded-full overflow-hidden">
+                  <div
+                    className="h-full bg-primary transition-all duration-300"
+                    style={{ width: `${pipelineProgress.progress_pct}%` }}
+                  />
                 </div>
+                <p className="text-xs text-mute font-medium">
+                  {pipelineProgress.message}
+                </p>
               </div>
             )}
 
             {errorMessage && (
-              <div className="p-3 bg-semantic-error/10 border border-semantic-error/20 rounded-pin text-xs text-semantic-error font-medium">
-                {errorMessage}
+              <div className="p-3 bg-semantic-error/10 border border-semantic-error/20 rounded-pin text-xs text-semantic-error font-medium flex items-center gap-2">
+                <AlertCircle className="w-4 h-4 flex-shrink-0" />
+                <span>{errorMessage}</span>
               </div>
             )}
           </form>
         </div>
 
-        {/* 4. Pinterest-style Masonry Showcase Preview */}
+        {/* 4. Real-time Extracted Media & Frame Gallery (Phase 1 Deliverable) */}
+        {pipelineData && (
+          <section className="bg-white rounded-pin-lg p-8 border border-hairline mb-12 shadow-sm animate-fade-in">
+            <div className="flex flex-col md:flex-row md:items-center justify-between pb-6 border-b border-hairline gap-4 mb-8">
+              <div>
+                <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-semantic-successPale text-semantic-successDeep mb-2">
+                  <CheckCircle2 className="w-3.5 h-3.5" />
+                  <span>Pipeline Completed (100%)</span>
+                </div>
+                <h2 className="text-2xl font-bold text-ink">
+                  Extracted Media Assets & Timestamps
+                </h2>
+                <p className="text-xs text-mute">
+                  ID: <span className="font-mono text-ink font-semibold">{pipelineData.video_id}</span> • {pipelineData.metadata.duration_s}s duration • {pipelineData.metadata.width}x{pipelineData.metadata.height} @ {pipelineData.metadata.fps}fps
+                </p>
+              </div>
+
+              <div className="flex items-center gap-3">
+                <button
+                  onClick={() => alert("Phase 2 Analysis Engine will be triggered here!")}
+                  className="btn-primary flex items-center gap-2"
+                >
+                  <Sparkles className="w-4 h-4" />
+                  <span>Proceed to Phase 2 Analysis</span>
+                </button>
+              </div>
+            </div>
+
+            {/* Grid of Extracted Frames */}
+            <div className="mb-8">
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="text-sm font-bold text-ink flex items-center gap-2">
+                  <Film className="w-4 h-4 text-primary" />
+                  <span>1 FPS Extracted Frames ({pipelineData.frames.length} total)</span>
+                </h3>
+                <span className="text-xs text-mute">Click any frame to inspect timestamp</span>
+              </div>
+
+              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-3 overflow-x-auto pb-2">
+                {pipelineData.frames.map((frame, idx) => (
+                  <div
+                    key={idx}
+                    onClick={() => setSelectedFrame(frame)}
+                    className={`card-pin p-1 cursor-pointer transition border-2 ${
+                      selectedFrame?.t_ms === frame.t_ms
+                        ? "border-primary shadow-sm"
+                        : "border-transparent hover:border-stone"
+                    }`}
+                  >
+                    <div className="relative aspect-[9/16] bg-surface-dark rounded-xl overflow-hidden flex items-center justify-center">
+                      <img
+                        src={`http://localhost:8000/storage/thumbs/${pipelineData.video_id}/${frame.t_ms}.jpg`}
+                        alt={`Frame at ${frame.t_ms}ms`}
+                        className="w-full h-full object-cover"
+                        onError={(e) => {
+                          // Fallback to placeholder if thumbnail is rendering
+                          (e.target as HTMLElement).style.display = "none";
+                        }}
+                      />
+                      <div className="absolute top-2 left-2 pill-overlay text-[10px] py-0.5 px-2">
+                        {formatMs(frame.t_ms)}
+                      </div>
+                      {frame.is_keyframe && (
+                        <div className="absolute bottom-2 right-2 bg-primary text-white text-[9px] font-bold px-1.5 py-0.5 rounded-full">
+                          Cut
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Two Column Asset Inspection: Transcript & Audio Energy */}
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              {/* Left: Word-level Transcript */}
+              <div className="bg-surface-card rounded-pin p-6 border border-hairline">
+                <div className="flex items-center justify-between mb-4">
+                  <h3 className="text-sm font-bold text-ink flex items-center gap-2">
+                    <FileText className="w-4 h-4 text-primary" />
+                    <span>Whisper Word Timestamps</span>
+                  </h3>
+                  <span className="pill-overlay text-xs">
+                    {pipelineData.transcript?.words?.length || 0} Words Detected
+                  </span>
+                </div>
+
+                {pipelineData.transcript?.words && pipelineData.transcript.words.length > 0 ? (
+                  <div className="flex flex-wrap gap-1.5 max-h-56 overflow-y-auto p-1">
+                    {pipelineData.transcript.words.map((w, i) => (
+                      <span
+                        key={i}
+                        className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs bg-white border border-hairline hover:border-primary transition cursor-pointer"
+                        title={`${formatMs(w.start_ms)} → ${formatMs(w.end_ms)}`}
+                      >
+                        <span className="font-semibold text-ink">{w.w}</span>
+                        <span className="text-[10px] text-mute font-mono">
+                          {formatMs(w.start_ms)}
+                        </span>
+                      </span>
+                    ))}
+                  </div>
+                ) : (
+                  <p className="text-xs text-mute italic p-4 bg-white/60 rounded-pin text-center">
+                    No spoken words detected in audio track (music or instrumental audio).
+                  </p>
+                )}
+              </div>
+
+              {/* Right: Audio Energy & Silence Gaps */}
+              <div className="bg-surface-card rounded-pin p-6 border border-hairline">
+                <div className="flex items-center justify-between mb-4">
+                  <h3 className="text-sm font-bold text-ink flex items-center gap-2">
+                    <Volume2 className="w-4 h-4 text-primary" />
+                    <span>Audio Features & Pacing</span>
+                  </h3>
+                  <span className="pill-overlay text-xs">
+                    Mean Energy: {pipelineData.audio_features?.mean_energy || 0}
+                  </span>
+                </div>
+
+                <div className="space-y-4">
+                  <div>
+                    <div className="text-xs font-semibold text-ink mb-1 flex items-center justify-between">
+                      <span>Detected Silence Gaps (&gt; 500ms):</span>
+                      <span className="font-bold text-primary">
+                        {pipelineData.audio_features?.silence_gaps?.length || 0} Gaps
+                      </span>
+                    </div>
+                    {pipelineData.audio_features?.silence_gaps &&
+                    pipelineData.audio_features.silence_gaps.length > 0 ? (
+                      <div className="space-y-1.5">
+                        {pipelineData.audio_features.silence_gaps.map((gap, i) => (
+                          <div
+                            key={i}
+                            className="p-2 bg-white rounded-pin border border-hairline text-xs flex items-center justify-between"
+                          >
+                            <span className="font-mono text-ink">
+                              {formatMs(gap.start_ms)} → {formatMs(gap.end_ms)}
+                            </span>
+                            <span className="font-bold text-mute">
+                              {gap.duration_ms}ms gap
+                            </span>
+                          </div>
+                        ))}
+                      </div>
+                    ) : (
+                      <p className="text-xs text-mute italic p-3 bg-white/60 rounded-pin">
+                        Continuous audio pace — zero long silence pauses.
+                      </p>
+                    )}
+                  </div>
+
+                  <div>
+                    <div className="text-xs font-semibold text-ink mb-1">
+                      Scene Transitions ({pipelineData.scenes.length} cuts detected)
+                    </div>
+                    <div className="flex flex-wrap gap-1">
+                      {pipelineData.scenes.map((sc, i) => (
+                        <span
+                          key={i}
+                          className="px-2 py-0.5 rounded-full text-[11px] font-mono bg-white border border-hairline text-ink"
+                        >
+                          Cut {sc.scene_index + 1}: {formatMs(sc.start_ms)}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+        )}
+
+        {/* 5. Pinterest-style Masonry Showcase Preview */}
         <section className="mt-8">
           <div className="flex items-center justify-between mb-8">
             <div>
@@ -483,7 +763,7 @@ export default function Home() {
         </section>
       </main>
 
-      {/* 5. Clean Footer */}
+      {/* 6. Clean Footer */}
       <footer className="border-t border-hairline py-8 px-6 bg-white mt-16 text-center text-xs text-mute">
         <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
           <div className="flex items-center gap-2">

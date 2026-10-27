@@ -78,7 +78,7 @@ def test_upload_video_valid_file_succeeds():
     data = response.json()
     assert "id" in data
     assert data["source_type"] == "upload"
-    assert data["status"] == "queued"
+    assert data["status"] in ("queued", "processing")
     assert data["filename"] == "sample_clip.mp4"
     assert data["size_bytes"] == 2060
     assert data["storage_key"].startswith("originals/")

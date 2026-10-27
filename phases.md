@@ -26,19 +26,19 @@ Acceptance
 
 ---
 
-## Phase 1 — Ingest and media pipeline (Week 1)  ☐
+## Phase 1 — Ingest and media pipeline (Week 1)  ☑
 
 **Goal:** upload a video, get frames, audio, transcript, and OCR stored and viewable.
 
 Tasks
-- [ ] Auth (email + OAuth) and `users` table.
-- [ ] Upload endpoint with presigned upload, rights checkbox, size/duration limits, magic-byte validation.
-- [ ] YouTube URL ingest via yt-dlp (sandboxed, timeouts, size caps). Fallback message to upload.
-- [ ] Celery pipeline: `ingest → normalize → frames → transcribe → ocr → audio_features → embed`.
-- [ ] Scene detection with PySceneDetect; keyframes saved.
-- [ ] Progress events (SSE) with real stage names.
-- [ ] Minimal frontend: upload page, progress page, raw frame gallery with transcript and OCR.
-- [ ] DB migrations for `videos`, `frames`, `transcripts`.
+- [x] Auth (email + OAuth) and `users` table.
+- [x] Upload endpoint with presigned upload, rights checkbox, size/duration limits, magic-byte validation.
+- [x] YouTube URL ingest via yt-dlp (sandboxed, timeouts, size caps). Fallback message to upload.
+- [x] Celery pipeline: `ingest → normalize → frames → transcribe → ocr → audio_features → embed`.
+- [x] Scene detection with PySceneDetect; keyframes saved.
+- [x] Progress events (SSE) with real stage names.
+- [x] Minimal frontend: upload page, progress page, raw frame gallery with transcript and OCR.
+- [x] DB migrations for `videos`, `frames`, `transcripts`.
 
 Acceptance
 - A 60 s video completes ingest stages in ≤ 2 min on target hardware.

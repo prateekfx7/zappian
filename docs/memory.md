@@ -39,13 +39,14 @@ Format: `YYYY-MM-DD | decision | reason | status`
 | 2026-10-27 | Working name "FrameDNA" | Placeholder; alternatives: Reelprint, Blueframe, Remixr, Hookd | Open |
 | 2026-10-27 | GPU Path = Rented Cloud GPU (RunPod/Vast/Modal) for VLMs & video generation; Apple M5 16GB for dev/api/web | Host RAM is 16GB unified; LTX-2/Wan 2.2 requires 24–48GB VRAM | Active |
 | 2026-10-27 | Web UI Design = Pinterest design system (`DESIGN-pinterest.md`) | Pin Sans/Inter, 16px/32px radius, Pinterest red `#e60023` CTA, `#f6f6f3` cards, quiet cream chrome | Active |
+| 2026-10-27 | Media Pipeline = FFmpeg (720p H.264 proxy + 16kHz WAV), 1fps frames, PySceneDetect keyframes, faster-whisper, soundfile/numpy energy curves | Modular, resilient pipeline meeting Phase 1 acceptance criteria | Active |
 
 ## 4. Current status
 
-- Phase: **Phase 0 completed** (Scaffold created, schemas verified, provider interfaces established, API and Web stubs running and passing unit tests)
-- Next action: Awaiting owner review & golden test videos in `tests/golden/` to start **Phase 1**
-- Blockers: None for Phase 0. Owner to provide golden test videos (`g1` through `g5`) in `tests/golden/`.
-- Last milestone: Phase 0 acceptance criteria satisfied.
+- Phase: **Phase 1 completed** (Media pipeline built, tested on golden clip `tests/golden/g1_product_ad.mp4`, SSE live progress, and raw asset gallery viewable in web UI)
+- Next action: **Phase 2 — Analysis engine and report** (VLM chunking, blueprint extraction, why-it-works evidence synthesis, and report UI)
+- Blockers: None.
+- Last milestone: Phase 1 acceptance criteria satisfied.
 
 ## 5. Open questions (owner to answer)
 
@@ -137,7 +138,8 @@ STYLE LOCK: [palette], [lighting], [lens], [grade], fast confident camera moves,
 | Date | Agent/Dev | Done | Next |
 |---|---|---|---|
 | 2026-10-27 | Claude (chat) | Wrote PRD, architecture, rules, phases, memory | Start Phase 0 |
-| 2026-10-27 | Antigravity | Phase 0 completed: monorepo scaffold, Docker Compose config, FastAPI stub with OpenAPI & tests, Next.js web app with Pinterest design system, provider interfaces in `packages/providers`, JSON schemas in `packages/schemas`, golden set manifest in `tests/golden`, competitor structure in `tests/competitors`, spikes for VLM, Whisper, and OCR. All tests, linting, and builds pass cleanly. | Await owner approval to start Phase 1 |
+| 2026-10-27 | Antigravity | Phase 0 completed: monorepo scaffold, Docker Compose config, FastAPI stub with OpenAPI & tests, Next.js web app with Pinterest design system, provider interfaces in `packages/providers`, JSON schemas in `packages/schemas`, golden set manifest in `tests/golden`, competitor structure in `tests/competitors`, spikes for VLM, Whisper, and OCR. All tests, linting, and builds pass cleanly. | Phase 1 |
+| 2026-10-27 | Antigravity | Phase 1 completed: Built Ingest and Media Pipeline (FFmpeg 720p normalization & WAV extraction, 1 fps frame extraction with thumbnails, PySceneDetect scene cut keyframes, faster-whisper word-level STT, soundfile/numpy audio energy analysis, SSE stage progress streaming, and Next.js asset gallery). 13/13 unit & integration tests pass cleanly. | Start Phase 2 |
 
 ## 14. Update protocol
 

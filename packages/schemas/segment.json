@@ -1,0 +1,88 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "VLMSegmentOutput",
+  "type": "object",
+  "required": ["segment", "frames"],
+  "properties": {
+    "segment": {
+      "type": "object",
+      "required": ["t_start_ms", "t_end_ms"],
+      "properties": {
+        "t_start_ms": { "type": "integer", "minimum": 0 },
+        "t_end_ms": { "type": "integer", "minimum": 0 }
+      },
+      "additionalProperties": false
+    },
+    "frames": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "t_ms",
+          "what_is_on_screen",
+          "subject",
+          "shot_type",
+          "camera_motion",
+          "on_screen_text",
+          "spoken_text",
+          "role",
+          "viewer_emotion",
+          "why_it_works",
+          "confidence"
+        ],
+        "properties": {
+          "t_ms": { "type": "integer", "minimum": 0 },
+          "what_is_on_screen": { "type": "string" },
+          "subject": { "type": "string" },
+          "shot_type": {
+            "type": "string",
+            "enum": [
+              "extreme_close",
+              "close",
+              "medium",
+              "wide",
+              "screen_recording",
+              "text_card"
+            ]
+          },
+          "camera_motion": {
+            "type": "string",
+            "enum": [
+              "static",
+              "push_in",
+              "pull_out",
+              "whip_pan",
+              "handheld",
+              "tracking",
+              "zoom"
+            ]
+          },
+          "on_screen_text": { "type": "string" },
+          "spoken_text": { "type": "string" },
+          "role": {
+            "type": "string",
+            "enum": [
+              "hook",
+              "problem",
+              "proof",
+              "demo",
+              "offer",
+              "social_proof",
+              "cta",
+              "transition",
+              "other"
+            ]
+          },
+          "viewer_emotion": { "type": "string" },
+          "why_it_works": { "type": "string" },
+          "confidence": {
+            "type": "string",
+            "enum": ["high", "medium", "low"]
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  },
+  "additionalProperties": false
+}

@@ -1,0 +1,139 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "AnalysisReport",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "verdict",
+    "scores",
+    "blueprint",
+    "why_it_works",
+    "design_language",
+    "fixes",
+    "stats"
+  ],
+  "properties": {
+    "schema_version": { "type": "string" },
+    "verdict": { "type": "string" },
+    "scores": {
+      "type": "object",
+      "required": [
+        "hook",
+        "retention",
+        "emotion",
+        "clarity",
+        "cta",
+        "shareability",
+        "sales_potential_estimate"
+      ],
+      "properties": {
+        "hook": { "type": "number", "minimum": 0, "maximum": 100 },
+        "retention": { "type": "number", "minimum": 0, "maximum": 100 },
+        "emotion": { "type": "number", "minimum": 0, "maximum": 100 },
+        "clarity": { "type": "number", "minimum": 0, "maximum": 100 },
+        "cta": { "type": "number", "minimum": 0, "maximum": 100 },
+        "shareability": { "type": "number", "minimum": 0, "maximum": 100 },
+        "sales_potential_estimate": { "type": "number", "minimum": 0, "maximum": 100 }
+      },
+      "additionalProperties": false
+    },
+    "blueprint": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["role", "t_start_ms", "t_end_ms", "technique", "purpose"],
+        "properties": {
+          "role": { "type": "string" },
+          "t_start_ms": { "type": "integer", "minimum": 0 },
+          "t_end_ms": { "type": "integer", "minimum": 0 },
+          "technique": { "type": "string" },
+          "purpose": { "type": "string" }
+        },
+        "additionalProperties": false
+      }
+    },
+    "why_it_works": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["category", "claim", "evidence", "confidence"],
+        "properties": {
+          "category": {
+            "type": "string",
+            "enum": ["growth", "retention", "emotion", "sales", "shareability"]
+          },
+          "claim": { "type": "string" },
+          "evidence": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": "object",
+              "required": ["t_ms"],
+              "properties": {
+                "t_ms": { "type": "integer", "minimum": 0 },
+                "frame_id": { "type": "string" }
+              },
+              "additionalProperties": false
+            }
+          },
+          "confidence": {
+            "type": "string",
+            "enum": ["high", "medium", "low"]
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "design_language": {
+      "type": "object",
+      "required": ["palette", "lighting", "typography", "cut_rhythm_s", "motion_style", "music_energy"],
+      "properties": {
+        "palette": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "lighting": { "type": "string" },
+        "typography": { "type": "string" },
+        "cut_rhythm_s": { "type": "number" },
+        "motion_style": { "type": "string" },
+        "music_energy": { "type": "string" }
+      },
+      "additionalProperties": false
+    },
+    "fixes": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["rank", "change", "t_ms", "expected_impact"],
+        "properties": {
+          "rank": { "type": "integer" },
+          "change": { "type": "string" },
+          "t_ms": { "type": "integer", "minimum": 0 },
+          "expected_impact": {
+            "type": "string",
+            "enum": ["high", "medium", "low"]
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "stats": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["metric", "value", "source", "fetched_at"],
+        "properties": {
+          "metric": { "type": "string" },
+          "value": { "type": "number" },
+          "source": {
+            "type": "string",
+            "enum": ["youtube_api", "ytdlp", "manual", "csv", "connector"]
+          },
+          "fetched_at": { "type": "string" }
+        },
+        "additionalProperties": false
+      }
+    }
+  },
+  "additionalProperties": false
+}

@@ -1,0 +1,3 @@
+# FrameDNA root docker-compose forwarding to infra/compose.yml
+include:
+  - infra/compose.yml

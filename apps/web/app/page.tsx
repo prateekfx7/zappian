@@ -349,6 +349,18 @@ export default function Home() {
       const likesNum = parseCount(knownLikes);
 
       if (sourceType === "upload" && selectedFile) {
+        // Vercel serverless request body has a strict 4.5 MB hard limit
+        const isServerlessVercel =
+          typeof window !== "undefined" &&
+          (window.location.hostname.includes("vercel.app") || window.location.protocol === "https:");
+        const maxVercelBytes = 4.5 * 1024 * 1024;
+        if (isServerlessVercel && selectedFile.size > maxVercelBytes) {
+          const sizeMB = (selectedFile.size / (1024 * 1024)).toFixed(1);
+          throw new Error(
+            `File size (${sizeMB} MB) exceeds Vercel's serverless function upload limit of 4.5 MB. Please switch to the "Paste Link" tab (YouTube, Instagram, or TikTok) for high-definition analysis without any file size limits!`
+          );
+        }
+
         const formData = new FormData();
         formData.append("file", selectedFile);
         formData.append("rights_confirmed", "true");
@@ -627,7 +639,7 @@ export default function Home() {
                               Drop video here, or <span className="underline">browse</span>
                             </div>
                             <p className="text-xs text-secondary">
-                              MP4, MOV, or WebM
+                              MP4, MOV, or WebM (up to 4.5 MB on cloud • paste link above for unlimited size)
                             </p>
                           </div>
                         ) : (

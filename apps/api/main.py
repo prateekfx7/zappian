@@ -438,70 +438,80 @@ async def upload_video(
     known_shares: float | None = Form(None),
     known_comments: float | None = Form(None),
 ) -> VideoResponse:
-    if not rights_confirmed:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Rights confirmation is required. You must certify rights to analyze this video.",
+    try:
+        if not rights_confirmed:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Rights confirmation is required. You must certify rights to analyze this video.",
+            )
+
+        ext = Path(file.filename or "").suffix.lower()
+        if ext not in ALLOWED_EXTENSIONS:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail=f"Unsupported file extension '{ext}'. Allowed: {', '.join(sorted(ALLOWED_EXTENSIONS))}",
+            )
+
+        video_id = str(uuid.uuid4())
+        target_dir = ORIGINALS_DIR / video_id
+        target_dir.mkdir(parents=True, exist_ok=True)
+        safe_filename = Path(file.filename or "video.mp4").name
+        target_file = target_dir / safe_filename
+
+        max_bytes = settings.max_upload_size_mb * 1024 * 1024
+        size_bytes = 0
+
+        with target_file.open("wb") as buffer:
+            while chunk := await file.read(1024 * 1024):
+                size_bytes += len(chunk)
+                if size_bytes > max_bytes:
+                    buffer.close()
+                    target_file.unlink(missing_ok=True)
+                    raise HTTPException(
+                        status_code=status.HTTP_413_REQUEST_ENTITY_TOO_LARGE,
+                        detail=f"File exceeds maximum size limit of {settings.max_upload_size_mb} MB.",
+                    )
+                buffer.write(chunk)
+
+        initial_stats: list[dict[str, Any]] = []
+        now_iso = datetime.now(UTC).isoformat()
+        if known_views is not None and known_views > 0:
+            initial_stats.append({"metric": "views", "value": known_views, "source": "manual", "fetched_at": now_iso})
+        if known_likes is not None and known_likes > 0:
+            initial_stats.append({"metric": "likes", "value": known_likes, "source": "manual", "fetched_at": now_iso})
+        if known_shares is not None and known_shares > 0:
+            initial_stats.append({"metric": "shares", "value": known_shares, "source": "manual", "fetched_at": now_iso})
+        if known_comments is not None and known_comments > 0:
+            initial_stats.append({"metric": "comments", "value": known_comments, "source": "manual", "fetched_at": now_iso})
+
+        # Initialize state and schedule pipeline execution
+        state = get_or_create_pipeline_state(video_id)
+        state.update("ingest", 5, "Upload received. Scheduling media pipeline...")
+        background_tasks.add_task(
+            execute_pipeline_background,
+            video_id,
+            target_file,
+            initial_stats=initial_stats if initial_stats else None,
         )
 
-    ext = Path(file.filename or "").suffix.lower()
-    if ext not in ALLOWED_EXTENSIONS:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail=f"Unsupported file extension '{ext}'. Allowed: {', '.join(sorted(ALLOWED_EXTENSIONS))}",
+        return VideoResponse(
+            id=video_id,
+            source_type="upload",
+            status="processing",
+            stage="ingest",
+            filename=file.filename,
+            size_bytes=size_bytes,
+            storage_key=f"originals/{video_id}/{target_file.name}",
+            created_at=datetime.now(UTC),
         )
-
-    video_id = str(uuid.uuid4())
-    target_dir = ORIGINALS_DIR / video_id
-    target_dir.mkdir(parents=True, exist_ok=True)
-    target_file = target_dir / (file.filename or f"video{ext}")
-
-    max_bytes = settings.max_upload_size_mb * 1024 * 1024
-    size_bytes = 0
-
-    with target_file.open("wb") as buffer:
-        while chunk := await file.read(1024 * 1024):
-            size_bytes += len(chunk)
-            if size_bytes > max_bytes:
-                buffer.close()
-                target_file.unlink(missing_ok=True)
-                raise HTTPException(
-                    status_code=status.HTTP_413_REQUEST_ENTITY_TOO_LARGE,
-                    detail=f"File exceeds maximum size limit of {settings.max_upload_size_mb} MB.",
-                )
-            buffer.write(chunk)
-
-    initial_stats: list[dict[str, Any]] = []
-    now_iso = datetime.now(UTC).isoformat()
-    if known_views is not None and known_views > 0:
-        initial_stats.append({"metric": "views", "value": known_views, "source": "manual", "fetched_at": now_iso})
-    if known_likes is not None and known_likes > 0:
-        initial_stats.append({"metric": "likes", "value": known_likes, "source": "manual", "fetched_at": now_iso})
-    if known_shares is not None and known_shares > 0:
-        initial_stats.append({"metric": "shares", "value": known_shares, "source": "manual", "fetched_at": now_iso})
-    if known_comments is not None and known_comments > 0:
-        initial_stats.append({"metric": "comments", "value": known_comments, "source": "manual", "fetched_at": now_iso})
-
-    # Initialize state and schedule pipeline execution
-    state = get_or_create_pipeline_state(video_id)
-    state.update("ingest", 5, "Upload received. Scheduling media pipeline...")
-    background_tasks.add_task(
-        execute_pipeline_background,
-        video_id,
-        target_file,
-        initial_stats=initial_stats if initial_stats else None,
-    )
-
-    return VideoResponse(
-        id=video_id,
-        source_type="upload",
-        status="processing",
-        stage="ingest",
-        filename=file.filename,
-        size_bytes=size_bytes,
-        storage_key=f"originals/{video_id}/{target_file.name}",
-        created_at=datetime.now(UTC),
-    )
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Failed to process video upload: {e}", exc_info=True)
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Server upload error: {e!s}",
+        )
 
 
 @app.get("/v1/videos/{video_id}", response_model=VideoResponse, tags=["Videos"])

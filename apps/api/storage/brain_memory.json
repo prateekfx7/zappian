@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "last_updated": "2026-10-28T08:24:20.666678+00:00",
+  "last_updated": "2026-10-28T10:37:04.227515+00:00",
   "videos": {
     "test_analysis_1911c0de": {
       "video_id": "test_analysis_1911c0de",
@@ -3166,6 +3166,1942 @@
           "claim": "Primal emotional vulnerability triggers visceral viewer empathy and compulsive curiosity for the narrative resolution."
         }
       ]
+    },
+    "test_batch_f7b5a097": {
+      "video_id": "test_batch_f7b5a097",
+      "indexed_at": "2026-10-28T10:30:37.419456+00:00",
+      "category": "e_commerce",
+      "duration_s": 33.033,
+      "frame_count": 57,
+      "virality": {
+        "tier": "Tier-3 High Performer",
+        "views": 500000.0,
+        "likes": 25000.0,
+        "shares": 0.0,
+        "comments": 0.0,
+        "like_ratio": 5.0,
+        "share_ratio": 0.0,
+        "archetype": "Direct Character & Situational Intrigue Hook",
+        "source": "manual",
+        "social_metadata": {
+          "title": "Viral Short #1",
+          "platform": "instagram"
+        }
+      },
+      "scores": {
+        "hook": 86,
+        "retention": 85,
+        "emotion": 83,
+        "clarity": 83,
+        "cta": 76,
+        "composite": 83
+      },
+      "hook_dna": {
+        "type": "Direct Character & Situational Intrigue Hook",
+        "technique": "Extreme close-up macro cut with rapid audio onset",
+        "first_3s_words": "",
+        "opening_ocr": [],
+        "hold_score": 86
+      },
+      "pacing_dna": {
+        "cuts_count": 24,
+        "cuts_per_minute": 43.6,
+        "cut_rhythm_s": 1.38,
+        "silence_ratio": 0.08
+      },
+      "style_dna": {
+        "palette": [
+          "#1f1e1c",
+          "#281f1e",
+          "#374141"
+        ],
+        "lighting": "Moody high-contrast low-key lighting with deep cinematic shadows",
+        "motion": "Rapid dynamic multi-cut cadence"
+      },
+      "blueprint": [
+        {
+          "role": "hook",
+          "technique": "Extreme close-up macro cut with rapid audio onset",
+          "duration_ms": 2500
+        },
+        {
+          "role": "problem",
+          "technique": "Handheld visceral frustration framing",
+          "duration_ms": 12364
+        },
+        {
+          "role": "demo",
+          "technique": "Smooth tracking shot illustrating mechanism in action",
+          "duration_ms": 11562
+        },
+        {
+          "role": "cta",
+          "technique": "Hero product framing with friction-free direct action",
+          "duration_ms": 6607
+        }
+      ],
+      "why_it_works_claims": [
+        {
+          "category": "growth",
+          "claim": "Opening 2.5s achieves 86% hook strength via early sound and visual tension"
+        },
+        {
+          "category": "retention",
+          "claim": "Scene cut pacing (1 cut every 1.3s) maintains engagement"
+        },
+        {
+          "category": "emotion",
+          "claim": "Depiction stimulates viewer empathy and grounds core value proposition"
+        }
+      ]
+    },
+    "test_batch_1f2fc0ee": {
+      "video_id": "test_batch_1f2fc0ee",
+      "indexed_at": "2026-10-28T10:31:37.374654+00:00",
+      "category": "saas_app",
+      "duration_s": 33.033,
+      "frame_count": 57,
+      "virality": {
+        "tier": "Tier-3 High Performer",
+        "views": 500000.0,
+        "likes": 25000.0,
+        "shares": 0.0,
+        "comments": 0.0,
+        "like_ratio": 5.0,
+        "share_ratio": 0.0,
+        "archetype": "Direct Character & Situational Intrigue Hook",
+        "source": "manual",
+        "social_metadata": {
+          "title": "Viral Short #1",
+          "platform": "instagram"
+        }
+      },
+      "scores": {
+        "hook": 86,
+        "retention": 85,
+        "emotion": 83,
+        "clarity": 83,
+        "cta": 76,
+        "composite": 83
+      },
+      "hook_dna": {
+        "type": "Direct Character & Situational Intrigue Hook",
+        "technique": "Extreme close-up macro cut with rapid audio onset",
+        "first_3s_words": "",
+        "opening_ocr": [],
+        "hold_score": 86
+      },
+      "pacing_dna": {
+        "cuts_count": 24,
+        "cuts_per_minute": 43.6,
+        "cut_rhythm_s": 1.38,
+        "silence_ratio": 0.08
+      },
+      "style_dna": {
+        "palette": [
+          "#1f1e1c",
+          "#281f1e",
+          "#374141"
+        ],
+        "lighting": "Moody high-contrast low-key lighting with deep cinematic shadows",
+        "motion": "Rapid dynamic multi-cut cadence"
+      },
+      "blueprint": [
+        {
+          "role": "hook",
+          "technique": "Extreme close-up macro cut with rapid audio onset",
+          "duration_ms": 2500
+        },
+        {
+          "role": "problem",
+          "technique": "Handheld visceral frustration framing",
+          "duration_ms": 12364
+        },
+        {
+          "role": "demo",
+          "technique": "Smooth tracking shot illustrating mechanism in action",
+          "duration_ms": 11562
+        },
+        {
+          "role": "cta",
+          "technique": "Hero product framing with friction-free direct action",
+          "duration_ms": 6607
+        }
+      ],
+      "why_it_works_claims": [
+        {
+          "category": "growth",
+          "claim": "Opening 2.5s achieves 86% hook strength via early sound and visual tension"
+        },
+        {
+          "category": "retention",
+          "claim": "Scene cut pacing (1 cut every 1.3s) maintains engagement"
+        },
+        {
+          "category": "emotion",
+          "claim": "Depiction stimulates viewer empathy and grounds core value proposition"
+        }
+      ]
+    },
+    "test_batch_713a2ab2": {
+      "video_id": "test_batch_713a2ab2",
+      "indexed_at": "2026-10-28T10:33:03.952254+00:00",
+      "category": "e_commerce",
+      "duration_s": 33.033,
+      "frame_count": 57,
+      "virality": {
+        "tier": "Tier-3 High Performer",
+        "views": 500000.0,
+        "likes": 25000.0,
+        "shares": 0.0,
+        "comments": 0.0,
+        "like_ratio": 5.0,
+        "share_ratio": 0.0,
+        "archetype": "Direct Character & Situational Intrigue Hook",
+        "source": "manual",
+        "social_metadata": {
+          "title": "Viral Short #1",
+          "platform": "instagram"
+        }
+      },
+      "scores": {
+        "hook": 86,
+        "retention": 85,
+        "emotion": 83,
+        "clarity": 83,
+        "cta": 76,
+        "composite": 83
+      },
+      "hook_dna": {
+        "type": "Direct Character & Situational Intrigue Hook",
+        "technique": "Extreme close-up macro cut with rapid audio onset",
+        "first_3s_words": "",
+        "opening_ocr": [],
+        "hold_score": 86
+      },
+      "pacing_dna": {
+        "cuts_count": 24,
+        "cuts_per_minute": 43.6,
+        "cut_rhythm_s": 1.38,
+        "silence_ratio": 0.08
+      },
+      "style_dna": {
+        "palette": [
+          "#1f1e1c",
+          "#281f1e",
+          "#374141"
+        ],
+        "lighting": "Moody high-contrast low-key lighting with deep cinematic shadows",
+        "motion": "Rapid dynamic multi-cut cadence"
+      },
+      "blueprint": [
+        {
+          "role": "hook",
+          "technique": "Extreme close-up macro cut with rapid audio onset",
+          "duration_ms": 2500
+        },
+        {
+          "role": "problem",
+          "technique": "Handheld visceral frustration framing",
+          "duration_ms": 12364
+        },
+        {
+          "role": "demo",
+          "technique": "Smooth tracking shot illustrating mechanism in action",
+          "duration_ms": 11562
+        },
+        {
+          "role": "cta",
+          "technique": "Hero product framing with friction-free direct action",
+          "duration_ms": 6607
+        }
+      ],
+      "why_it_works_claims": [
+        {
+          "category": "growth",
+          "claim": "Opening 2.5s achieves 86% hook strength via early sound and visual tension"
+        },
+        {
+          "category": "retention",
+          "claim": "Scene cut pacing (1 cut every 1.3s) maintains engagement"
+        },
+        {
+          "category": "emotion",
+          "claim": "Depiction stimulates viewer empathy and grounds core value proposition"
+        }
+      ]
+    },
+    "test_batch_f0e05303": {
+      "video_id": "test_batch_f0e05303",
+      "indexed_at": "2026-10-28T10:33:07.740851+00:00",
+      "category": "saas_app",
+      "duration_s": 14.033,
+      "frame_count": 14,
+      "virality": {
+        "tier": "Tier-2 Viral Breakthrough",
+        "views": 1000000.0,
+        "likes": 50000.0,
+        "shares": 0.0,
+        "comments": 0.0,
+        "like_ratio": 5.0,
+        "share_ratio": 0.0,
+        "archetype": "High-Entropy Emotional Suspense & Negative Curiosity Hook",
+        "source": "manual",
+        "social_metadata": {
+          "title": "Viral Short #2",
+          "platform": "tiktok"
+        }
+      },
+      "scores": {
+        "hook": 92,
+        "retention": 91,
+        "emotion": 90,
+        "clarity": 86,
+        "cta": 84,
+        "composite": 89
+      },
+      "hook_dna": {
+        "type": "High-Entropy Emotional Suspense & Negative Curiosity Hook",
+        "technique": "Extreme close-up macro cut with rapid audio onset",
+        "first_3s_words": "Introducing Fizzinga for the athlete's dreamers",
+        "opening_ocr": [],
+        "hold_score": 92
+      },
+      "pacing_dna": {
+        "cuts_count": 1,
+        "cuts_per_minute": 4.3,
+        "cut_rhythm_s": 14.03,
+        "silence_ratio": 0.0
+      },
+      "style_dna": {
+        "palette": [
+          "#c5c5c5",
+          "#c1c1c1",
+          "#c5c5c5"
+        ],
+        "lighting": "Bright high-key diffused lighting with high visual clarity",
+        "motion": "Stable deliberate medium-pacing cadence"
+      },
+      "blueprint": [
+        {
+          "role": "hook",
+          "technique": "Extreme close-up macro cut with rapid audio onset",
+          "duration_ms": 2500
+        },
+        {
+          "role": "problem",
+          "technique": "Handheld visceral frustration framing",
+          "duration_ms": 3814
+        },
+        {
+          "role": "demo",
+          "technique": "Smooth tracking shot illustrating mechanism in action",
+          "duration_ms": 4912
+        },
+        {
+          "role": "cta",
+          "technique": "Hero product framing with friction-free direct action",
+          "duration_ms": 2807
+        }
+      ],
+      "why_it_works_claims": [
+        {
+          "category": "growth",
+          "claim": "Opening 2.5s achieves 92% hook strength via early sound and visual tension"
+        },
+        {
+          "category": "retention",
+          "claim": "Scene cut pacing (1 cut every 14.0s) maintains engagement"
+        },
+        {
+          "category": "emotion",
+          "claim": "Depiction stimulates viewer empathy and grounds core value proposition"
+        }
+      ]
+    },
+    "test_batch_8250a7ce": {
+      "video_id": "test_batch_8250a7ce",
+      "indexed_at": "2026-10-28T10:33:11.570611+00:00",
+      "category": "saas_app",
+      "duration_s": 14.033,
+      "frame_count": 14,
+      "virality": {
+        "tier": "Tier-2 Viral Breakthrough",
+        "views": 1500000.0,
+        "likes": 75000.0,
+        "shares": 0.0,
+        "comments": 0.0,
+        "like_ratio": 5.0,
+        "share_ratio": 0.0,
+        "archetype": "High-Entropy Emotional Suspense & Negative Curiosity Hook",
+        "source": "manual",
+        "social_metadata": {
+          "title": "Viral Short #3",
+          "platform": "instagram"
+        }
+      },
+      "scores": {
+        "hook": 92,
+        "retention": 91,
+        "emotion": 90,
+        "clarity": 86,
+        "cta": 84,
+        "composite": 89
+      },
+      "hook_dna": {
+        "type": "High-Entropy Emotional Suspense & Negative Curiosity Hook",
+        "technique": "Extreme close-up macro cut with rapid audio onset",
+        "first_3s_words": "Introducing Fizzinga for the athlete's dreamers",
+        "opening_ocr": [],
+        "hold_score": 92
+      },
+      "pacing_dna": {
+        "cuts_count": 1,
+        "cuts_per_minute": 4.3,
+        "cut_rhythm_s": 14.03,
+        "silence_ratio": 0.0
+      },
+      "style_dna": {
+        "palette": [
+          "#c5c5c5",
+          "#c1c1c1",
+          "#c5c5c5"
+        ],
+        "lighting": "Bright high-key diffused lighting with high visual clarity",
+        "motion": "Stable deliberate medium-pacing cadence"
+      },
+      "blueprint": [
+        {
+          "role": "hook",
+          "technique": "Extreme close-up macro cut with rapid audio onset",
+          "duration_ms": 2500
+        },
+        {
+          "role": "problem",
+          "technique": "Handheld visceral frustration framing",
+          "duration_ms": 3814
+        },
+        {
+          "role": "demo",
+          "technique": "Smooth tracking shot illustrating mechanism in action",
+          "duration_ms": 4912
+        },
+        {
+          "role": "cta",
+          "technique": "Hero product framing with friction-free direct action",
+          "duration_ms": 2807
+        }
+      ],
+      "why_it_works_claims": [
+        {
+          "category": "growth",
+          "claim": "Opening 2.5s achieves 92% hook strength via early sound and visual tension"
+        },
+        {
+          "category": "retention",
+          "claim": "Scene cut pacing (1 cut every 14.0s) maintains engagement"
+        },
+        {
+          "category": "emotion",
+          "claim": "Depiction stimulates viewer empathy and grounds core value proposition"
+        }
+      ]
+    },
+    "test_batch_1d0d9a45": {
+      "video_id": "test_batch_1d0d9a45",
+      "indexed_at": "2026-10-28T10:33:16.343911+00:00",
+      "category": "saas_app",
+      "duration_s": 11.7,
+      "frame_count": 15,
+      "virality": {
+        "tier": "Tier-2 Viral Breakthrough",
+        "views": 2000000.0,
+        "likes": 100000.0,
+        "shares": 0.0,
+        "comments": 0.0,
+        "like_ratio": 5.0,
+        "share_ratio": 0.0,
+        "archetype": "Direct Character & Situational Intrigue Hook",
+        "source": "manual",
+        "social_metadata": {
+          "title": "Viral Short #4",
+          "platform": "tiktok"
+        }
+      },
+      "scores": {
+        "hook": 92,
+        "retention": 91,
+        "emotion": 90,
+        "clarity": 86,
+        "cta": 84,
+        "composite": 89
+      },
+      "hook_dna": {
+        "type": "Direct Character & Situational Intrigue Hook",
+        "technique": "Extreme close-up macro cut with rapid audio onset",
+        "first_3s_words": "Boys if you are looking for these kind of kurtas at fort de wali",
+        "opening_ocr": [],
+        "hold_score": 92
+      },
+      "pacing_dna": {
+        "cuts_count": 3,
+        "cuts_per_minute": 15.4,
+        "cut_rhythm_s": 3.9,
+        "silence_ratio": 0.0
+      },
+      "style_dna": {
+        "palette": [
+          "#7e6664",
+          "#856a5e",
+          "#937760"
+        ],
+        "lighting": "Balanced natural daylight key lighting with neutral contrast",
+        "motion": "Rapid dynamic multi-cut cadence"
+      },
+      "blueprint": [
+        {
+          "role": "hook",
+          "technique": "Extreme close-up macro cut with rapid audio onset",
+          "duration_ms": 2500
+        },
+        {
+          "role": "problem",
+          "technique": "Handheld visceral frustration framing",
+          "duration_ms": 2765
+        },
+        {
+          "role": "demo",
+          "technique": "Smooth tracking shot illustrating mechanism in action",
+          "duration_ms": 4095
+        },
+        {
+          "role": "cta",
+          "technique": "Hero product framing with friction-free direct action",
+          "duration_ms": 2340
+        }
+      ],
+      "why_it_works_claims": [
+        {
+          "category": "growth",
+          "claim": "Opening 2.5s achieves 92% hook strength via early sound and visual tension"
+        },
+        {
+          "category": "retention",
+          "claim": "Scene cut pacing (1 cut every 2.9s) maintains engagement"
+        },
+        {
+          "category": "emotion",
+          "claim": "Depiction stimulates viewer empathy and grounds core value proposition"
+        }
+      ]
+    },
+    "test_batch_5f85f749": {
+      "video_id": "test_batch_5f85f749",
+      "indexed_at": "2026-10-28T10:33:20.341097+00:00",
+      "category": "saas_app",
+      "duration_s": 14.033,
+      "frame_count": 14,
+      "virality": {
+        "tier": "Tier-2 Viral Breakthrough",
+        "views": 2500000.0,
+        "likes": 125000.0,
+        "shares": 0.0,
+        "comments": 0.0,
+        "like_ratio": 5.0,
+        "share_ratio": 0.0,
+        "archetype": "High-Entropy Emotional Suspense & Negative Curiosity Hook",
+        "source": "manual",
+        "social_metadata": {
+          "title": "Viral Short #5",
+          "platform": "instagram"
+        }
+      },
+      "scores": {
+        "hook": 92,
+        "retention": 91,
+        "emotion": 90,
+        "clarity": 86,
+        "cta": 84,
+        "composite": 89
+      },
+      "hook_dna": {
+        "type": "High-Entropy Emotional Suspense & Negative Curiosity Hook",
+        "technique": "Extreme close-up macro cut with rapid audio onset",
+        "first_3s_words": "Introducing Fizzinga for the athlete's dreamers",
+        "opening_ocr": [],
+        "hold_score": 92
+      },
+      "pacing_dna": {
+        "cuts_count": 1,
+        "cuts_per_minute": 4.3,
+        "cut_rhythm_s": 14.03,
+        "silence_ratio": 0.0
+      },
+      "style_dna": {
+        "palette": [
+          "#c5c5c5",
+          "#c1c1c1",
+          "#c5c5c5"
+        ],
+        "lighting": "Bright high-key diffused lighting with high visual clarity",
+        "motion": "Stable deliberate medium-pacing cadence"
+      },
+      "blueprint": [
+        {
+          "role": "hook",
+          "technique": "Extreme close-up macro cut with rapid audio onset",
+          "duration_ms": 2500
+        },
+        {
+          "role": "problem",
+          "technique": "Handheld visceral frustration framing",
+          "duration_ms": 3814
+        },
+        {
+          "role": "demo",
+          "technique": "Smooth tracking shot illustrating mechanism in action",
+          "duration_ms": 4912
+        },
+        {
+          "role": "cta",
+          "technique": "Hero product framing with friction-free direct action",
+          "duration_ms": 2807
+        }
+      ],
+      "why_it_works_claims": [
+        {
+          "category": "growth",
+          "claim": "Opening 2.5s achieves 92% hook strength via early sound and visual tension"
+        },
+        {
+          "category": "retention",
+          "claim": "Scene cut pacing (1 cut every 14.0s) maintains engagement"
+        },
+        {
+          "category": "emotion",
+          "claim": "Depiction stimulates viewer empathy and grounds core value proposition"
+        }
+      ]
+    },
+    "test_batch_63f3d80b": {
+      "video_id": "test_batch_63f3d80b",
+      "indexed_at": "2026-10-28T10:33:24.324677+00:00",
+      "category": "saas_app",
+      "duration_s": 14.033,
+      "frame_count": 14,
+      "virality": {
+        "tier": "Tier-2 Viral Breakthrough",
+        "views": 3000000.0,
+        "likes": 150000.0,
+        "shares": 0.0,
+        "comments": 0.0,
+        "like_ratio": 5.0,
+        "share_ratio": 0.0,
+        "archetype": "High-Entropy Emotional Suspense & Negative Curiosity Hook",
+        "source": "manual",
+        "social_metadata": {
+          "title": "Viral Short #6",
+          "platform": "tiktok"
+        }
+      },
+      "scores": {
+        "hook": 92,
+        "retention": 91,
+        "emotion": 90,
+        "clarity": 86,
+        "cta": 84,
+        "composite": 89
+      },
+      "hook_dna": {
+        "type": "High-Entropy Emotional Suspense & Negative Curiosity Hook",
+        "technique": "Extreme close-up macro cut with rapid audio onset",
+        "first_3s_words": "Introducing Fizzinga for the athlete's dreamers",
+        "opening_ocr": [],
+        "hold_score": 92
+      },
+      "pacing_dna": {
+        "cuts_count": 1,
+        "cuts_per_minute": 4.3,
+        "cut_rhythm_s": 14.03,
+        "silence_ratio": 0.0
+      },
+      "style_dna": {
+        "palette": [
+          "#c5c5c5",
+          "#c1c1c1",
+          "#c5c5c5"
+        ],
+        "lighting": "Bright high-key diffused lighting with high visual clarity",
+        "motion": "Stable deliberate medium-pacing cadence"
+      },
+      "blueprint": [
+        {
+          "role": "hook",
+          "technique": "Extreme close-up macro cut with rapid audio onset",
+          "duration_ms": 2500
+        },
+        {
+          "role": "problem",
+          "technique": "Handheld visceral frustration framing",
+          "duration_ms": 3814
+        },
+        {
+          "role": "demo",
+          "technique": "Smooth tracking shot illustrating mechanism in action",
+          "duration_ms": 4912
+        },
+        {
+          "role": "cta",
+          "technique": "Hero product framing with friction-free direct action",
+          "duration_ms": 2807
+        }
+      ],
+      "why_it_works_claims": [
+        {
+          "category": "growth",
+          "claim": "Opening 2.5s achieves 92% hook strength via early sound and visual tension"
+        },
+        {
+          "category": "retention",
+          "claim": "Scene cut pacing (1 cut every 14.0s) maintains engagement"
+        },
+        {
+          "category": "emotion",
+          "claim": "Depiction stimulates viewer empathy and grounds core value proposition"
+        }
+      ]
+    },
+    "test_batch_8181eb39": {
+      "video_id": "test_batch_8181eb39",
+      "indexed_at": "2026-10-28T10:33:27.225266+00:00",
+      "category": "saas_app",
+      "duration_s": 5.467,
+      "frame_count": 6,
+      "virality": {
+        "tier": "Tier-2 Viral Breakthrough",
+        "views": 3500000.0,
+        "likes": 175000.0,
+        "shares": 0.0,
+        "comments": 0.0,
+        "like_ratio": 5.0,
+        "share_ratio": 0.0,
+        "archetype": "High-Entropy Emotional Suspense & Negative Curiosity Hook",
+        "source": "manual",
+        "social_metadata": {
+          "title": "Viral Short #7",
+          "platform": "instagram"
+        }
+      },
+      "scores": {
+        "hook": 92,
+        "retention": 91,
+        "emotion": 90,
+        "clarity": 86,
+        "cta": 84,
+        "composite": 89
+      },
+      "hook_dna": {
+        "type": "High-Entropy Emotional Suspense & Negative Curiosity Hook",
+        "technique": "Extreme close-up macro cut with rapid audio onset",
+        "first_3s_words": "The thing you can't die",
+        "opening_ocr": [],
+        "hold_score": 92
+      },
+      "pacing_dna": {
+        "cuts_count": 1,
+        "cuts_per_minute": 11.0,
+        "cut_rhythm_s": 5.47,
+        "silence_ratio": 0.0
+      },
+      "style_dna": {
+        "palette": [
+          "#767264",
+          "#7b7769",
+          "#6d6d69"
+        ],
+        "lighting": "Balanced natural daylight key lighting with neutral contrast",
+        "motion": "Stable deliberate medium-pacing cadence"
+      },
+      "blueprint": [
+        {
+          "role": "hook",
+          "technique": "Extreme close-up macro cut with rapid audio onset",
+          "duration_ms": 2500
+        },
+        {
+          "role": "problem",
+          "technique": "Handheld visceral frustration framing",
+          "duration_ms": 1000
+        },
+        {
+          "role": "demo",
+          "technique": "Smooth tracking shot illustrating mechanism in action",
+          "duration_ms": 1913
+        },
+        {
+          "role": "cta",
+          "technique": "Hero product framing with friction-free direct action",
+          "duration_ms": 1094
+        }
+      ],
+      "why_it_works_claims": [
+        {
+          "category": "growth",
+          "claim": "Opening 2.5s achieves 92% hook strength via early sound and visual tension"
+        },
+        {
+          "category": "retention",
+          "claim": "Scene cut pacing (1 cut every 5.5s) maintains engagement"
+        },
+        {
+          "category": "emotion",
+          "claim": "Depiction stimulates viewer empathy and grounds core value proposition"
+        }
+      ]
+    },
+    "test_batch_7c841a63": {
+      "video_id": "test_batch_7c841a63",
+      "indexed_at": "2026-10-28T10:33:31.163232+00:00",
+      "category": "saas_app",
+      "duration_s": 12.517,
+      "frame_count": 14,
+      "virality": {
+        "tier": "Tier-2 Viral Breakthrough",
+        "views": 4000000.0,
+        "likes": 200000.0,
+        "shares": 0.0,
+        "comments": 0.0,
+        "like_ratio": 5.0,
+        "share_ratio": 0.0,
+        "archetype": "High-Entropy Emotional Suspense & Negative Curiosity Hook",
+        "source": "manual",
+        "social_metadata": {
+          "title": "Viral Short #8",
+          "platform": "tiktok"
+        }
+      },
+      "scores": {
+        "hook": 92,
+        "retention": 91,
+        "emotion": 90,
+        "clarity": 86,
+        "cta": 84,
+        "composite": 89
+      },
+      "hook_dna": {
+        "type": "High-Entropy Emotional Suspense & Negative Curiosity Hook",
+        "technique": "Extreme close-up macro cut with rapid audio onset",
+        "first_3s_words": "",
+        "opening_ocr": [],
+        "hold_score": 92
+      },
+      "pacing_dna": {
+        "cuts_count": 1,
+        "cuts_per_minute": 4.8,
+        "cut_rhythm_s": 12.52,
+        "silence_ratio": 0.22
+      },
+      "style_dna": {
+        "palette": [
+          "#312524",
+          "#382721",
+          "#6a5e59"
+        ],
+        "lighting": "Balanced natural daylight key lighting with neutral contrast",
+        "motion": "Stable deliberate medium-pacing cadence"
+      },
+      "blueprint": [
+        {
+          "role": "hook",
+          "technique": "Extreme close-up macro cut with rapid audio onset",
+          "duration_ms": 2500
+        },
+        {
+          "role": "problem",
+          "technique": "Handheld visceral frustration framing",
+          "duration_ms": 3132
+        },
+        {
+          "role": "demo",
+          "technique": "Smooth tracking shot illustrating mechanism in action",
+          "duration_ms": 4380
+        },
+        {
+          "role": "cta",
+          "technique": "Hero product framing with friction-free direct action",
+          "duration_ms": 2504
+        }
+      ],
+      "why_it_works_claims": [
+        {
+          "category": "growth",
+          "claim": "Opening 2.5s achieves 92% hook strength via early sound and visual tension"
+        },
+        {
+          "category": "retention",
+          "claim": "Scene cut pacing (1 cut every 6.3s) maintains engagement"
+        },
+        {
+          "category": "emotion",
+          "claim": "Depiction stimulates viewer empathy and grounds core value proposition"
+        }
+      ]
+    },
+    "test_batch_dfb9a5c4": {
+      "video_id": "test_batch_dfb9a5c4",
+      "indexed_at": "2026-10-28T10:33:35.268620+00:00",
+      "category": "saas_app",
+      "duration_s": 18.933,
+      "frame_count": 19,
+      "virality": {
+        "tier": "Tier-2 Viral Breakthrough",
+        "views": 4500000.0,
+        "likes": 225000.0,
+        "shares": 0.0,
+        "comments": 0.0,
+        "like_ratio": 5.0,
+        "share_ratio": 0.0,
+        "archetype": "Direct Character & Situational Intrigue Hook",
+        "source": "manual",
+        "social_metadata": {
+          "title": "Viral Short #9",
+          "platform": "instagram"
+        }
+      },
+      "scores": {
+        "hook": 92,
+        "retention": 91,
+        "emotion": 90,
+        "clarity": 86,
+        "cta": 84,
+        "composite": 89
+      },
+      "hook_dna": {
+        "type": "Direct Character & Situational Intrigue Hook",
+        "technique": "Extreme close-up macro cut with rapid audio onset",
+        "first_3s_words": "Alright so here we are one of the elephants.",
+        "opening_ocr": [],
+        "hold_score": 92
+      },
+      "pacing_dna": {
+        "cuts_count": 1,
+        "cuts_per_minute": 3.2,
+        "cut_rhythm_s": 18.93,
+        "silence_ratio": 0.0
+      },
+      "style_dna": {
+        "palette": [
+          "#6c6771",
+          "#69646e",
+          "#6d6973"
+        ],
+        "lighting": "Balanced natural daylight key lighting with neutral contrast",
+        "motion": "Stable deliberate medium-pacing cadence"
+      },
+      "blueprint": [
+        {
+          "role": "hook",
+          "technique": "Extreme close-up macro cut with rapid audio onset",
+          "duration_ms": 2500
+        },
+        {
+          "role": "problem",
+          "technique": "Handheld visceral frustration framing",
+          "duration_ms": 6019
+        },
+        {
+          "role": "demo",
+          "technique": "Smooth tracking shot illustrating mechanism in action",
+          "duration_ms": 6627
+        },
+        {
+          "role": "cta",
+          "technique": "Hero product framing with friction-free direct action",
+          "duration_ms": 3787
+        }
+      ],
+      "why_it_works_claims": [
+        {
+          "category": "growth",
+          "claim": "Opening 2.5s achieves 92% hook strength via early sound and visual tension"
+        },
+        {
+          "category": "retention",
+          "claim": "Scene cut pacing (1 cut every 18.9s) maintains engagement"
+        },
+        {
+          "category": "emotion",
+          "claim": "Depiction stimulates viewer empathy and grounds core value proposition"
+        }
+      ]
+    },
+    "test_batch_21c29c70": {
+      "video_id": "test_batch_21c29c70",
+      "indexed_at": "2026-10-28T10:33:39.565611+00:00",
+      "category": "saas_app",
+      "duration_s": 14.033,
+      "frame_count": 14,
+      "virality": {
+        "tier": "Tier-2 Viral Breakthrough",
+        "views": 5000000.0,
+        "likes": 250000.0,
+        "shares": 0.0,
+        "comments": 0.0,
+        "like_ratio": 5.0,
+        "share_ratio": 0.0,
+        "archetype": "High-Entropy Emotional Suspense & Negative Curiosity Hook",
+        "source": "manual",
+        "social_metadata": {
+          "title": "Viral Short #10",
+          "platform": "tiktok"
+        }
+      },
+      "scores": {
+        "hook": 92,
+        "retention": 91,
+        "emotion": 90,
+        "clarity": 86,
+        "cta": 84,
+        "composite": 89
+      },
+      "hook_dna": {
+        "type": "High-Entropy Emotional Suspense & Negative Curiosity Hook",
+        "technique": "Extreme close-up macro cut with rapid audio onset",
+        "first_3s_words": "Introducing Fizzinga for the athlete's dreamers",
+        "opening_ocr": [],
+        "hold_score": 92
+      },
+      "pacing_dna": {
+        "cuts_count": 1,
+        "cuts_per_minute": 4.3,
+        "cut_rhythm_s": 14.03,
+        "silence_ratio": 0.0
+      },
+      "style_dna": {
+        "palette": [
+          "#c5c5c5",
+          "#c1c1c1",
+          "#c5c5c5"
+        ],
+        "lighting": "Bright high-key diffused lighting with high visual clarity",
+        "motion": "Stable deliberate medium-pacing cadence"
+      },
+      "blueprint": [
+        {
+          "role": "hook",
+          "technique": "Extreme close-up macro cut with rapid audio onset",
+          "duration_ms": 2500
+        },
+        {
+          "role": "problem",
+          "technique": "Handheld visceral frustration framing",
+          "duration_ms": 3814
+        },
+        {
+          "role": "demo",
+          "technique": "Smooth tracking shot illustrating mechanism in action",
+          "duration_ms": 4912
+        },
+        {
+          "role": "cta",
+          "technique": "Hero product framing with friction-free direct action",
+          "duration_ms": 2807
+        }
+      ],
+      "why_it_works_claims": [
+        {
+          "category": "growth",
+          "claim": "Opening 2.5s achieves 92% hook strength via early sound and visual tension"
+        },
+        {
+          "category": "retention",
+          "claim": "Scene cut pacing (1 cut every 14.0s) maintains engagement"
+        },
+        {
+          "category": "emotion",
+          "claim": "Depiction stimulates viewer empathy and grounds core value proposition"
+        }
+      ]
+    },
+    "test_batch_cdb6c9c4": {
+      "video_id": "test_batch_cdb6c9c4",
+      "indexed_at": "2026-10-28T10:36:24.984246+00:00",
+      "category": "e_commerce",
+      "duration_s": 33.033,
+      "frame_count": 57,
+      "virality": {
+        "tier": "Tier-3 High Performer",
+        "views": 500000.0,
+        "likes": 25000.0,
+        "shares": 0.0,
+        "comments": 0.0,
+        "like_ratio": 5.0,
+        "share_ratio": 0.0,
+        "archetype": "Direct Character & Situational Intrigue Hook",
+        "source": "manual",
+        "social_metadata": {
+          "title": "Viral Short #1",
+          "platform": "instagram"
+        }
+      },
+      "scores": {
+        "hook": 86,
+        "retention": 85,
+        "emotion": 83,
+        "clarity": 83,
+        "cta": 76,
+        "composite": 83
+      },
+      "hook_dna": {
+        "type": "Direct Character & Situational Intrigue Hook",
+        "technique": "Extreme close-up macro cut with rapid audio onset",
+        "first_3s_words": "Music",
+        "opening_ocr": [],
+        "hold_score": 86
+      },
+      "pacing_dna": {
+        "cuts_count": 24,
+        "cuts_per_minute": 43.6,
+        "cut_rhythm_s": 1.38,
+        "silence_ratio": 0.08
+      },
+      "style_dna": {
+        "palette": [
+          "#1f1e1c",
+          "#281f1e",
+          "#374141"
+        ],
+        "lighting": "Moody high-contrast low-key lighting with deep cinematic shadows",
+        "motion": "Rapid dynamic multi-cut cadence"
+      },
+      "blueprint": [
+        {
+          "role": "hook",
+          "technique": "Extreme close-up macro cut with rapid audio onset",
+          "duration_ms": 2500
+        },
+        {
+          "role": "problem",
+          "technique": "Handheld visceral frustration framing",
+          "duration_ms": 12364
+        },
+        {
+          "role": "demo",
+          "technique": "Smooth tracking shot illustrating mechanism in action",
+          "duration_ms": 11562
+        },
+        {
+          "role": "cta",
+          "technique": "Hero product framing with friction-free direct action",
+          "duration_ms": 6607
+        }
+      ],
+      "why_it_works_claims": [
+        {
+          "category": "growth",
+          "claim": "Opening 2.5s achieves 86% hook strength via early sound and visual tension"
+        },
+        {
+          "category": "retention",
+          "claim": "Scene cut pacing (1 cut every 1.3s) maintains engagement"
+        },
+        {
+          "category": "emotion",
+          "claim": "Depiction stimulates viewer empathy and grounds core value proposition"
+        }
+      ]
+    },
+    "test_batch_0aced61c": {
+      "video_id": "test_batch_0aced61c",
+      "indexed_at": "2026-10-28T10:36:28.849521+00:00",
+      "category": "saas_app",
+      "duration_s": 14.033,
+      "frame_count": 14,
+      "virality": {
+        "tier": "Tier-2 Viral Breakthrough",
+        "views": 1000000.0,
+        "likes": 50000.0,
+        "shares": 0.0,
+        "comments": 0.0,
+        "like_ratio": 5.0,
+        "share_ratio": 0.0,
+        "archetype": "High-Entropy Emotional Suspense & Negative Curiosity Hook",
+        "source": "manual",
+        "social_metadata": {
+          "title": "Viral Short #2",
+          "platform": "tiktok"
+        }
+      },
+      "scores": {
+        "hook": 92,
+        "retention": 91,
+        "emotion": 90,
+        "clarity": 86,
+        "cta": 84,
+        "composite": 89
+      },
+      "hook_dna": {
+        "type": "High-Entropy Emotional Suspense & Negative Curiosity Hook",
+        "technique": "Extreme close-up macro cut with rapid audio onset",
+        "first_3s_words": "Introducing Fizzinga for the athlete's dreamers",
+        "opening_ocr": [],
+        "hold_score": 92
+      },
+      "pacing_dna": {
+        "cuts_count": 1,
+        "cuts_per_minute": 4.3,
+        "cut_rhythm_s": 14.03,
+        "silence_ratio": 0.0
+      },
+      "style_dna": {
+        "palette": [
+          "#c5c5c5",
+          "#c1c1c1",
+          "#c5c5c5"
+        ],
+        "lighting": "Bright high-key diffused lighting with high visual clarity",
+        "motion": "Stable deliberate medium-pacing cadence"
+      },
+      "blueprint": [
+        {
+          "role": "hook",
+          "technique": "Extreme close-up macro cut with rapid audio onset",
+          "duration_ms": 2500
+        },
+        {
+          "role": "problem",
+          "technique": "Handheld visceral frustration framing",
+          "duration_ms": 3814
+        },
+        {
+          "role": "demo",
+          "technique": "Smooth tracking shot illustrating mechanism in action",
+          "duration_ms": 4912
+        },
+        {
+          "role": "cta",
+          "technique": "Hero product framing with friction-free direct action",
+          "duration_ms": 2807
+        }
+      ],
+      "why_it_works_claims": [
+        {
+          "category": "growth",
+          "claim": "Opening 2.5s achieves 92% hook strength via early sound and visual tension"
+        },
+        {
+          "category": "retention",
+          "claim": "Scene cut pacing (1 cut every 14.0s) maintains engagement"
+        },
+        {
+          "category": "emotion",
+          "claim": "Depiction stimulates viewer empathy and grounds core value proposition"
+        }
+      ]
+    },
+    "test_batch_b27ba8b4": {
+      "video_id": "test_batch_b27ba8b4",
+      "indexed_at": "2026-10-28T10:36:32.811492+00:00",
+      "category": "saas_app",
+      "duration_s": 14.033,
+      "frame_count": 14,
+      "virality": {
+        "tier": "Tier-2 Viral Breakthrough",
+        "views": 1500000.0,
+        "likes": 75000.0,
+        "shares": 0.0,
+        "comments": 0.0,
+        "like_ratio": 5.0,
+        "share_ratio": 0.0,
+        "archetype": "High-Entropy Emotional Suspense & Negative Curiosity Hook",
+        "source": "manual",
+        "social_metadata": {
+          "title": "Viral Short #3",
+          "platform": "instagram"
+        }
+      },
+      "scores": {
+        "hook": 92,
+        "retention": 91,
+        "emotion": 90,
+        "clarity": 86,
+        "cta": 84,
+        "composite": 89
+      },
+      "hook_dna": {
+        "type": "High-Entropy Emotional Suspense & Negative Curiosity Hook",
+        "technique": "Extreme close-up macro cut with rapid audio onset",
+        "first_3s_words": "Introducing Fizzinga for the athlete's dreamers",
+        "opening_ocr": [],
+        "hold_score": 92
+      },
+      "pacing_dna": {
+        "cuts_count": 1,
+        "cuts_per_minute": 4.3,
+        "cut_rhythm_s": 14.03,
+        "silence_ratio": 0.0
+      },
+      "style_dna": {
+        "palette": [
+          "#c5c5c5",
+          "#c1c1c1",
+          "#c5c5c5"
+        ],
+        "lighting": "Bright high-key diffused lighting with high visual clarity",
+        "motion": "Stable deliberate medium-pacing cadence"
+      },
+      "blueprint": [
+        {
+          "role": "hook",
+          "technique": "Extreme close-up macro cut with rapid audio onset",
+          "duration_ms": 2500
+        },
+        {
+          "role": "problem",
+          "technique": "Handheld visceral frustration framing",
+          "duration_ms": 3814
+        },
+        {
+          "role": "demo",
+          "technique": "Smooth tracking shot illustrating mechanism in action",
+          "duration_ms": 4912
+        },
+        {
+          "role": "cta",
+          "technique": "Hero product framing with friction-free direct action",
+          "duration_ms": 2807
+        }
+      ],
+      "why_it_works_claims": [
+        {
+          "category": "growth",
+          "claim": "Opening 2.5s achieves 92% hook strength via early sound and visual tension"
+        },
+        {
+          "category": "retention",
+          "claim": "Scene cut pacing (1 cut every 14.0s) maintains engagement"
+        },
+        {
+          "category": "emotion",
+          "claim": "Depiction stimulates viewer empathy and grounds core value proposition"
+        }
+      ]
+    },
+    "test_batch_abdaf5e8": {
+      "video_id": "test_batch_abdaf5e8",
+      "indexed_at": "2026-10-28T10:36:37.579459+00:00",
+      "category": "saas_app",
+      "duration_s": 11.7,
+      "frame_count": 15,
+      "virality": {
+        "tier": "Tier-2 Viral Breakthrough",
+        "views": 2000000.0,
+        "likes": 100000.0,
+        "shares": 0.0,
+        "comments": 0.0,
+        "like_ratio": 5.0,
+        "share_ratio": 0.0,
+        "archetype": "Direct Character & Situational Intrigue Hook",
+        "source": "manual",
+        "social_metadata": {
+          "title": "Viral Short #4",
+          "platform": "tiktok"
+        }
+      },
+      "scores": {
+        "hook": 92,
+        "retention": 91,
+        "emotion": 90,
+        "clarity": 86,
+        "cta": 84,
+        "composite": 89
+      },
+      "hook_dna": {
+        "type": "Direct Character & Situational Intrigue Hook",
+        "technique": "Extreme close-up macro cut with rapid audio onset",
+        "first_3s_words": "Boys if you are looking for these kind of kurtas at fort de wali",
+        "opening_ocr": [],
+        "hold_score": 92
+      },
+      "pacing_dna": {
+        "cuts_count": 3,
+        "cuts_per_minute": 15.4,
+        "cut_rhythm_s": 3.9,
+        "silence_ratio": 0.0
+      },
+      "style_dna": {
+        "palette": [
+          "#7e6664",
+          "#856a5e",
+          "#937760"
+        ],
+        "lighting": "Balanced natural daylight key lighting with neutral contrast",
+        "motion": "Rapid dynamic multi-cut cadence"
+      },
+      "blueprint": [
+        {
+          "role": "hook",
+          "technique": "Extreme close-up macro cut with rapid audio onset",
+          "duration_ms": 2500
+        },
+        {
+          "role": "problem",
+          "technique": "Handheld visceral frustration framing",
+          "duration_ms": 2765
+        },
+        {
+          "role": "demo",
+          "technique": "Smooth tracking shot illustrating mechanism in action",
+          "duration_ms": 4095
+        },
+        {
+          "role": "cta",
+          "technique": "Hero product framing with friction-free direct action",
+          "duration_ms": 2340
+        }
+      ],
+      "why_it_works_claims": [
+        {
+          "category": "growth",
+          "claim": "Opening 2.5s achieves 92% hook strength via early sound and visual tension"
+        },
+        {
+          "category": "retention",
+          "claim": "Scene cut pacing (1 cut every 2.9s) maintains engagement"
+        },
+        {
+          "category": "emotion",
+          "claim": "Depiction stimulates viewer empathy and grounds core value proposition"
+        }
+      ]
+    },
+    "test_batch_71541535": {
+      "video_id": "test_batch_71541535",
+      "indexed_at": "2026-10-28T10:36:42.354085+00:00",
+      "category": "saas_app",
+      "duration_s": 14.033,
+      "frame_count": 14,
+      "virality": {
+        "tier": "Tier-2 Viral Breakthrough",
+        "views": 2500000.0,
+        "likes": 125000.0,
+        "shares": 0.0,
+        "comments": 0.0,
+        "like_ratio": 5.0,
+        "share_ratio": 0.0,
+        "archetype": "High-Entropy Emotional Suspense & Negative Curiosity Hook",
+        "source": "manual",
+        "social_metadata": {
+          "title": "Viral Short #5",
+          "platform": "instagram"
+        }
+      },
+      "scores": {
+        "hook": 92,
+        "retention": 91,
+        "emotion": 90,
+        "clarity": 86,
+        "cta": 84,
+        "composite": 89
+      },
+      "hook_dna": {
+        "type": "High-Entropy Emotional Suspense & Negative Curiosity Hook",
+        "technique": "Extreme close-up macro cut with rapid audio onset",
+        "first_3s_words": "Introducing Fizzinga for the athlete's dreamers",
+        "opening_ocr": [],
+        "hold_score": 92
+      },
+      "pacing_dna": {
+        "cuts_count": 1,
+        "cuts_per_minute": 4.3,
+        "cut_rhythm_s": 14.03,
+        "silence_ratio": 0.0
+      },
+      "style_dna": {
+        "palette": [
+          "#c5c5c5",
+          "#c1c1c1",
+          "#c5c5c5"
+        ],
+        "lighting": "Bright high-key diffused lighting with high visual clarity",
+        "motion": "Stable deliberate medium-pacing cadence"
+      },
+      "blueprint": [
+        {
+          "role": "hook",
+          "technique": "Extreme close-up macro cut with rapid audio onset",
+          "duration_ms": 2500
+        },
+        {
+          "role": "problem",
+          "technique": "Handheld visceral frustration framing",
+          "duration_ms": 3814
+        },
+        {
+          "role": "demo",
+          "technique": "Smooth tracking shot illustrating mechanism in action",
+          "duration_ms": 4912
+        },
+        {
+          "role": "cta",
+          "technique": "Hero product framing with friction-free direct action",
+          "duration_ms": 2807
+        }
+      ],
+      "why_it_works_claims": [
+        {
+          "category": "growth",
+          "claim": "Opening 2.5s achieves 92% hook strength via early sound and visual tension"
+        },
+        {
+          "category": "retention",
+          "claim": "Scene cut pacing (1 cut every 14.0s) maintains engagement"
+        },
+        {
+          "category": "emotion",
+          "claim": "Depiction stimulates viewer empathy and grounds core value proposition"
+        }
+      ]
+    },
+    "test_batch_39a5fa08": {
+      "video_id": "test_batch_39a5fa08",
+      "indexed_at": "2026-10-28T10:36:46.642580+00:00",
+      "category": "saas_app",
+      "duration_s": 14.033,
+      "frame_count": 14,
+      "virality": {
+        "tier": "Tier-2 Viral Breakthrough",
+        "views": 3000000.0,
+        "likes": 150000.0,
+        "shares": 0.0,
+        "comments": 0.0,
+        "like_ratio": 5.0,
+        "share_ratio": 0.0,
+        "archetype": "High-Entropy Emotional Suspense & Negative Curiosity Hook",
+        "source": "manual",
+        "social_metadata": {
+          "title": "Viral Short #6",
+          "platform": "tiktok"
+        }
+      },
+      "scores": {
+        "hook": 92,
+        "retention": 91,
+        "emotion": 90,
+        "clarity": 86,
+        "cta": 84,
+        "composite": 89
+      },
+      "hook_dna": {
+        "type": "High-Entropy Emotional Suspense & Negative Curiosity Hook",
+        "technique": "Extreme close-up macro cut with rapid audio onset",
+        "first_3s_words": "Introducing Fizzinga for the athlete's dreamers",
+        "opening_ocr": [],
+        "hold_score": 92
+      },
+      "pacing_dna": {
+        "cuts_count": 1,
+        "cuts_per_minute": 4.3,
+        "cut_rhythm_s": 14.03,
+        "silence_ratio": 0.0
+      },
+      "style_dna": {
+        "palette": [
+          "#c5c5c5",
+          "#c1c1c1",
+          "#c5c5c5"
+        ],
+        "lighting": "Bright high-key diffused lighting with high visual clarity",
+        "motion": "Stable deliberate medium-pacing cadence"
+      },
+      "blueprint": [
+        {
+          "role": "hook",
+          "technique": "Extreme close-up macro cut with rapid audio onset",
+          "duration_ms": 2500
+        },
+        {
+          "role": "problem",
+          "technique": "Handheld visceral frustration framing",
+          "duration_ms": 3814
+        },
+        {
+          "role": "demo",
+          "technique": "Smooth tracking shot illustrating mechanism in action",
+          "duration_ms": 4912
+        },
+        {
+          "role": "cta",
+          "technique": "Hero product framing with friction-free direct action",
+          "duration_ms": 2807
+        }
+      ],
+      "why_it_works_claims": [
+        {
+          "category": "growth",
+          "claim": "Opening 2.5s achieves 92% hook strength via early sound and visual tension"
+        },
+        {
+          "category": "retention",
+          "claim": "Scene cut pacing (1 cut every 14.0s) maintains engagement"
+        },
+        {
+          "category": "emotion",
+          "claim": "Depiction stimulates viewer empathy and grounds core value proposition"
+        }
+      ]
+    },
+    "test_batch_5fd6d071": {
+      "video_id": "test_batch_5fd6d071",
+      "indexed_at": "2026-10-28T10:36:49.663481+00:00",
+      "category": "saas_app",
+      "duration_s": 5.467,
+      "frame_count": 6,
+      "virality": {
+        "tier": "Tier-2 Viral Breakthrough",
+        "views": 3500000.0,
+        "likes": 175000.0,
+        "shares": 0.0,
+        "comments": 0.0,
+        "like_ratio": 5.0,
+        "share_ratio": 0.0,
+        "archetype": "High-Entropy Emotional Suspense & Negative Curiosity Hook",
+        "source": "manual",
+        "social_metadata": {
+          "title": "Viral Short #7",
+          "platform": "instagram"
+        }
+      },
+      "scores": {
+        "hook": 92,
+        "retention": 91,
+        "emotion": 90,
+        "clarity": 86,
+        "cta": 84,
+        "composite": 89
+      },
+      "hook_dna": {
+        "type": "High-Entropy Emotional Suspense & Negative Curiosity Hook",
+        "technique": "Extreme close-up macro cut with rapid audio onset",
+        "first_3s_words": "The thing you can't die",
+        "opening_ocr": [],
+        "hold_score": 92
+      },
+      "pacing_dna": {
+        "cuts_count": 1,
+        "cuts_per_minute": 11.0,
+        "cut_rhythm_s": 5.47,
+        "silence_ratio": 0.0
+      },
+      "style_dna": {
+        "palette": [
+          "#767264",
+          "#7b7769",
+          "#6d6d69"
+        ],
+        "lighting": "Balanced natural daylight key lighting with neutral contrast",
+        "motion": "Stable deliberate medium-pacing cadence"
+      },
+      "blueprint": [
+        {
+          "role": "hook",
+          "technique": "Extreme close-up macro cut with rapid audio onset",
+          "duration_ms": 2500
+        },
+        {
+          "role": "problem",
+          "technique": "Handheld visceral frustration framing",
+          "duration_ms": 1000
+        },
+        {
+          "role": "demo",
+          "technique": "Smooth tracking shot illustrating mechanism in action",
+          "duration_ms": 1913
+        },
+        {
+          "role": "cta",
+          "technique": "Hero product framing with friction-free direct action",
+          "duration_ms": 1094
+        }
+      ],
+      "why_it_works_claims": [
+        {
+          "category": "growth",
+          "claim": "Opening 2.5s achieves 92% hook strength via early sound and visual tension"
+        },
+        {
+          "category": "retention",
+          "claim": "Scene cut pacing (1 cut every 5.5s) maintains engagement"
+        },
+        {
+          "category": "emotion",
+          "claim": "Depiction stimulates viewer empathy and grounds core value proposition"
+        }
+      ]
+    },
+    "test_batch_0fcfaf30": {
+      "video_id": "test_batch_0fcfaf30",
+      "indexed_at": "2026-10-28T10:36:54.324258+00:00",
+      "category": "saas_app",
+      "duration_s": 12.517,
+      "frame_count": 14,
+      "virality": {
+        "tier": "Tier-2 Viral Breakthrough",
+        "views": 4000000.0,
+        "likes": 200000.0,
+        "shares": 0.0,
+        "comments": 0.0,
+        "like_ratio": 5.0,
+        "share_ratio": 0.0,
+        "archetype": "High-Entropy Emotional Suspense & Negative Curiosity Hook",
+        "source": "manual",
+        "social_metadata": {
+          "title": "Viral Short #8",
+          "platform": "tiktok"
+        }
+      },
+      "scores": {
+        "hook": 92,
+        "retention": 91,
+        "emotion": 90,
+        "clarity": 86,
+        "cta": 84,
+        "composite": 89
+      },
+      "hook_dna": {
+        "type": "High-Entropy Emotional Suspense & Negative Curiosity Hook",
+        "technique": "Extreme close-up macro cut with rapid audio onset",
+        "first_3s_words": "",
+        "opening_ocr": [],
+        "hold_score": 92
+      },
+      "pacing_dna": {
+        "cuts_count": 1,
+        "cuts_per_minute": 4.8,
+        "cut_rhythm_s": 12.52,
+        "silence_ratio": 0.22
+      },
+      "style_dna": {
+        "palette": [
+          "#312524",
+          "#382721",
+          "#6a5e59"
+        ],
+        "lighting": "Balanced natural daylight key lighting with neutral contrast",
+        "motion": "Stable deliberate medium-pacing cadence"
+      },
+      "blueprint": [
+        {
+          "role": "hook",
+          "technique": "Extreme close-up macro cut with rapid audio onset",
+          "duration_ms": 2500
+        },
+        {
+          "role": "problem",
+          "technique": "Handheld visceral frustration framing",
+          "duration_ms": 3132
+        },
+        {
+          "role": "demo",
+          "technique": "Smooth tracking shot illustrating mechanism in action",
+          "duration_ms": 4380
+        },
+        {
+          "role": "cta",
+          "technique": "Hero product framing with friction-free direct action",
+          "duration_ms": 2504
+        }
+      ],
+      "why_it_works_claims": [
+        {
+          "category": "growth",
+          "claim": "Opening 2.5s achieves 92% hook strength via early sound and visual tension"
+        },
+        {
+          "category": "retention",
+          "claim": "Scene cut pacing (1 cut every 6.3s) maintains engagement"
+        },
+        {
+          "category": "emotion",
+          "claim": "Depiction stimulates viewer empathy and grounds core value proposition"
+        }
+      ]
+    },
+    "test_batch_0c4355a0": {
+      "video_id": "test_batch_0c4355a0",
+      "indexed_at": "2026-10-28T10:36:59.068834+00:00",
+      "category": "saas_app",
+      "duration_s": 18.933,
+      "frame_count": 19,
+      "virality": {
+        "tier": "Tier-2 Viral Breakthrough",
+        "views": 4500000.0,
+        "likes": 225000.0,
+        "shares": 0.0,
+        "comments": 0.0,
+        "like_ratio": 5.0,
+        "share_ratio": 0.0,
+        "archetype": "Direct Character & Situational Intrigue Hook",
+        "source": "manual",
+        "social_metadata": {
+          "title": "Viral Short #9",
+          "platform": "instagram"
+        }
+      },
+      "scores": {
+        "hook": 92,
+        "retention": 91,
+        "emotion": 90,
+        "clarity": 86,
+        "cta": 84,
+        "composite": 89
+      },
+      "hook_dna": {
+        "type": "Direct Character & Situational Intrigue Hook",
+        "technique": "Extreme close-up macro cut with rapid audio onset",
+        "first_3s_words": "Alright so here we are one of the elephants.",
+        "opening_ocr": [],
+        "hold_score": 92
+      },
+      "pacing_dna": {
+        "cuts_count": 1,
+        "cuts_per_minute": 3.2,
+        "cut_rhythm_s": 18.93,
+        "silence_ratio": 0.0
+      },
+      "style_dna": {
+        "palette": [
+          "#6c6771",
+          "#69646e",
+          "#6d6973"
+        ],
+        "lighting": "Balanced natural daylight key lighting with neutral contrast",
+        "motion": "Stable deliberate medium-pacing cadence"
+      },
+      "blueprint": [
+        {
+          "role": "hook",
+          "technique": "Extreme close-up macro cut with rapid audio onset",
+          "duration_ms": 2500
+        },
+        {
+          "role": "problem",
+          "technique": "Handheld visceral frustration framing",
+          "duration_ms": 6019
+        },
+        {
+          "role": "demo",
+          "technique": "Smooth tracking shot illustrating mechanism in action",
+          "duration_ms": 6627
+        },
+        {
+          "role": "cta",
+          "technique": "Hero product framing with friction-free direct action",
+          "duration_ms": 3787
+        }
+      ],
+      "why_it_works_claims": [
+        {
+          "category": "growth",
+          "claim": "Opening 2.5s achieves 92% hook strength via early sound and visual tension"
+        },
+        {
+          "category": "retention",
+          "claim": "Scene cut pacing (1 cut every 18.9s) maintains engagement"
+        },
+        {
+          "category": "emotion",
+          "claim": "Depiction stimulates viewer empathy and grounds core value proposition"
+        }
+      ]
+    },
+    "test_batch_0d3e0b6f": {
+      "video_id": "test_batch_0d3e0b6f",
+      "indexed_at": "2026-10-28T10:37:04.227273+00:00",
+      "category": "saas_app",
+      "duration_s": 14.033,
+      "frame_count": 14,
+      "virality": {
+        "tier": "Tier-2 Viral Breakthrough",
+        "views": 5000000.0,
+        "likes": 250000.0,
+        "shares": 0.0,
+        "comments": 0.0,
+        "like_ratio": 5.0,
+        "share_ratio": 0.0,
+        "archetype": "High-Entropy Emotional Suspense & Negative Curiosity Hook",
+        "source": "manual",
+        "social_metadata": {
+          "title": "Viral Short #10",
+          "platform": "tiktok"
+        }
+      },
+      "scores": {
+        "hook": 92,
+        "retention": 91,
+        "emotion": 90,
+        "clarity": 86,
+        "cta": 84,
+        "composite": 89
+      },
+      "hook_dna": {
+        "type": "High-Entropy Emotional Suspense & Negative Curiosity Hook",
+        "technique": "Extreme close-up macro cut with rapid audio onset",
+        "first_3s_words": "Introducing Fizzinga for the athlete's dreamers",
+        "opening_ocr": [],
+        "hold_score": 92
+      },
+      "pacing_dna": {
+        "cuts_count": 1,
+        "cuts_per_minute": 4.3,
+        "cut_rhythm_s": 14.03,
+        "silence_ratio": 0.0
+      },
+      "style_dna": {
+        "palette": [
+          "#c5c5c5",
+          "#c1c1c1",
+          "#c5c5c5"
+        ],
+        "lighting": "Bright high-key diffused lighting with high visual clarity",
+        "motion": "Stable deliberate medium-pacing cadence"
+      },
+      "blueprint": [
+        {
+          "role": "hook",
+          "technique": "Extreme close-up macro cut with rapid audio onset",
+          "duration_ms": 2500
+        },
+        {
+          "role": "problem",
+          "technique": "Handheld visceral frustration framing",
+          "duration_ms": 3814
+        },
+        {
+          "role": "demo",
+          "technique": "Smooth tracking shot illustrating mechanism in action",
+          "duration_ms": 4912
+        },
+        {
+          "role": "cta",
+          "technique": "Hero product framing with friction-free direct action",
+          "duration_ms": 2807
+        }
+      ],
+      "why_it_works_claims": [
+        {
+          "category": "growth",
+          "claim": "Opening 2.5s achieves 92% hook strength via early sound and visual tension"
+        },
+        {
+          "category": "retention",
+          "claim": "Scene cut pacing (1 cut every 14.0s) maintains engagement"
+        },
+        {
+          "category": "emotion",
+          "claim": "Depiction stimulates viewer empathy and grounds core value proposition"
+        }
+      ]
     }
   },
   "categories": {
@@ -3209,12 +5145,34 @@
       "test_analysis_899f0c01",
       "test_golden_c0ef3823",
       "test_analysis_60cd273a",
-      "test_golden_4ce53317"
+      "test_golden_4ce53317",
+      "test_batch_f7b5a097",
+      "test_batch_713a2ab2",
+      "test_batch_cdb6c9c4"
     ],
     "saas_app": [
       "b7db7ccf-c10b-4e25-a909-9364efec5beb",
       "b547015c-6491-4353-85fc-5de444075633",
-      "8d6001bb-6579-4203-a203-841985d1df92"
+      "8d6001bb-6579-4203-a203-841985d1df92",
+      "test_batch_1f2fc0ee",
+      "test_batch_f0e05303",
+      "test_batch_8250a7ce",
+      "test_batch_1d0d9a45",
+      "test_batch_5f85f749",
+      "test_batch_63f3d80b",
+      "test_batch_8181eb39",
+      "test_batch_7c841a63",
+      "test_batch_dfb9a5c4",
+      "test_batch_21c29c70",
+      "test_batch_0aced61c",
+      "test_batch_b27ba8b4",
+      "test_batch_abdaf5e8",
+      "test_batch_71541535",
+      "test_batch_39a5fa08",
+      "test_batch_5fd6d071",
+      "test_batch_0fcfaf30",
+      "test_batch_0c4355a0",
+      "test_batch_0d3e0b6f"
     ],
     "creator_ugc": [],
     "lifestyle": [],
@@ -3222,15 +5180,6 @@
   },
   "patterns": {
     "hooks": [
-      {
-        "archetype": "Direct Character & Situational Intrigue Hook",
-        "frequency": 1,
-        "avg_hook_score": 96.0,
-        "techniques": [
-          "Direct Character & Situational Intrigue Hook"
-        ],
-        "recommended_for": "Fast-scroll feeds (TikTok & Instagram Reels)"
-      },
       {
         "archetype": "High-Velocity Narrative Acceleration Hook",
         "frequency": 1,
@@ -3241,12 +5190,22 @@
         "recommended_for": "Fast-scroll feeds (TikTok & Instagram Reels)"
       },
       {
-        "archetype": "High-Entropy Emotional Suspense & Negative Curiosity Hook",
-        "frequency": 5,
-        "avg_hook_score": 83.4,
+        "archetype": "Direct Character & Situational Intrigue Hook",
+        "frequency": 9,
+        "avg_hook_score": 89.8,
         "techniques": [
-          "High-Entropy Emotional Suspense & Negative Curiosity Hook",
-          "Extreme close-up macro cut with rapid audio onset"
+          "Extreme close-up macro cut with rapid audio onset",
+          "Direct Character & Situational Intrigue Hook"
+        ],
+        "recommended_for": "Fast-scroll feeds (TikTok & Instagram Reels)"
+      },
+      {
+        "archetype": "High-Entropy Emotional Suspense & Negative Curiosity Hook",
+        "frequency": 19,
+        "avg_hook_score": 89.7,
+        "techniques": [
+          "Extreme close-up macro cut with rapid audio onset",
+          "High-Entropy Emotional Suspense & Negative Curiosity Hook"
         ],
         "recommended_for": "Fast-scroll feeds (TikTok & Instagram Reels)"
       },
@@ -3255,8 +5214,8 @@
         "frequency": 4,
         "avg_hook_score": 73.0,
         "techniques": [
-          "Opening visual setup",
-          "Extreme close-up macro cut with rapid audio onset"
+          "Extreme close-up macro cut with rapid audio onset",
+          "Opening visual setup"
         ],
         "recommended_for": "Fast-scroll feeds (TikTok & Instagram Reels)"
       },
@@ -3271,10 +5230,10 @@
       }
     ],
     "pacing": {
-      "avg_cuts_per_minute": 14.0,
-      "avg_cut_rhythm_s": 6.28,
+      "avg_cuts_per_minute": 13.7,
+      "avg_cut_rhythm_s": 7.68,
       "optimal_silence_ratio": 0.02,
-      "recommendation": "Pace cuts every 6.28s (14.0 cuts/min) to maximize viewer momentum without disorientation."
+      "recommendation": "Pace cuts every 7.68s (13.7 cuts/min) to maximize viewer momentum without disorientation."
     },
     "styles": {
       "top_palette_accents": [
@@ -3282,8 +5241,8 @@
         "#7d7f80",
         "#7e7f80",
         "#c5c5c5",
-        "#546959",
-        "#292929"
+        "#c1c1c1",
+        "#1f1e1c"
       ],
       "dominant_camera_motions": [
         "Push-in macro (Hook)",
@@ -3295,8 +5254,8 @@
     "blueprints": [
       {
         "sequence": "Hook → Problem → Demo → Cta",
-        "occurrences": 42,
-        "avg_composite_score": 61.2
+        "occurrences": 64,
+        "avg_composite_score": 70.4
       }
     ],
     "mega_viral_hall_of_fame": [
@@ -3327,12 +5286,12 @@
     ]
   },
   "metrics": {
-    "total_videos": 42,
-    "total_frames_analyzed": 838,
-    "total_views_analyzed": 1999170036.0,
-    "total_likes_analyzed": 45090388.0,
+    "total_videos": 64,
+    "total_frames_analyzed": 1314,
+    "total_views_analyzed": 2055170036.0,
+    "total_likes_analyzed": 47890388.0,
     "mega_viral_count": 2,
-    "avg_hook_score": 54.8,
-    "avg_retention_score": 83.5
+    "avg_hook_score": 67.2,
+    "avg_retention_score": 85.7
   }
 }

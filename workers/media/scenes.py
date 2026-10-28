@@ -77,6 +77,25 @@ def extract_keyframe_at_timestamp(
 
     try:
         subprocess.run(cmd, capture_output=True, check=True, timeout=10.0)
-        return output_path.exists()
+        if output_path.exists():
+            return True
     except (subprocess.SubprocessError, OSError):
-        return False
+        pass
+
+    # Fallback to OpenCV
+    try:
+        import cv2
+
+        cap = cv2.VideoCapture(str(video_path))
+        fps = float(cap.get(cv2.CAP_PROP_FPS) or 30.0)
+        target_frame = int((t_ms / 1000.0) * fps)
+        cap.set(cv2.CAP_PROP_POS_FRAMES, target_frame)
+        ret, frame = cap.read()
+        cap.release()
+        if ret and frame is not None:
+            cv2.imwrite(str(output_path), frame)
+            return output_path.exists()
+    except Exception:
+        pass
+
+    return False

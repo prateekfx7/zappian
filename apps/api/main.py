@@ -1,9 +1,15 @@
 import asyncio
 import json
+import sys
 import uuid
 from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
+
+# Ensure monorepo root is on sys.path when deployed via Vercel Services
+ROOT_DIR = Path(__file__).resolve().parent.parent.parent
+if str(ROOT_DIR) not in sys.path:
+    sys.path.insert(0, str(ROOT_DIR))
 
 from fastapi import (
     BackgroundTasks,
@@ -31,10 +37,11 @@ app = FastAPI(
     redoc_url="/redoc",
 )
 
-# CORS setup for Next.js web client
+# CORS setup for Next.js web client and Vercel deployment domains
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["http://localhost:3000", "http://127.0.0.1:3000"],
+    allow_origin_regex=r"https://.*\.vercel\.app|https://.*",
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],

@@ -7,8 +7,12 @@ import subprocess
 from pathlib import Path
 from typing import Any
 
-from scenedetect import SceneManager, open_video
-from scenedetect.detectors import ContentDetector
+try:
+    from scenedetect import SceneManager, open_video
+    from scenedetect.detectors import ContentDetector
+    HAS_SCENEDETECT = True
+except Exception:
+    HAS_SCENEDETECT = False
 
 
 def detect_scene_cuts(
@@ -18,25 +22,32 @@ def detect_scene_cuts(
     Detects scene transitions using PySceneDetect ContentDetector.
     Returns list of scenes with start_time, end_time, and duration in ms.
     """
-    video = open_video(str(video_path))
-    scene_manager = SceneManager()
-    scene_manager.add_detector(ContentDetector(threshold=threshold))
+    if not HAS_SCENEDETECT:
+        return []
 
-    scene_manager.detect_scenes(video)
-    scene_list = scene_manager.get_scene_list()
+    try:
+        video = open_video(str(video_path))
+        scene_manager = SceneManager()
+        scene_manager.add_detector(ContentDetector(threshold=threshold))
 
-    scenes: list[dict[str, Any]] = []
-    for idx, scene in enumerate(scene_list):
-        start_ms = int(scene[0].get_seconds() * 1000)
-        end_ms = int(scene[1].get_seconds() * 1000)
-        scenes.append(
-            {
-                "scene_index": idx,
-                "start_ms": start_ms,
-                "end_ms": end_ms,
-                "duration_ms": end_ms - start_ms,
-            }
-        )
+        scene_manager.detect_scenes(video)
+        scene_list = scene_manager.get_scene_list()
+
+        scenes: list[dict[str, Any]] = []
+        for idx, scene in enumerate(scene_list):
+            start_ms = int(scene[0].get_seconds() * 1000)
+            end_ms = int(scene[1].get_seconds() * 1000)
+            scenes.append(
+                {
+                    "scene_index": idx,
+                    "start_ms": start_ms,
+                    "end_ms": end_ms,
+                    "duration_ms": end_ms - start_ms,
+                }
+            )
+        return scenes
+    except Exception:
+        return []
 
     return scenes
 

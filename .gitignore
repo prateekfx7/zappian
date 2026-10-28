@@ -47,6 +47,9 @@ out/
 !/storage/brain_memory.json
 !/storage/analyses/
 !/storage/analyses/g1_product_ad/**
+apps/api/storage/**
+!apps/api/storage/
+!apps/api/storage/brain_memory.json
 /data/
 *.mp4
 *.mov

@@ -1,0 +1,3338 @@
+{
+  "version": "1.0",
+  "last_updated": "2026-10-28T08:24:20.666678+00:00",
+  "videos": {
+    "test_analysis_1911c0de": {
+      "video_id": "test_analysis_1911c0de",
+      "indexed_at": "2026-10-28T06:04:50.582838+00:00",
+      "category": "e_commerce",
+      "duration_s": 6.0,
+      "frame_count": 6,
+      "scores": {
+        "hook": 41,
+        "retention": 84,
+        "emotion": 55,
+        "clarity": 38,
+        "cta": 25,
+        "composite": 54
+      },
+      "hook_dna": {
+        "type": "Pattern Interrupt",
+        "technique": "Opening visual setup",
+        "first_3s_words": "",
+        "opening_ocr": [],
+        "hold_score": 41
+      },
+      "pacing_dna": {
+        "cuts_count": 1,
+        "cuts_per_minute": 10.0,
+        "cut_rhythm_s": 6.0,
+        "silence_ratio": 0.0
+      },
+      "style_dna": {
+        "palette": [
+          "#7d8080",
+          "#7d7f80",
+          "#7e7f80"
+        ],
+        "lighting": "Balanced natural daylight key lighting with neutral contrast",
+        "motion": "Stable deliberate medium-pacing cadence"
+      },
+      "blueprint": [
+        {
+          "role": "hook",
+          "technique": "Opening visual setup",
+          "duration_ms": 2500
+        },
+        {
+          "role": "problem",
+          "technique": "Handheld visceral frustration framing",
+          "duration_ms": 1000
+        },
+        {
+          "role": "demo",
+          "technique": "Smooth tracking shot illustrating mechanism in action",
+          "duration_ms": 2100
+        },
+        {
+          "role": "cta",
+          "technique": "Closing brand outro",
+          "duration_ms": 1200
+        }
+      ],
+      "why_it_works_claims": [
+        {
+          "category": "growth",
+          "claim": "Opening visual pace is delayed, risking early scroll drop-off in feed"
+        },
+        {
+          "category": "retention",
+          "claim": "Scene cut pacing (1 cut every 6.0s) maintains engagement"
+        },
+        {
+          "category": "emotion",
+          "claim": "Depiction stimulates viewer empathy and grounds core value proposition"
+        }
+      ]
+    },
+    "test_analysis_2e6fa1d7": {
+      "video_id": "test_analysis_2e6fa1d7",
+      "indexed_at": "2026-10-28T06:04:50.590873+00:00",
+      "category": "e_commerce",
+      "duration_s": 6.0,
+      "frame_count": 6,
+      "scores": {
+        "hook": 41,
+        "retention": 84,
+        "emotion": 55,
+        "clarity": 38,
+        "cta": 25,
+        "composite": 54
+      },
+      "hook_dna": {
+        "type": "Pattern Interrupt",
+        "technique": "Opening visual setup",
+        "first_3s_words": "",
+        "opening_ocr": [],
+        "hold_score": 41
+      },
+      "pacing_dna": {
+        "cuts_count": 1,
+        "cuts_per_minute": 10.0,
+        "cut_rhythm_s": 6.0,
+        "silence_ratio": 0.0
+      },
+      "style_dna": {
+        "palette": [
+          "#7d8080",
+          "#7d7f80",
+          "#7e7f80"
+        ],
+        "lighting": "Balanced natural daylight key lighting with neutral contrast",
+        "motion": "Stable deliberate medium-pacing cadence"
+      },
+      "blueprint": [
+        {
+          "role": "hook",
+          "technique": "Opening visual setup",
+          "duration_ms": 2500
+        },
+        {
+          "role": "problem",
+          "technique": "Handheld visceral frustration framing",
+          "duration_ms": 1000
+        },
+        {
+          "role": "demo",
+          "technique": "Smooth tracking shot illustrating mechanism in action",
+          "duration_ms": 2100
+        },
+        {
+          "role": "cta",
+          "technique": "Closing brand outro",
+          "duration_ms": 1200
+        }
+      ],
+      "why_it_works_claims": [
+        {
+          "category": "growth",
+          "claim": "Opening visual pace is delayed, risking early scroll drop-off in feed"
+        },
+        {
+          "category": "retention",
+          "claim": "Scene cut pacing (1 cut every 6.0s) maintains engagement"
+        },
+        {
+          "category": "emotion",
+          "claim": "Depiction stimulates viewer empathy and grounds core value proposition"
+        }
+      ]
+    },
+    "405ed88c-413f-43d3-8807-cd1bd5b3e5b1": {
+      "video_id": "405ed88c-413f-43d3-8807-cd1bd5b3e5b1",
+      "indexed_at": "2026-10-28T06:04:50.601765+00:00",
+      "category": "e_commerce",
+      "duration_s": 11.7,
+      "frame_count": 15,
+      "scores": {
+        "hook": 73,
+        "retention": 96,
+        "emotion": 92,
+        "clarity": 54,
+        "cta": 70,
+        "composite": 79
+      },
+      "hook_dna": {
+        "type": "Pattern Interrupt",
+        "technique": "Opening visual setup",
+        "first_3s_words": "Boys if you are looking for these kind of kurtas at fort de wali",
+        "opening_ocr": [],
+        "hold_score": 73
+      },
+      "pacing_dna": {
+        "cuts_count": 3,
+        "cuts_per_minute": 15.4,
+        "cut_rhythm_s": 3.9,
+        "silence_ratio": 0.0
+      },
+      "style_dna": {
+        "palette": [
+          "#7e6664",
+          "#856a5e",
+          "#937760"
+        ],
+        "lighting": "Balanced natural daylight key lighting with neutral contrast",
+        "motion": "Rapid dynamic multi-cut cadence"
+      },
+      "blueprint": [
+        {
+          "role": "hook",
+          "technique": "Opening visual setup",
+          "duration_ms": 2500
+        },
+        {
+          "role": "problem",
+          "technique": "Handheld visceral frustration framing",
+          "duration_ms": 2765
+        },
+        {
+          "role": "demo",
+          "technique": "Smooth tracking shot illustrating mechanism in action",
+          "duration_ms": 4095
+        },
+        {
+          "role": "cta",
+          "technique": "Closing brand outro",
+          "duration_ms": 2340
+        }
+      ],
+      "why_it_works_claims": [
+        {
+          "category": "growth",
+          "claim": "Opening 2.5s achieves 73% hook strength via early sound and visual tension"
+        },
+        {
+          "category": "retention",
+          "claim": "Scene cut pacing (1 cut every 2.9s) maintains engagement"
+        },
+        {
+          "category": "emotion",
+          "claim": "Depiction stimulates viewer empathy and grounds core value proposition"
+        }
+      ]
+    },
+    "test_analysis_dd5467c9": {
+      "video_id": "test_analysis_dd5467c9",
+      "indexed_at": "2026-10-28T06:04:50.609156+00:00",
+      "category": "e_commerce",
+      "duration_s": 6.0,
+      "frame_count": 6,
+      "scores": {
+        "hook": 41,
+        "retention": 84,
+        "emotion": 55,
+        "clarity": 38,
+        "cta": 25,
+        "composite": 54
+      },
+      "hook_dna": {
+        "type": "Pattern Interrupt",
+        "technique": "Opening visual setup",
+        "first_3s_words": "",
+        "opening_ocr": [],
+        "hold_score": 41
+      },
+      "pacing_dna": {
+        "cuts_count": 1,
+        "cuts_per_minute": 10.0,
+        "cut_rhythm_s": 6.0,
+        "silence_ratio": 0.0
+      },
+      "style_dna": {
+        "palette": [
+          "#7d8080",
+          "#7d7f80",
+          "#7e7f80"
+        ],
+        "lighting": "Balanced natural daylight key lighting with neutral contrast",
+        "motion": "Stable deliberate medium-pacing cadence"
+      },
+      "blueprint": [
+        {
+          "role": "hook",
+          "technique": "Opening visual setup",
+          "duration_ms": 2500
+        },
+        {
+          "role": "problem",
+          "technique": "Handheld visceral frustration framing",
+          "duration_ms": 1000
+        },
+        {
+          "role": "demo",
+          "technique": "Smooth tracking shot illustrating mechanism in action",
+          "duration_ms": 2100
+        },
+        {
+          "role": "cta",
+          "technique": "Closing brand outro",
+          "duration_ms": 1200
+        }
+      ],
+      "why_it_works_claims": [
+        {
+          "category": "growth",
+          "claim": "Opening visual pace is delayed, risking early scroll drop-off in feed"
+        },
+        {
+          "category": "retention",
+          "claim": "Scene cut pacing (1 cut every 6.0s) maintains engagement"
+        },
+        {
+          "category": "emotion",
+          "claim": "Depiction stimulates viewer empathy and grounds core value proposition"
+        }
+      ]
+    },
+    "test_golden_40638f82": {
+      "video_id": "test_golden_40638f82",
+      "indexed_at": "2026-10-28T06:04:50.616547+00:00",
+      "category": "e_commerce",
+      "duration_s": 6.0,
+      "frame_count": 6,
+      "scores": {
+        "hook": 41,
+        "retention": 84,
+        "emotion": 55,
+        "clarity": 38,
+        "cta": 25,
+        "composite": 54
+      },
+      "hook_dna": {
+        "type": "Pattern Interrupt",
+        "technique": "Opening visual setup",
+        "first_3s_words": "",
+        "opening_ocr": [],
+        "hold_score": 41
+      },
+      "pacing_dna": {
+        "cuts_count": 1,
+        "cuts_per_minute": 10.0,
+        "cut_rhythm_s": 6.0,
+        "silence_ratio": 0.0
+      },
+      "style_dna": {
+        "palette": [
+          "#7d8080",
+          "#7d7f80",
+          "#7e7f80"
+        ],
+        "lighting": "Balanced natural daylight key lighting with neutral contrast",
+        "motion": "Stable deliberate medium-pacing cadence"
+      },
+      "blueprint": [
+        {
+          "role": "hook",
+          "technique": "Opening visual setup",
+          "duration_ms": 2500
+        },
+        {
+          "role": "problem",
+          "technique": "Handheld visceral frustration framing",
+          "duration_ms": 1000
+        },
+        {
+          "role": "demo",
+          "technique": "Smooth tracking shot illustrating mechanism in action",
+          "duration_ms": 2100
+        },
+        {
+          "role": "cta",
+          "technique": "Closing brand outro",
+          "duration_ms": 1200
+        }
+      ],
+      "why_it_works_claims": [
+        {
+          "category": "growth",
+          "claim": "Opening visual pace is delayed, risking early scroll drop-off in feed"
+        },
+        {
+          "category": "retention",
+          "claim": "Scene cut pacing (1 cut every 6.0s) maintains engagement"
+        },
+        {
+          "category": "emotion",
+          "claim": "Depiction stimulates viewer empathy and grounds core value proposition"
+        }
+      ]
+    },
+    "test_golden_c165d71b": {
+      "video_id": "test_golden_c165d71b",
+      "indexed_at": "2026-10-28T06:04:50.623718+00:00",
+      "category": "e_commerce",
+      "duration_s": 6.0,
+      "frame_count": 6,
+      "scores": {
+        "hook": 41,
+        "retention": 84,
+        "emotion": 55,
+        "clarity": 38,
+        "cta": 25,
+        "composite": 54
+      },
+      "hook_dna": {
+        "type": "Pattern Interrupt",
+        "technique": "Opening visual setup",
+        "first_3s_words": "",
+        "opening_ocr": [],
+        "hold_score": 41
+      },
+      "pacing_dna": {
+        "cuts_count": 1,
+        "cuts_per_minute": 10.0,
+        "cut_rhythm_s": 6.0,
+        "silence_ratio": 0.0
+      },
+      "style_dna": {
+        "palette": [
+          "#7d8080",
+          "#7d7f80",
+          "#7e7f80"
+        ],
+        "lighting": "Balanced natural daylight key lighting with neutral contrast",
+        "motion": "Stable deliberate medium-pacing cadence"
+      },
+      "blueprint": [
+        {
+          "role": "hook",
+          "technique": "Opening visual setup",
+          "duration_ms": 2500
+        },
+        {
+          "role": "problem",
+          "technique": "Handheld visceral frustration framing",
+          "duration_ms": 1000
+        },
+        {
+          "role": "demo",
+          "technique": "Smooth tracking shot illustrating mechanism in action",
+          "duration_ms": 2100
+        },
+        {
+          "role": "cta",
+          "technique": "Closing brand outro",
+          "duration_ms": 1200
+        }
+      ],
+      "why_it_works_claims": [
+        {
+          "category": "growth",
+          "claim": "Opening visual pace is delayed, risking early scroll drop-off in feed"
+        },
+        {
+          "category": "retention",
+          "claim": "Scene cut pacing (1 cut every 6.0s) maintains engagement"
+        },
+        {
+          "category": "emotion",
+          "claim": "Depiction stimulates viewer empathy and grounds core value proposition"
+        }
+      ]
+    },
+    "8aaa2324-a7c7-4b3b-8a2b-98557d65640f": {
+      "video_id": "8aaa2324-a7c7-4b3b-8a2b-98557d65640f",
+      "indexed_at": "2026-10-28T06:04:50.630705+00:00",
+      "category": "e_commerce",
+      "duration_s": 18.933,
+      "frame_count": 19,
+      "scores": {
+        "hook": 73,
+        "retention": 67,
+        "emotion": 65,
+        "clarity": 58,
+        "cta": 43,
+        "composite": 67
+      },
+      "hook_dna": {
+        "type": "Pattern Interrupt",
+        "technique": "Opening visual setup",
+        "first_3s_words": "Alright so here we are one of the elephants.",
+        "opening_ocr": [],
+        "hold_score": 73
+      },
+      "pacing_dna": {
+        "cuts_count": 1,
+        "cuts_per_minute": 3.2,
+        "cut_rhythm_s": 18.93,
+        "silence_ratio": 0.0
+      },
+      "style_dna": {
+        "palette": [
+          "#6c6771",
+          "#69646e",
+          "#6d6973"
+        ],
+        "lighting": "Balanced natural daylight key lighting with neutral contrast",
+        "motion": "Stable deliberate medium-pacing cadence"
+      },
+      "blueprint": [
+        {
+          "role": "hook",
+          "technique": "Opening visual setup",
+          "duration_ms": 2500
+        },
+        {
+          "role": "problem",
+          "technique": "Handheld visceral frustration framing",
+          "duration_ms": 6019
+        },
+        {
+          "role": "demo",
+          "technique": "Smooth tracking shot illustrating mechanism in action",
+          "duration_ms": 6627
+        },
+        {
+          "role": "cta",
+          "technique": "Closing brand outro",
+          "duration_ms": 3787
+        }
+      ],
+      "why_it_works_claims": [
+        {
+          "category": "growth",
+          "claim": "Opening 2.5s achieves 73% hook strength via early sound and visual tension"
+        },
+        {
+          "category": "retention",
+          "claim": "Cut rhythm is slow (18.9s/cut), causing viewer fatigue"
+        },
+        {
+          "category": "emotion",
+          "claim": "Depiction stimulates viewer empathy and grounds core value proposition"
+        }
+      ]
+    },
+    "test_golden_ecda4254": {
+      "video_id": "test_golden_ecda4254",
+      "indexed_at": "2026-10-28T06:04:50.637971+00:00",
+      "category": "e_commerce",
+      "duration_s": 6.0,
+      "frame_count": 6,
+      "scores": {
+        "hook": 41,
+        "retention": 84,
+        "emotion": 55,
+        "clarity": 38,
+        "cta": 25,
+        "composite": 54
+      },
+      "hook_dna": {
+        "type": "Pattern Interrupt",
+        "technique": "Opening visual setup",
+        "first_3s_words": "",
+        "opening_ocr": [],
+        "hold_score": 41
+      },
+      "pacing_dna": {
+        "cuts_count": 1,
+        "cuts_per_minute": 10.0,
+        "cut_rhythm_s": 6.0,
+        "silence_ratio": 0.0
+      },
+      "style_dna": {
+        "palette": [
+          "#7d8080",
+          "#7d7f80",
+          "#7e7f80"
+        ],
+        "lighting": "Balanced natural daylight key lighting with neutral contrast",
+        "motion": "Stable deliberate medium-pacing cadence"
+      },
+      "blueprint": [
+        {
+          "role": "hook",
+          "technique": "Opening visual setup",
+          "duration_ms": 2500
+        },
+        {
+          "role": "problem",
+          "technique": "Handheld visceral frustration framing",
+          "duration_ms": 1000
+        },
+        {
+          "role": "demo",
+          "technique": "Smooth tracking shot illustrating mechanism in action",
+          "duration_ms": 2100
+        },
+        {
+          "role": "cta",
+          "technique": "Closing brand outro",
+          "duration_ms": 1200
+        }
+      ],
+      "why_it_works_claims": [
+        {
+          "category": "growth",
+          "claim": "Opening visual pace is delayed, risking early scroll drop-off in feed"
+        },
+        {
+          "category": "retention",
+          "claim": "Scene cut pacing (1 cut every 6.0s) maintains engagement"
+        },
+        {
+          "category": "emotion",
+          "claim": "Depiction stimulates viewer empathy and grounds core value proposition"
+        }
+      ]
+    },
+    "test_analysis_aa82aeeb": {
+      "video_id": "test_analysis_aa82aeeb",
+      "indexed_at": "2026-10-28T06:04:50.645133+00:00",
+      "category": "e_commerce",
+      "duration_s": 6.0,
+      "frame_count": 6,
+      "scores": {
+        "hook": 41,
+        "retention": 84,
+        "emotion": 55,
+        "clarity": 38,
+        "cta": 25,
+        "composite": 54
+      },
+      "hook_dna": {
+        "type": "Pattern Interrupt",
+        "technique": "Opening visual setup",
+        "first_3s_words": "",
+        "opening_ocr": [],
+        "hold_score": 41
+      },
+      "pacing_dna": {
+        "cuts_count": 1,
+        "cuts_per_minute": 10.0,
+        "cut_rhythm_s": 6.0,
+        "silence_ratio": 0.0
+      },
+      "style_dna": {
+        "palette": [
+          "#7d8080",
+          "#7d7f80",
+          "#7e7f80"
+        ],
+        "lighting": "Balanced natural daylight key lighting with neutral contrast",
+        "motion": "Stable deliberate medium-pacing cadence"
+      },
+      "blueprint": [
+        {
+          "role": "hook",
+          "technique": "Opening visual setup",
+          "duration_ms": 2500
+        },
+        {
+          "role": "problem",
+          "technique": "Handheld visceral frustration framing",
+          "duration_ms": 1000
+        },
+        {
+          "role": "demo",
+          "technique": "Smooth tracking shot illustrating mechanism in action",
+          "duration_ms": 2100
+        },
+        {
+          "role": "cta",
+          "technique": "Closing brand outro",
+          "duration_ms": 1200
+        }
+      ],
+      "why_it_works_claims": [
+        {
+          "category": "growth",
+          "claim": "Opening visual pace is delayed, risking early scroll drop-off in feed"
+        },
+        {
+          "category": "retention",
+          "claim": "Scene cut pacing (1 cut every 6.0s) maintains engagement"
+        },
+        {
+          "category": "emotion",
+          "claim": "Depiction stimulates viewer empathy and grounds core value proposition"
+        }
+      ]
+    },
+    "df0e99f1-affe-44a2-b55c-fd224e97f39c": {
+      "video_id": "df0e99f1-affe-44a2-b55c-fd224e97f39c",
+      "indexed_at": "2026-10-28T06:04:50.651893+00:00",
+      "category": "e_commerce",
+      "duration_s": 17.8,
+      "frame_count": 33,
+      "scores": {
+        "hook": 83,
+        "retention": 96,
+        "emotion": 85,
+        "clarity": 58,
+        "cta": 43,
+        "composite": 82
+      },
+      "hook_dna": {
+        "type": "Micro-Cut Visual Shock",
+        "technique": "Extreme close-up macro cut with rapid audio onset",
+        "first_3s_words": "Music or noise? Music or",
+        "opening_ocr": [],
+        "hold_score": 83
+      },
+      "pacing_dna": {
+        "cuts_count": 15,
+        "cuts_per_minute": 50.6,
+        "cut_rhythm_s": 1.19,
+        "silence_ratio": 0.03
+      },
+      "style_dna": {
+        "palette": [
+          "#546959",
+          "#292929",
+          "#363636"
+        ],
+        "lighting": "Moody high-contrast low-key lighting with deep cinematic shadows",
+        "motion": "Rapid dynamic multi-cut cadence"
+      },
+      "blueprint": [
+        {
+          "role": "hook",
+          "technique": "Extreme close-up macro cut with rapid audio onset",
+          "duration_ms": 2500
+        },
+        {
+          "role": "problem",
+          "technique": "Handheld visceral frustration framing",
+          "duration_ms": 5510
+        },
+        {
+          "role": "demo",
+          "technique": "Smooth tracking shot illustrating mechanism in action",
+          "duration_ms": 6230
+        },
+        {
+          "role": "cta",
+          "technique": "Closing brand outro",
+          "duration_ms": 3560
+        }
+      ],
+      "why_it_works_claims": [
+        {
+          "category": "growth",
+          "claim": "Opening 2.5s achieves 83% hook strength via early sound and visual tension"
+        },
+        {
+          "category": "retention",
+          "claim": "Scene cut pacing (1 cut every 1.1s) maintains engagement"
+        },
+        {
+          "category": "emotion",
+          "claim": "Depiction stimulates viewer empathy and grounds core value proposition"
+        }
+      ]
+    },
+    "5b07a029-dc91-4c83-a5dc-01d10d1aa0a2": {
+      "video_id": "5b07a029-dc91-4c83-a5dc-01d10d1aa0a2",
+      "indexed_at": "2026-10-28T06:04:50.658488+00:00",
+      "category": "e_commerce",
+      "duration_s": 14.033,
+      "frame_count": 14,
+      "scores": {
+        "hook": 61,
+        "retention": 67,
+        "emotion": 65,
+        "clarity": 45,
+        "cta": 25,
+        "composite": 60
+      },
+      "hook_dna": {
+        "type": "Pattern Interrupt",
+        "technique": "Opening visual setup",
+        "first_3s_words": "Introducing Fizzinga for the athlete's dreamers",
+        "opening_ocr": [],
+        "hold_score": 61
+      },
+      "pacing_dna": {
+        "cuts_count": 1,
+        "cuts_per_minute": 4.3,
+        "cut_rhythm_s": 14.03,
+        "silence_ratio": 0.0
+      },
+      "style_dna": {
+        "palette": [
+          "#c5c5c5",
+          "#c1c1c1",
+          "#c5c5c5"
+        ],
+        "lighting": "Bright high-key diffused lighting with high visual clarity",
+        "motion": "Stable deliberate medium-pacing cadence"
+      },
+      "blueprint": [
+        {
+          "role": "hook",
+          "technique": "Opening visual setup",
+          "duration_ms": 2500
+        },
+        {
+          "role": "problem",
+          "technique": "Handheld visceral frustration framing",
+          "duration_ms": 3814
+        },
+        {
+          "role": "demo",
+          "technique": "Smooth tracking shot illustrating mechanism in action",
+          "duration_ms": 4912
+        },
+        {
+          "role": "cta",
+          "technique": "Closing brand outro",
+          "duration_ms": 2807
+        }
+      ],
+      "why_it_works_claims": [
+        {
+          "category": "growth",
+          "claim": "Opening visual pace is delayed, risking early scroll drop-off in feed"
+        },
+        {
+          "category": "retention",
+          "claim": "Cut rhythm is slow (14.0s/cut), causing viewer fatigue"
+        },
+        {
+          "category": "emotion",
+          "claim": "Depiction stimulates viewer empathy and grounds core value proposition"
+        }
+      ]
+    },
+    "test_analysis_976f73a8": {
+      "video_id": "test_analysis_976f73a8",
+      "indexed_at": "2026-10-28T06:04:50.665806+00:00",
+      "category": "e_commerce",
+      "duration_s": 6.0,
+      "frame_count": 6,
+      "scores": {
+        "hook": 41,
+        "retention": 84,
+        "emotion": 55,
+        "clarity": 38,
+        "cta": 25,
+        "composite": 54
+      },
+      "hook_dna": {
+        "type": "Pattern Interrupt",
+        "technique": "Opening visual setup",
+        "first_3s_words": "",
+        "opening_ocr": [],
+        "hold_score": 41
+      },
+      "pacing_dna": {
+        "cuts_count": 1,
+        "cuts_per_minute": 10.0,
+        "cut_rhythm_s": 6.0,
+        "silence_ratio": 0.0
+      },
+      "style_dna": {
+        "palette": [
+          "#7d8080",
+          "#7d7f80",
+          "#7e7f80"
+        ],
+        "lighting": "Balanced natural daylight key lighting with neutral contrast",
+        "motion": "Stable deliberate medium-pacing cadence"
+      },
+      "blueprint": [
+        {
+          "role": "hook",
+          "technique": "Opening visual setup",
+          "duration_ms": 2500
+        },
+        {
+          "role": "problem",
+          "technique": "Handheld visceral frustration framing",
+          "duration_ms": 1000
+        },
+        {
+          "role": "demo",
+          "technique": "Smooth tracking shot illustrating mechanism in action",
+          "duration_ms": 2100
+        },
+        {
+          "role": "cta",
+          "technique": "Closing brand outro",
+          "duration_ms": 1200
+        }
+      ],
+      "why_it_works_claims": [
+        {
+          "category": "growth",
+          "claim": "Opening visual pace is delayed, risking early scroll drop-off in feed"
+        },
+        {
+          "category": "retention",
+          "claim": "Scene cut pacing (1 cut every 6.0s) maintains engagement"
+        },
+        {
+          "category": "emotion",
+          "claim": "Depiction stimulates viewer empathy and grounds core value proposition"
+        }
+      ]
+    },
+    "test_golden_b46ff568": {
+      "video_id": "test_golden_b46ff568",
+      "indexed_at": "2026-10-28T06:04:50.673167+00:00",
+      "category": "e_commerce",
+      "duration_s": 6.0,
+      "frame_count": 6,
+      "scores": {
+        "hook": 41,
+        "retention": 84,
+        "emotion": 55,
+        "clarity": 38,
+        "cta": 25,
+        "composite": 54
+      },
+      "hook_dna": {
+        "type": "Pattern Interrupt",
+        "technique": "Opening visual setup",
+        "first_3s_words": "",
+        "opening_ocr": [],
+        "hold_score": 41
+      },
+      "pacing_dna": {
+        "cuts_count": 1,
+        "cuts_per_minute": 10.0,
+        "cut_rhythm_s": 6.0,
+        "silence_ratio": 0.0
+      },
+      "style_dna": {
+        "palette": [
+          "#7d8080",
+          "#7d7f80",
+          "#7e7f80"
+        ],
+        "lighting": "Balanced natural daylight key lighting with neutral contrast",
+        "motion": "Stable deliberate medium-pacing cadence"
+      },
+      "blueprint": [
+        {
+          "role": "hook",
+          "technique": "Opening visual setup",
+          "duration_ms": 2500
+        },
+        {
+          "role": "problem",
+          "technique": "Handheld visceral frustration framing",
+          "duration_ms": 1000
+        },
+        {
+          "role": "demo",
+          "technique": "Smooth tracking shot illustrating mechanism in action",
+          "duration_ms": 2100
+        },
+        {
+          "role": "cta",
+          "technique": "Closing brand outro",
+          "duration_ms": 1200
+        }
+      ],
+      "why_it_works_claims": [
+        {
+          "category": "growth",
+          "claim": "Opening visual pace is delayed, risking early scroll drop-off in feed"
+        },
+        {
+          "category": "retention",
+          "claim": "Scene cut pacing (1 cut every 6.0s) maintains engagement"
+        },
+        {
+          "category": "emotion",
+          "claim": "Depiction stimulates viewer empathy and grounds core value proposition"
+        }
+      ]
+    },
+    "test_analysis_3898a255": {
+      "video_id": "test_analysis_3898a255",
+      "indexed_at": "2026-10-28T06:04:50.680458+00:00",
+      "category": "e_commerce",
+      "duration_s": 6.0,
+      "frame_count": 6,
+      "scores": {
+        "hook": 41,
+        "retention": 84,
+        "emotion": 55,
+        "clarity": 38,
+        "cta": 25,
+        "composite": 54
+      },
+      "hook_dna": {
+        "type": "Pattern Interrupt",
+        "technique": "Opening visual setup",
+        "first_3s_words": "",
+        "opening_ocr": [],
+        "hold_score": 41
+      },
+      "pacing_dna": {
+        "cuts_count": 1,
+        "cuts_per_minute": 10.0,
+        "cut_rhythm_s": 6.0,
+        "silence_ratio": 0.0
+      },
+      "style_dna": {
+        "palette": [
+          "#7d8080",
+          "#7d7f80",
+          "#7e7f80"
+        ],
+        "lighting": "Balanced natural daylight key lighting with neutral contrast",
+        "motion": "Stable deliberate medium-pacing cadence"
+      },
+      "blueprint": [
+        {
+          "role": "hook",
+          "technique": "Opening visual setup",
+          "duration_ms": 2500
+        },
+        {
+          "role": "problem",
+          "technique": "Handheld visceral frustration framing",
+          "duration_ms": 1000
+        },
+        {
+          "role": "demo",
+          "technique": "Smooth tracking shot illustrating mechanism in action",
+          "duration_ms": 2100
+        },
+        {
+          "role": "cta",
+          "technique": "Closing brand outro",
+          "duration_ms": 1200
+        }
+      ],
+      "why_it_works_claims": [
+        {
+          "category": "growth",
+          "claim": "Opening visual pace is delayed, risking early scroll drop-off in feed"
+        },
+        {
+          "category": "retention",
+          "claim": "Scene cut pacing (1 cut every 6.0s) maintains engagement"
+        },
+        {
+          "category": "emotion",
+          "claim": "Depiction stimulates viewer empathy and grounds core value proposition"
+        }
+      ]
+    },
+    "test_golden_ddba5dc3": {
+      "video_id": "test_golden_ddba5dc3",
+      "indexed_at": "2026-10-28T06:04:50.687520+00:00",
+      "category": "e_commerce",
+      "duration_s": 6.0,
+      "frame_count": 6,
+      "scores": {
+        "hook": 41,
+        "retention": 84,
+        "emotion": 55,
+        "clarity": 38,
+        "cta": 25,
+        "composite": 54
+      },
+      "hook_dna": {
+        "type": "Pattern Interrupt",
+        "technique": "Opening visual setup",
+        "first_3s_words": "",
+        "opening_ocr": [],
+        "hold_score": 41
+      },
+      "pacing_dna": {
+        "cuts_count": 1,
+        "cuts_per_minute": 10.0,
+        "cut_rhythm_s": 6.0,
+        "silence_ratio": 0.0
+      },
+      "style_dna": {
+        "palette": [
+          "#7d8080",
+          "#7d7f80",
+          "#7e7f80"
+        ],
+        "lighting": "Balanced natural daylight key lighting with neutral contrast",
+        "motion": "Stable deliberate medium-pacing cadence"
+      },
+      "blueprint": [
+        {
+          "role": "hook",
+          "technique": "Opening visual setup",
+          "duration_ms": 2500
+        },
+        {
+          "role": "problem",
+          "technique": "Handheld visceral frustration framing",
+          "duration_ms": 1000
+        },
+        {
+          "role": "demo",
+          "technique": "Smooth tracking shot illustrating mechanism in action",
+          "duration_ms": 2100
+        },
+        {
+          "role": "cta",
+          "technique": "Closing brand outro",
+          "duration_ms": 1200
+        }
+      ],
+      "why_it_works_claims": [
+        {
+          "category": "growth",
+          "claim": "Opening visual pace is delayed, risking early scroll drop-off in feed"
+        },
+        {
+          "category": "retention",
+          "claim": "Scene cut pacing (1 cut every 6.0s) maintains engagement"
+        },
+        {
+          "category": "emotion",
+          "claim": "Depiction stimulates viewer empathy and grounds core value proposition"
+        }
+      ]
+    },
+    "test_golden_57fef2b8": {
+      "video_id": "test_golden_57fef2b8",
+      "indexed_at": "2026-10-28T06:04:50.694914+00:00",
+      "category": "e_commerce",
+      "duration_s": 6.0,
+      "frame_count": 6,
+      "scores": {
+        "hook": 41,
+        "retention": 84,
+        "emotion": 55,
+        "clarity": 38,
+        "cta": 25,
+        "composite": 54
+      },
+      "hook_dna": {
+        "type": "Pattern Interrupt",
+        "technique": "Opening visual setup",
+        "first_3s_words": "",
+        "opening_ocr": [],
+        "hold_score": 41
+      },
+      "pacing_dna": {
+        "cuts_count": 1,
+        "cuts_per_minute": 10.0,
+        "cut_rhythm_s": 6.0,
+        "silence_ratio": 0.0
+      },
+      "style_dna": {
+        "palette": [
+          "#7d8080",
+          "#7d7f80",
+          "#7e7f80"
+        ],
+        "lighting": "Balanced natural daylight key lighting with neutral contrast",
+        "motion": "Stable deliberate medium-pacing cadence"
+      },
+      "blueprint": [
+        {
+          "role": "hook",
+          "technique": "Opening visual setup",
+          "duration_ms": 2500
+        },
+        {
+          "role": "problem",
+          "technique": "Handheld visceral frustration framing",
+          "duration_ms": 1000
+        },
+        {
+          "role": "demo",
+          "technique": "Smooth tracking shot illustrating mechanism in action",
+          "duration_ms": 2100
+        },
+        {
+          "role": "cta",
+          "technique": "Closing brand outro",
+          "duration_ms": 1200
+        }
+      ],
+      "why_it_works_claims": [
+        {
+          "category": "growth",
+          "claim": "Opening visual pace is delayed, risking early scroll drop-off in feed"
+        },
+        {
+          "category": "retention",
+          "claim": "Scene cut pacing (1 cut every 6.0s) maintains engagement"
+        },
+        {
+          "category": "emotion",
+          "claim": "Depiction stimulates viewer empathy and grounds core value proposition"
+        }
+      ]
+    },
+    "test_golden_g1": {
+      "video_id": "test_golden_g1",
+      "indexed_at": "2026-10-28T06:04:50.702303+00:00",
+      "category": "e_commerce",
+      "duration_s": 6.0,
+      "frame_count": 6,
+      "scores": {
+        "hook": 41,
+        "retention": 84,
+        "emotion": 55,
+        "clarity": 38,
+        "cta": 25,
+        "composite": 54
+      },
+      "hook_dna": {
+        "type": "Pattern Interrupt",
+        "technique": "Opening visual setup",
+        "first_3s_words": "",
+        "opening_ocr": [],
+        "hold_score": 41
+      },
+      "pacing_dna": {
+        "cuts_count": 1,
+        "cuts_per_minute": 10.0,
+        "cut_rhythm_s": 6.0,
+        "silence_ratio": 0.0
+      },
+      "style_dna": {
+        "palette": [
+          "#7d8080",
+          "#7d7f80",
+          "#7e7f80"
+        ],
+        "lighting": "Balanced natural daylight key lighting with neutral contrast",
+        "motion": "Stable deliberate medium-pacing cadence"
+      },
+      "blueprint": [
+        {
+          "role": "hook",
+          "technique": "Opening visual setup",
+          "duration_ms": 2500
+        },
+        {
+          "role": "problem",
+          "technique": "Handheld visceral frustration framing",
+          "duration_ms": 1000
+        },
+        {
+          "role": "demo",
+          "technique": "Smooth tracking shot illustrating mechanism in action",
+          "duration_ms": 2100
+        },
+        {
+          "role": "cta",
+          "technique": "Closing brand outro",
+          "duration_ms": 1200
+        }
+      ],
+      "why_it_works_claims": [
+        {
+          "category": "growth",
+          "claim": "Opening visual pace is delayed, risking early scroll drop-off in feed"
+        },
+        {
+          "category": "retention",
+          "claim": "Scene cut pacing (1 cut every 6.0s) maintains engagement"
+        },
+        {
+          "category": "emotion",
+          "claim": "Depiction stimulates viewer empathy and grounds core value proposition"
+        }
+      ]
+    },
+    "c3973cba-72ae-4a03-b93b-728f827f7c46": {
+      "video_id": "c3973cba-72ae-4a03-b93b-728f827f7c46",
+      "indexed_at": "2026-10-28T06:04:50.709290+00:00",
+      "category": "e_commerce",
+      "duration_s": 17.8,
+      "frame_count": 33,
+      "scores": {
+        "hook": 83,
+        "retention": 96,
+        "emotion": 85,
+        "clarity": 45,
+        "cta": 25,
+        "composite": 79
+      },
+      "hook_dna": {
+        "type": "Micro-Cut Visual Shock",
+        "technique": "Extreme close-up macro cut with rapid audio onset",
+        "first_3s_words": "Music or noise, music, or",
+        "opening_ocr": [],
+        "hold_score": 83
+      },
+      "pacing_dna": {
+        "cuts_count": 15,
+        "cuts_per_minute": 50.6,
+        "cut_rhythm_s": 1.19,
+        "silence_ratio": 0.03
+      },
+      "style_dna": {
+        "palette": [
+          "#546959",
+          "#292929",
+          "#363636"
+        ],
+        "lighting": "Moody high-contrast low-key lighting with deep cinematic shadows",
+        "motion": "Rapid dynamic multi-cut cadence"
+      },
+      "blueprint": [
+        {
+          "role": "hook",
+          "technique": "Extreme close-up macro cut with rapid audio onset",
+          "duration_ms": 2500
+        },
+        {
+          "role": "problem",
+          "technique": "Handheld visceral frustration framing",
+          "duration_ms": 5510
+        },
+        {
+          "role": "demo",
+          "technique": "Smooth tracking shot illustrating mechanism in action",
+          "duration_ms": 6230
+        },
+        {
+          "role": "cta",
+          "technique": "Closing brand outro",
+          "duration_ms": 3560
+        }
+      ],
+      "why_it_works_claims": [
+        {
+          "category": "growth",
+          "claim": "Opening 2.5s achieves 83% hook strength via early sound and visual tension"
+        },
+        {
+          "category": "retention",
+          "claim": "Scene cut pacing (1 cut every 1.1s) maintains engagement"
+        },
+        {
+          "category": "emotion",
+          "claim": "Depiction stimulates viewer empathy and grounds core value proposition"
+        }
+      ]
+    },
+    "test_analysis_f54ad4a6": {
+      "video_id": "test_analysis_f54ad4a6",
+      "indexed_at": "2026-10-28T06:04:50.716540+00:00",
+      "category": "e_commerce",
+      "duration_s": 6.0,
+      "frame_count": 6,
+      "scores": {
+        "hook": 41,
+        "retention": 84,
+        "emotion": 55,
+        "clarity": 38,
+        "cta": 25,
+        "composite": 54
+      },
+      "hook_dna": {
+        "type": "Pattern Interrupt",
+        "technique": "Opening visual setup",
+        "first_3s_words": "",
+        "opening_ocr": [],
+        "hold_score": 41
+      },
+      "pacing_dna": {
+        "cuts_count": 1,
+        "cuts_per_minute": 10.0,
+        "cut_rhythm_s": 6.0,
+        "silence_ratio": 0.0
+      },
+      "style_dna": {
+        "palette": [
+          "#7d8080",
+          "#7d7f80",
+          "#7e7f80"
+        ],
+        "lighting": "Balanced natural daylight key lighting with neutral contrast",
+        "motion": "Stable deliberate medium-pacing cadence"
+      },
+      "blueprint": [
+        {
+          "role": "hook",
+          "technique": "Opening visual setup",
+          "duration_ms": 2500
+        },
+        {
+          "role": "problem",
+          "technique": "Handheld visceral frustration framing",
+          "duration_ms": 1000
+        },
+        {
+          "role": "demo",
+          "technique": "Smooth tracking shot illustrating mechanism in action",
+          "duration_ms": 2100
+        },
+        {
+          "role": "cta",
+          "technique": "Closing brand outro",
+          "duration_ms": 1200
+        }
+      ],
+      "why_it_works_claims": [
+        {
+          "category": "growth",
+          "claim": "Opening visual pace is delayed, risking early scroll drop-off in feed"
+        },
+        {
+          "category": "retention",
+          "claim": "Scene cut pacing (1 cut every 6.0s) maintains engagement"
+        },
+        {
+          "category": "emotion",
+          "claim": "Depiction stimulates viewer empathy and grounds core value proposition"
+        }
+      ]
+    },
+    "test_golden_ffb090a8": {
+      "video_id": "test_golden_ffb090a8",
+      "indexed_at": "2026-10-28T06:04:50.724443+00:00",
+      "category": "e_commerce",
+      "duration_s": 6.0,
+      "frame_count": 6,
+      "scores": {
+        "hook": 41,
+        "retention": 84,
+        "emotion": 55,
+        "clarity": 38,
+        "cta": 25,
+        "composite": 54
+      },
+      "hook_dna": {
+        "type": "Pattern Interrupt",
+        "technique": "Opening visual setup",
+        "first_3s_words": "",
+        "opening_ocr": [],
+        "hold_score": 41
+      },
+      "pacing_dna": {
+        "cuts_count": 1,
+        "cuts_per_minute": 10.0,
+        "cut_rhythm_s": 6.0,
+        "silence_ratio": 0.0
+      },
+      "style_dna": {
+        "palette": [
+          "#7d8080",
+          "#7d7f80",
+          "#7e7f80"
+        ],
+        "lighting": "Balanced natural daylight key lighting with neutral contrast",
+        "motion": "Stable deliberate medium-pacing cadence"
+      },
+      "blueprint": [
+        {
+          "role": "hook",
+          "technique": "Opening visual setup",
+          "duration_ms": 2500
+        },
+        {
+          "role": "problem",
+          "technique": "Handheld visceral frustration framing",
+          "duration_ms": 1000
+        },
+        {
+          "role": "demo",
+          "technique": "Smooth tracking shot illustrating mechanism in action",
+          "duration_ms": 2100
+        },
+        {
+          "role": "cta",
+          "technique": "Closing brand outro",
+          "duration_ms": 1200
+        }
+      ],
+      "why_it_works_claims": [
+        {
+          "category": "growth",
+          "claim": "Opening visual pace is delayed, risking early scroll drop-off in feed"
+        },
+        {
+          "category": "retention",
+          "claim": "Scene cut pacing (1 cut every 6.0s) maintains engagement"
+        },
+        {
+          "category": "emotion",
+          "claim": "Depiction stimulates viewer empathy and grounds core value proposition"
+        }
+      ]
+    },
+    "test_golden_7be61441": {
+      "video_id": "test_golden_7be61441",
+      "indexed_at": "2026-10-28T06:04:50.740117+00:00",
+      "category": "e_commerce",
+      "duration_s": 6.0,
+      "frame_count": 6,
+      "scores": {
+        "hook": 41,
+        "retention": 84,
+        "emotion": 55,
+        "clarity": 38,
+        "cta": 25,
+        "composite": 54
+      },
+      "hook_dna": {
+        "type": "Pattern Interrupt",
+        "technique": "Opening visual setup",
+        "first_3s_words": "",
+        "opening_ocr": [],
+        "hold_score": 41
+      },
+      "pacing_dna": {
+        "cuts_count": 1,
+        "cuts_per_minute": 10.0,
+        "cut_rhythm_s": 6.0,
+        "silence_ratio": 0.0
+      },
+      "style_dna": {
+        "palette": [
+          "#7d8080",
+          "#7d7f80",
+          "#7e7f80"
+        ],
+        "lighting": "Balanced natural daylight key lighting with neutral contrast",
+        "motion": "Stable deliberate medium-pacing cadence"
+      },
+      "blueprint": [
+        {
+          "role": "hook",
+          "technique": "Opening visual setup",
+          "duration_ms": 2500
+        },
+        {
+          "role": "problem",
+          "technique": "Handheld visceral frustration framing",
+          "duration_ms": 1000
+        },
+        {
+          "role": "demo",
+          "technique": "Smooth tracking shot illustrating mechanism in action",
+          "duration_ms": 2100
+        },
+        {
+          "role": "cta",
+          "technique": "Closing brand outro",
+          "duration_ms": 1200
+        }
+      ],
+      "why_it_works_claims": [
+        {
+          "category": "growth",
+          "claim": "Opening visual pace is delayed, risking early scroll drop-off in feed"
+        },
+        {
+          "category": "retention",
+          "claim": "Scene cut pacing (1 cut every 6.0s) maintains engagement"
+        },
+        {
+          "category": "emotion",
+          "claim": "Depiction stimulates viewer empathy and grounds core value proposition"
+        }
+      ]
+    },
+    "test_analysis_504a7409": {
+      "video_id": "test_analysis_504a7409",
+      "indexed_at": "2026-10-28T06:04:50.747536+00:00",
+      "category": "e_commerce",
+      "duration_s": 6.0,
+      "frame_count": 6,
+      "scores": {
+        "hook": 41,
+        "retention": 84,
+        "emotion": 55,
+        "clarity": 38,
+        "cta": 25,
+        "composite": 54
+      },
+      "hook_dna": {
+        "type": "Pattern Interrupt",
+        "technique": "Opening visual setup",
+        "first_3s_words": "",
+        "opening_ocr": [],
+        "hold_score": 41
+      },
+      "pacing_dna": {
+        "cuts_count": 1,
+        "cuts_per_minute": 10.0,
+        "cut_rhythm_s": 6.0,
+        "silence_ratio": 0.0
+      },
+      "style_dna": {
+        "palette": [
+          "#7d8080",
+          "#7d7f80",
+          "#7e7f80"
+        ],
+        "lighting": "Balanced natural daylight key lighting with neutral contrast",
+        "motion": "Stable deliberate medium-pacing cadence"
+      },
+      "blueprint": [
+        {
+          "role": "hook",
+          "technique": "Opening visual setup",
+          "duration_ms": 2500
+        },
+        {
+          "role": "problem",
+          "technique": "Handheld visceral frustration framing",
+          "duration_ms": 1000
+        },
+        {
+          "role": "demo",
+          "technique": "Smooth tracking shot illustrating mechanism in action",
+          "duration_ms": 2100
+        },
+        {
+          "role": "cta",
+          "technique": "Closing brand outro",
+          "duration_ms": 1200
+        }
+      ],
+      "why_it_works_claims": [
+        {
+          "category": "growth",
+          "claim": "Opening visual pace is delayed, risking early scroll drop-off in feed"
+        },
+        {
+          "category": "retention",
+          "claim": "Scene cut pacing (1 cut every 6.0s) maintains engagement"
+        },
+        {
+          "category": "emotion",
+          "claim": "Depiction stimulates viewer empathy and grounds core value proposition"
+        }
+      ]
+    },
+    "test_golden_36fd734c": {
+      "video_id": "test_golden_36fd734c",
+      "indexed_at": "2026-10-28T06:04:50.754911+00:00",
+      "category": "e_commerce",
+      "duration_s": 6.0,
+      "frame_count": 6,
+      "scores": {
+        "hook": 41,
+        "retention": 84,
+        "emotion": 55,
+        "clarity": 38,
+        "cta": 25,
+        "composite": 54
+      },
+      "hook_dna": {
+        "type": "Pattern Interrupt",
+        "technique": "Opening visual setup",
+        "first_3s_words": "",
+        "opening_ocr": [],
+        "hold_score": 41
+      },
+      "pacing_dna": {
+        "cuts_count": 1,
+        "cuts_per_minute": 10.0,
+        "cut_rhythm_s": 6.0,
+        "silence_ratio": 0.0
+      },
+      "style_dna": {
+        "palette": [
+          "#7d8080",
+          "#7d7f80",
+          "#7e7f80"
+        ],
+        "lighting": "Balanced natural daylight key lighting with neutral contrast",
+        "motion": "Stable deliberate medium-pacing cadence"
+      },
+      "blueprint": [
+        {
+          "role": "hook",
+          "technique": "Opening visual setup",
+          "duration_ms": 2500
+        },
+        {
+          "role": "problem",
+          "technique": "Handheld visceral frustration framing",
+          "duration_ms": 1000
+        },
+        {
+          "role": "demo",
+          "technique": "Smooth tracking shot illustrating mechanism in action",
+          "duration_ms": 2100
+        },
+        {
+          "role": "cta",
+          "technique": "Closing brand outro",
+          "duration_ms": 1200
+        }
+      ],
+      "why_it_works_claims": [
+        {
+          "category": "growth",
+          "claim": "Opening visual pace is delayed, risking early scroll drop-off in feed"
+        },
+        {
+          "category": "retention",
+          "claim": "Scene cut pacing (1 cut every 6.0s) maintains engagement"
+        },
+        {
+          "category": "emotion",
+          "claim": "Depiction stimulates viewer empathy and grounds core value proposition"
+        }
+      ]
+    },
+    "test_analysis_e3f6d980": {
+      "video_id": "test_analysis_e3f6d980",
+      "indexed_at": "2026-10-28T06:04:50.762171+00:00",
+      "category": "e_commerce",
+      "duration_s": 6.0,
+      "frame_count": 6,
+      "scores": {
+        "hook": 41,
+        "retention": 84,
+        "emotion": 55,
+        "clarity": 38,
+        "cta": 25,
+        "composite": 54
+      },
+      "hook_dna": {
+        "type": "Pattern Interrupt",
+        "technique": "Opening visual setup",
+        "first_3s_words": "",
+        "opening_ocr": [],
+        "hold_score": 41
+      },
+      "pacing_dna": {
+        "cuts_count": 1,
+        "cuts_per_minute": 10.0,
+        "cut_rhythm_s": 6.0,
+        "silence_ratio": 0.0
+      },
+      "style_dna": {
+        "palette": [
+          "#7d8080",
+          "#7d7f80",
+          "#7e7f80"
+        ],
+        "lighting": "Balanced natural daylight key lighting with neutral contrast",
+        "motion": "Stable deliberate medium-pacing cadence"
+      },
+      "blueprint": [
+        {
+          "role": "hook",
+          "technique": "Opening visual setup",
+          "duration_ms": 2500
+        },
+        {
+          "role": "problem",
+          "technique": "Handheld visceral frustration framing",
+          "duration_ms": 1000
+        },
+        {
+          "role": "demo",
+          "technique": "Smooth tracking shot illustrating mechanism in action",
+          "duration_ms": 2100
+        },
+        {
+          "role": "cta",
+          "technique": "Closing brand outro",
+          "duration_ms": 1200
+        }
+      ],
+      "why_it_works_claims": [
+        {
+          "category": "growth",
+          "claim": "Opening visual pace is delayed, risking early scroll drop-off in feed"
+        },
+        {
+          "category": "retention",
+          "claim": "Scene cut pacing (1 cut every 6.0s) maintains engagement"
+        },
+        {
+          "category": "emotion",
+          "claim": "Depiction stimulates viewer empathy and grounds core value proposition"
+        }
+      ]
+    },
+    "test_analysis_78f415b6": {
+      "video_id": "test_analysis_78f415b6",
+      "indexed_at": "2026-10-28T06:04:50.769248+00:00",
+      "category": "e_commerce",
+      "duration_s": 6.0,
+      "frame_count": 6,
+      "scores": {
+        "hook": 41,
+        "retention": 84,
+        "emotion": 55,
+        "clarity": 38,
+        "cta": 25,
+        "composite": 54
+      },
+      "hook_dna": {
+        "type": "Pattern Interrupt",
+        "technique": "Opening visual setup",
+        "first_3s_words": "",
+        "opening_ocr": [],
+        "hold_score": 41
+      },
+      "pacing_dna": {
+        "cuts_count": 1,
+        "cuts_per_minute": 10.0,
+        "cut_rhythm_s": 6.0,
+        "silence_ratio": 0.0
+      },
+      "style_dna": {
+        "palette": [
+          "#7d8080",
+          "#7d7f80",
+          "#7e7f80"
+        ],
+        "lighting": "Balanced natural daylight key lighting with neutral contrast",
+        "motion": "Stable deliberate medium-pacing cadence"
+      },
+      "blueprint": [
+        {
+          "role": "hook",
+          "technique": "Opening visual setup",
+          "duration_ms": 2500
+        },
+        {
+          "role": "problem",
+          "technique": "Handheld visceral frustration framing",
+          "duration_ms": 1000
+        },
+        {
+          "role": "demo",
+          "technique": "Smooth tracking shot illustrating mechanism in action",
+          "duration_ms": 2100
+        },
+        {
+          "role": "cta",
+          "technique": "Closing brand outro",
+          "duration_ms": 1200
+        }
+      ],
+      "why_it_works_claims": [
+        {
+          "category": "growth",
+          "claim": "Opening visual pace is delayed, risking early scroll drop-off in feed"
+        },
+        {
+          "category": "retention",
+          "claim": "Scene cut pacing (1 cut every 6.0s) maintains engagement"
+        },
+        {
+          "category": "emotion",
+          "claim": "Depiction stimulates viewer empathy and grounds core value proposition"
+        }
+      ]
+    },
+    "16e555cf-e66a-44c5-bb0b-7111916152b4": {
+      "video_id": "16e555cf-e66a-44c5-bb0b-7111916152b4",
+      "indexed_at": "2026-10-28T06:04:50.778267+00:00",
+      "category": "e_commerce",
+      "duration_s": 33.033,
+      "frame_count": 57,
+      "scores": {
+        "hook": 41,
+        "retention": 85,
+        "emotion": 85,
+        "clarity": 45,
+        "cta": 25,
+        "composite": 62
+      },
+      "hook_dna": {
+        "type": "Pattern Interrupt",
+        "technique": "Opening visual setup",
+        "first_3s_words": "",
+        "opening_ocr": [],
+        "hold_score": 41
+      },
+      "pacing_dna": {
+        "cuts_count": 24,
+        "cuts_per_minute": 43.6,
+        "cut_rhythm_s": 1.38,
+        "silence_ratio": 0.08
+      },
+      "style_dna": {
+        "palette": [
+          "#1f1e1c",
+          "#281f1e",
+          "#374141"
+        ],
+        "lighting": "Moody high-contrast low-key lighting with deep cinematic shadows",
+        "motion": "Rapid dynamic multi-cut cadence"
+      },
+      "blueprint": [
+        {
+          "role": "hook",
+          "technique": "Opening visual setup",
+          "duration_ms": 2500
+        },
+        {
+          "role": "problem",
+          "technique": "Handheld visceral frustration framing",
+          "duration_ms": 12364
+        },
+        {
+          "role": "demo",
+          "technique": "Smooth tracking shot illustrating mechanism in action",
+          "duration_ms": 11562
+        },
+        {
+          "role": "cta",
+          "technique": "Closing brand outro",
+          "duration_ms": 6607
+        }
+      ],
+      "why_it_works_claims": [
+        {
+          "category": "growth",
+          "claim": "Opening visual pace is delayed, risking early scroll drop-off in feed"
+        },
+        {
+          "category": "retention",
+          "claim": "Scene cut pacing (1 cut every 1.3s) maintains engagement"
+        },
+        {
+          "category": "emotion",
+          "claim": "Depiction stimulates viewer empathy and grounds core value proposition"
+        }
+      ]
+    },
+    "test_golden_96db4262": {
+      "video_id": "test_golden_96db4262",
+      "indexed_at": "2026-10-28T06:04:50.785738+00:00",
+      "category": "e_commerce",
+      "duration_s": 6.0,
+      "frame_count": 6,
+      "scores": {
+        "hook": 41,
+        "retention": 84,
+        "emotion": 55,
+        "clarity": 38,
+        "cta": 25,
+        "composite": 54
+      },
+      "hook_dna": {
+        "type": "Pattern Interrupt",
+        "technique": "Opening visual setup",
+        "first_3s_words": "",
+        "opening_ocr": [],
+        "hold_score": 41
+      },
+      "pacing_dna": {
+        "cuts_count": 1,
+        "cuts_per_minute": 10.0,
+        "cut_rhythm_s": 6.0,
+        "silence_ratio": 0.0
+      },
+      "style_dna": {
+        "palette": [
+          "#7d8080",
+          "#7d7f80",
+          "#7e7f80"
+        ],
+        "lighting": "Balanced natural daylight key lighting with neutral contrast",
+        "motion": "Stable deliberate medium-pacing cadence"
+      },
+      "blueprint": [
+        {
+          "role": "hook",
+          "technique": "Opening visual setup",
+          "duration_ms": 2500
+        },
+        {
+          "role": "problem",
+          "technique": "Handheld visceral frustration framing",
+          "duration_ms": 1000
+        },
+        {
+          "role": "demo",
+          "technique": "Smooth tracking shot illustrating mechanism in action",
+          "duration_ms": 2100
+        },
+        {
+          "role": "cta",
+          "technique": "Closing brand outro",
+          "duration_ms": 1200
+        }
+      ],
+      "why_it_works_claims": [
+        {
+          "category": "growth",
+          "claim": "Opening visual pace is delayed, risking early scroll drop-off in feed"
+        },
+        {
+          "category": "retention",
+          "claim": "Scene cut pacing (1 cut every 6.0s) maintains engagement"
+        },
+        {
+          "category": "emotion",
+          "claim": "Depiction stimulates viewer empathy and grounds core value proposition"
+        }
+      ]
+    },
+    "d5022ec0-c62d-410b-819e-8b6e4385956b": {
+      "video_id": "d5022ec0-c62d-410b-819e-8b6e4385956b",
+      "indexed_at": "2026-10-28T06:04:50.792343+00:00",
+      "category": "e_commerce",
+      "duration_s": 14.033,
+      "frame_count": 14,
+      "scores": {
+        "hook": 61,
+        "retention": 67,
+        "emotion": 65,
+        "clarity": 45,
+        "cta": 25,
+        "composite": 60
+      },
+      "hook_dna": {
+        "type": "Pattern Interrupt",
+        "technique": "Opening visual setup",
+        "first_3s_words": "Introducing Fizzinga for the athlete's dreamers",
+        "opening_ocr": [],
+        "hold_score": 61
+      },
+      "pacing_dna": {
+        "cuts_count": 1,
+        "cuts_per_minute": 4.3,
+        "cut_rhythm_s": 14.03,
+        "silence_ratio": 0.0
+      },
+      "style_dna": {
+        "palette": [
+          "#c5c5c5",
+          "#c1c1c1",
+          "#c5c5c5"
+        ],
+        "lighting": "Bright high-key diffused lighting with high visual clarity",
+        "motion": "Stable deliberate medium-pacing cadence"
+      },
+      "blueprint": [
+        {
+          "role": "hook",
+          "technique": "Opening visual setup",
+          "duration_ms": 2500
+        },
+        {
+          "role": "problem",
+          "technique": "Handheld visceral frustration framing",
+          "duration_ms": 3814
+        },
+        {
+          "role": "demo",
+          "technique": "Smooth tracking shot illustrating mechanism in action",
+          "duration_ms": 4912
+        },
+        {
+          "role": "cta",
+          "technique": "Closing brand outro",
+          "duration_ms": 2807
+        }
+      ],
+      "why_it_works_claims": [
+        {
+          "category": "growth",
+          "claim": "Opening visual pace is delayed, risking early scroll drop-off in feed"
+        },
+        {
+          "category": "retention",
+          "claim": "Cut rhythm is slow (14.0s/cut), causing viewer fatigue"
+        },
+        {
+          "category": "emotion",
+          "claim": "Depiction stimulates viewer empathy and grounds core value proposition"
+        }
+      ]
+    },
+    "test_golden_f32dcbfb": {
+      "video_id": "test_golden_f32dcbfb",
+      "indexed_at": "2026-10-28T06:04:50.799562+00:00",
+      "category": "e_commerce",
+      "duration_s": 6.0,
+      "frame_count": 6,
+      "scores": {
+        "hook": 41,
+        "retention": 84,
+        "emotion": 55,
+        "clarity": 38,
+        "cta": 25,
+        "composite": 54
+      },
+      "hook_dna": {
+        "type": "Pattern Interrupt",
+        "technique": "Opening visual setup",
+        "first_3s_words": "",
+        "opening_ocr": [],
+        "hold_score": 41
+      },
+      "pacing_dna": {
+        "cuts_count": 1,
+        "cuts_per_minute": 10.0,
+        "cut_rhythm_s": 6.0,
+        "silence_ratio": 0.0
+      },
+      "style_dna": {
+        "palette": [
+          "#7d8080",
+          "#7d7f80",
+          "#7e7f80"
+        ],
+        "lighting": "Balanced natural daylight key lighting with neutral contrast",
+        "motion": "Stable deliberate medium-pacing cadence"
+      },
+      "blueprint": [
+        {
+          "role": "hook",
+          "technique": "Opening visual setup",
+          "duration_ms": 2500
+        },
+        {
+          "role": "problem",
+          "technique": "Handheld visceral frustration framing",
+          "duration_ms": 1000
+        },
+        {
+          "role": "demo",
+          "technique": "Smooth tracking shot illustrating mechanism in action",
+          "duration_ms": 2100
+        },
+        {
+          "role": "cta",
+          "technique": "Closing brand outro",
+          "duration_ms": 1200
+        }
+      ],
+      "why_it_works_claims": [
+        {
+          "category": "growth",
+          "claim": "Opening visual pace is delayed, risking early scroll drop-off in feed"
+        },
+        {
+          "category": "retention",
+          "claim": "Scene cut pacing (1 cut every 6.0s) maintains engagement"
+        },
+        {
+          "category": "emotion",
+          "claim": "Depiction stimulates viewer empathy and grounds core value proposition"
+        }
+      ]
+    },
+    "a6d3362a-2a5f-4c19-a7d7-fe8b07ccc5ed": {
+      "video_id": "a6d3362a-2a5f-4c19-a7d7-fe8b07ccc5ed",
+      "indexed_at": "2026-10-28T06:04:50.809028+00:00",
+      "category": "e_commerce",
+      "duration_s": 21.833,
+      "frame_count": 37,
+      "scores": {
+        "hook": 41,
+        "retention": 96,
+        "emotion": 85,
+        "clarity": 45,
+        "cta": 25,
+        "composite": 64
+      },
+      "hook_dna": {
+        "type": "Pattern Interrupt",
+        "technique": "Opening visual setup",
+        "first_3s_words": "",
+        "opening_ocr": [],
+        "hold_score": 41
+      },
+      "pacing_dna": {
+        "cuts_count": 15,
+        "cuts_per_minute": 41.2,
+        "cut_rhythm_s": 1.46,
+        "silence_ratio": 0.04
+      },
+      "style_dna": {
+        "palette": [
+          "#71635c",
+          "#5f6165",
+          "#856052"
+        ],
+        "lighting": "Balanced natural daylight key lighting with neutral contrast",
+        "motion": "Rapid dynamic multi-cut cadence"
+      },
+      "blueprint": [
+        {
+          "role": "hook",
+          "technique": "Opening visual setup",
+          "duration_ms": 2500
+        },
+        {
+          "role": "problem",
+          "technique": "Handheld visceral frustration framing",
+          "duration_ms": 7324
+        },
+        {
+          "role": "demo",
+          "technique": "Smooth tracking shot illustrating mechanism in action",
+          "duration_ms": 7642
+        },
+        {
+          "role": "cta",
+          "technique": "Closing brand outro",
+          "duration_ms": 4367
+        }
+      ],
+      "why_it_works_claims": [
+        {
+          "category": "growth",
+          "claim": "Opening visual pace is delayed, risking early scroll drop-off in feed"
+        },
+        {
+          "category": "retention",
+          "claim": "Scene cut pacing (1 cut every 1.4s) maintains engagement"
+        },
+        {
+          "category": "emotion",
+          "claim": "Depiction stimulates viewer empathy and grounds core value proposition"
+        }
+      ]
+    },
+    "test_analysis_51a0d3b4": {
+      "video_id": "test_analysis_51a0d3b4",
+      "indexed_at": "2026-10-28T06:04:50.816702+00:00",
+      "category": "e_commerce",
+      "duration_s": 6.0,
+      "frame_count": 6,
+      "scores": {
+        "hook": 41,
+        "retention": 84,
+        "emotion": 55,
+        "clarity": 38,
+        "cta": 25,
+        "composite": 54
+      },
+      "hook_dna": {
+        "type": "Pattern Interrupt",
+        "technique": "Opening visual setup",
+        "first_3s_words": "",
+        "opening_ocr": [],
+        "hold_score": 41
+      },
+      "pacing_dna": {
+        "cuts_count": 1,
+        "cuts_per_minute": 10.0,
+        "cut_rhythm_s": 6.0,
+        "silence_ratio": 0.0
+      },
+      "style_dna": {
+        "palette": [
+          "#7d8080",
+          "#7d7f80",
+          "#7e7f80"
+        ],
+        "lighting": "Balanced natural daylight key lighting with neutral contrast",
+        "motion": "Stable deliberate medium-pacing cadence"
+      },
+      "blueprint": [
+        {
+          "role": "hook",
+          "technique": "Opening visual setup",
+          "duration_ms": 2500
+        },
+        {
+          "role": "problem",
+          "technique": "Handheld visceral frustration framing",
+          "duration_ms": 1000
+        },
+        {
+          "role": "demo",
+          "technique": "Smooth tracking shot illustrating mechanism in action",
+          "duration_ms": 2100
+        },
+        {
+          "role": "cta",
+          "technique": "Closing brand outro",
+          "duration_ms": 1200
+        }
+      ],
+      "why_it_works_claims": [
+        {
+          "category": "growth",
+          "claim": "Opening visual pace is delayed, risking early scroll drop-off in feed"
+        },
+        {
+          "category": "retention",
+          "claim": "Scene cut pacing (1 cut every 6.0s) maintains engagement"
+        },
+        {
+          "category": "emotion",
+          "claim": "Depiction stimulates viewer empathy and grounds core value proposition"
+        }
+      ]
+    },
+    "test_golden_8b68ad6e": {
+      "video_id": "test_golden_8b68ad6e",
+      "indexed_at": "2026-10-28T06:04:50.823831+00:00",
+      "category": "e_commerce",
+      "duration_s": 6.0,
+      "frame_count": 6,
+      "scores": {
+        "hook": 41,
+        "retention": 84,
+        "emotion": 55,
+        "clarity": 38,
+        "cta": 25,
+        "composite": 54
+      },
+      "hook_dna": {
+        "type": "Pattern Interrupt",
+        "technique": "Opening visual setup",
+        "first_3s_words": "",
+        "opening_ocr": [],
+        "hold_score": 41
+      },
+      "pacing_dna": {
+        "cuts_count": 1,
+        "cuts_per_minute": 10.0,
+        "cut_rhythm_s": 6.0,
+        "silence_ratio": 0.0
+      },
+      "style_dna": {
+        "palette": [
+          "#7d8080",
+          "#7d7f80",
+          "#7e7f80"
+        ],
+        "lighting": "Balanced natural daylight key lighting with neutral contrast",
+        "motion": "Stable deliberate medium-pacing cadence"
+      },
+      "blueprint": [
+        {
+          "role": "hook",
+          "technique": "Opening visual setup",
+          "duration_ms": 2500
+        },
+        {
+          "role": "problem",
+          "technique": "Handheld visceral frustration framing",
+          "duration_ms": 1000
+        },
+        {
+          "role": "demo",
+          "technique": "Smooth tracking shot illustrating mechanism in action",
+          "duration_ms": 2100
+        },
+        {
+          "role": "cta",
+          "technique": "Closing brand outro",
+          "duration_ms": 1200
+        }
+      ],
+      "why_it_works_claims": [
+        {
+          "category": "growth",
+          "claim": "Opening visual pace is delayed, risking early scroll drop-off in feed"
+        },
+        {
+          "category": "retention",
+          "claim": "Scene cut pacing (1 cut every 6.0s) maintains engagement"
+        },
+        {
+          "category": "emotion",
+          "claim": "Depiction stimulates viewer empathy and grounds core value proposition"
+        }
+      ]
+    },
+    "c14e120f-7a95-4be6-97d0-d136b523b062": {
+      "video_id": "c14e120f-7a95-4be6-97d0-d136b523b062",
+      "indexed_at": "2026-10-28T06:04:50.732985+00:00",
+      "category": "e_commerce",
+      "duration_s": 12.517,
+      "frame_count": 14,
+      "scores": {
+        "hook": 63,
+        "retention": 52,
+        "emotion": 75,
+        "clarity": 38,
+        "cta": 25,
+        "composite": 58
+      },
+      "hook_dna": {
+        "type": "Micro-Cut Visual Shock",
+        "technique": "Opening visual setup",
+        "first_3s_words": "",
+        "opening_ocr": [],
+        "hold_score": 63
+      },
+      "pacing_dna": {
+        "cuts_count": 1,
+        "cuts_per_minute": 4.8,
+        "cut_rhythm_s": 12.52,
+        "silence_ratio": 0.22
+      },
+      "style_dna": {
+        "palette": [
+          "#312524",
+          "#382721",
+          "#6a5e59"
+        ],
+        "lighting": "Balanced natural daylight key lighting with neutral contrast",
+        "motion": "Stable deliberate medium-pacing cadence"
+      },
+      "blueprint": [
+        {
+          "role": "hook",
+          "technique": "Opening visual setup",
+          "duration_ms": 2500
+        },
+        {
+          "role": "problem",
+          "technique": "Handheld visceral frustration framing",
+          "duration_ms": 3132
+        },
+        {
+          "role": "demo",
+          "technique": "Smooth tracking shot illustrating mechanism in action",
+          "duration_ms": 4380
+        },
+        {
+          "role": "cta",
+          "technique": "Closing brand outro",
+          "duration_ms": 2504
+        }
+      ],
+      "why_it_works_claims": [
+        {
+          "category": "growth",
+          "claim": "Opening visual pace is delayed, risking early scroll drop-off in feed"
+        },
+        {
+          "category": "retention",
+          "claim": "Cut rhythm is slow (6.3s/cut), causing viewer fatigue"
+        },
+        {
+          "category": "emotion",
+          "claim": "Depiction stimulates viewer empathy and grounds core value proposition"
+        }
+      ]
+    },
+    "877c2ce6-fab8-4a30-b016-35e3d1b9ff2c": {
+      "video_id": "877c2ce6-fab8-4a30-b016-35e3d1b9ff2c",
+      "indexed_at": "2026-10-28T06:08:03.202079+00:00",
+      "category": "e_commerce",
+      "duration_s": 12.517,
+      "frame_count": 14,
+      "scores": {
+        "hook": 63,
+        "retention": 52,
+        "emotion": 75,
+        "clarity": 38,
+        "cta": 25,
+        "composite": 58
+      },
+      "hook_dna": {
+        "type": "Micro-Cut Visual Shock",
+        "technique": "Opening visual setup",
+        "first_3s_words": "",
+        "opening_ocr": [],
+        "hold_score": 63
+      },
+      "pacing_dna": {
+        "cuts_count": 1,
+        "cuts_per_minute": 4.8,
+        "cut_rhythm_s": 12.52,
+        "silence_ratio": 0.22
+      },
+      "style_dna": {
+        "palette": [
+          "#312524",
+          "#382721",
+          "#6a5e59"
+        ],
+        "lighting": "Balanced natural daylight key lighting with neutral contrast",
+        "motion": "Stable deliberate medium-pacing cadence"
+      },
+      "blueprint": [
+        {
+          "role": "hook",
+          "technique": "Opening visual setup",
+          "duration_ms": 2500
+        },
+        {
+          "role": "problem",
+          "technique": "Handheld visceral frustration framing",
+          "duration_ms": 3132
+        },
+        {
+          "role": "demo",
+          "technique": "Smooth tracking shot illustrating mechanism in action",
+          "duration_ms": 4380
+        },
+        {
+          "role": "cta",
+          "technique": "Closing brand outro",
+          "duration_ms": 2504
+        }
+      ],
+      "why_it_works_claims": [
+        {
+          "category": "growth",
+          "claim": "Opening visual pace is delayed, risking early scroll drop-off in feed"
+        },
+        {
+          "category": "retention",
+          "claim": "Cut rhythm is slow (6.3s/cut), causing viewer fatigue"
+        },
+        {
+          "category": "emotion",
+          "claim": "Depiction stimulates viewer empathy and grounds core value proposition"
+        }
+      ]
+    },
+    "b7db7ccf-c10b-4e25-a909-9364efec5beb": {
+      "video_id": "b7db7ccf-c10b-4e25-a909-9364efec5beb",
+      "indexed_at": "2026-10-28T06:53:49.504062+00:00",
+      "category": "saas_app",
+      "duration_s": 5.467,
+      "frame_count": 6,
+      "virality": {
+        "tier": "Tier-1 Mega-Viral Unicorn",
+        "views": 167905836.0,
+        "likes": 25598023.0,
+        "shares": 3323366.0,
+        "comments": 246048.0,
+        "like_ratio": 15.25,
+        "share_ratio": 1.98,
+        "archetype": "High-Entropy Emotional Suspense & Negative Curiosity Hook",
+        "source": "connector",
+        "social_metadata": {
+          "platform": "tiktok",
+          "title": "i’m scared",
+          "author": "Julia Delgiorno (@tiktok)",
+          "duration": 5.5
+        }
+      },
+      "scores": {
+        "hook": 97,
+        "retention": 98,
+        "emotion": 97,
+        "clarity": 88,
+        "cta": 94,
+        "composite": 95
+      },
+      "hook_dna": {
+        "type": "High-Entropy Emotional Suspense & Negative Curiosity Hook",
+        "technique": "High-Entropy Emotional Suspense & Negative Curiosity Hook",
+        "first_3s_words": "The thing you can't die",
+        "opening_ocr": [],
+        "hold_score": 97
+      },
+      "pacing_dna": {
+        "cuts_count": 1,
+        "cuts_per_minute": 11.0,
+        "cut_rhythm_s": 5.47,
+        "silence_ratio": 0.0
+      },
+      "style_dna": {
+        "palette": [
+          "#767264",
+          "#7b7769",
+          "#6d6d69"
+        ],
+        "lighting": "Balanced natural daylight key lighting with neutral contrast",
+        "motion": "Stable deliberate medium-pacing cadence"
+      },
+      "blueprint": [
+        {
+          "role": "hook",
+          "technique": "High-Entropy Emotional Suspense & Negative Curiosity Hook",
+          "duration_ms": 2500
+        },
+        {
+          "role": "problem",
+          "technique": "Handheld visceral frustration framing",
+          "duration_ms": 1000
+        },
+        {
+          "role": "demo",
+          "technique": "Smooth tracking shot illustrating mechanism in action",
+          "duration_ms": 1913
+        },
+        {
+          "role": "cta",
+          "technique": "Hero product framing with friction-free direct action",
+          "duration_ms": 1094
+        }
+      ],
+      "why_it_works_claims": [
+        {
+          "category": "growth",
+          "claim": "Empirical 99th-percentile thumb-stop power verified by 167.9M views and 25.6M likes. Emotional tension halts feed scroll momentum."
+        },
+        {
+          "category": "retention",
+          "claim": "Intimate single-shot continuous framing sustains viewer attention through unbroken narrative anticipation and facial micro-expressions."
+        },
+        {
+          "category": "emotion",
+          "claim": "Primal emotional vulnerability triggers visceral viewer empathy and compulsive curiosity for the narrative resolution."
+        }
+      ]
+    },
+    "8494b96c-54e2-4c01-8615-8c5076bb90cb": {
+      "video_id": "8494b96c-54e2-4c01-8615-8c5076bb90cb",
+      "indexed_at": "2026-10-28T06:30:20.731020+00:00",
+      "category": "e_commerce",
+      "duration_s": 5.467,
+      "frame_count": 6,
+      "scores": {
+        "hook": 73,
+        "retention": 84,
+        "emotion": 65,
+        "clarity": 58,
+        "cta": 25,
+        "composite": 71
+      },
+      "hook_dna": {
+        "type": "Pattern Interrupt",
+        "technique": "Opening visual setup",
+        "first_3s_words": "The thing you can't die",
+        "opening_ocr": [],
+        "hold_score": 73
+      },
+      "pacing_dna": {
+        "cuts_count": 1,
+        "cuts_per_minute": 11.0,
+        "cut_rhythm_s": 5.47,
+        "silence_ratio": 0.0
+      },
+      "style_dna": {
+        "palette": [
+          "#767264",
+          "#7b7769",
+          "#6d6d69"
+        ],
+        "lighting": "Balanced natural daylight key lighting with neutral contrast",
+        "motion": "Stable deliberate medium-pacing cadence"
+      },
+      "blueprint": [
+        {
+          "role": "hook",
+          "technique": "Opening visual setup",
+          "duration_ms": 2500
+        },
+        {
+          "role": "problem",
+          "technique": "Handheld visceral frustration framing",
+          "duration_ms": 1000
+        },
+        {
+          "role": "demo",
+          "technique": "Smooth tracking shot illustrating mechanism in action",
+          "duration_ms": 1913
+        },
+        {
+          "role": "cta",
+          "technique": "Closing brand outro",
+          "duration_ms": 1094
+        }
+      ],
+      "why_it_works_claims": [
+        {
+          "category": "growth",
+          "claim": "Opening 2.5s achieves 73% hook strength via early sound and visual tension"
+        },
+        {
+          "category": "retention",
+          "claim": "Scene cut pacing (1 cut every 5.5s) maintains engagement"
+        },
+        {
+          "category": "emotion",
+          "claim": "Depiction stimulates viewer empathy and grounds core value proposition"
+        }
+      ]
+    },
+    "test_analysis_899f0c01": {
+      "video_id": "test_analysis_899f0c01",
+      "indexed_at": "2026-10-28T06:55:10.440979+00:00",
+      "category": "e_commerce",
+      "duration_s": 6.0,
+      "frame_count": 6,
+      "virality": {
+        "tier": "Tier-4 Organic Distribution",
+        "views": 0.0,
+        "likes": 0.0,
+        "shares": 0.0,
+        "comments": 0.0,
+        "like_ratio": 0.0,
+        "share_ratio": 0.0,
+        "archetype": "High-Entropy Emotional Suspense & Negative Curiosity Hook",
+        "source": "acoustic_heuristic",
+        "social_metadata": {}
+      },
+      "scores": {
+        "hook": 80,
+        "retention": 86,
+        "emotion": 90,
+        "clarity": 50,
+        "cta": 30,
+        "composite": 66
+      },
+      "hook_dna": {
+        "type": "High-Entropy Emotional Suspense & Negative Curiosity Hook",
+        "technique": "Extreme close-up macro cut with rapid audio onset",
+        "first_3s_words": "",
+        "opening_ocr": [],
+        "hold_score": 80
+      },
+      "pacing_dna": {
+        "cuts_count": 1,
+        "cuts_per_minute": 10.0,
+        "cut_rhythm_s": 6.0,
+        "silence_ratio": 0.0
+      },
+      "style_dna": {
+        "palette": [
+          "#7d8080",
+          "#7d7f80",
+          "#7e7f80"
+        ],
+        "lighting": "Balanced natural daylight key lighting with neutral contrast",
+        "motion": "Stable deliberate medium-pacing cadence"
+      },
+      "blueprint": [
+        {
+          "role": "hook",
+          "technique": "Extreme close-up macro cut with rapid audio onset",
+          "duration_ms": 2500
+        },
+        {
+          "role": "problem",
+          "technique": "Handheld visceral frustration framing",
+          "duration_ms": 1000
+        },
+        {
+          "role": "demo",
+          "technique": "Smooth tracking shot illustrating mechanism in action",
+          "duration_ms": 2100
+        },
+        {
+          "role": "cta",
+          "technique": "Closing brand outro",
+          "duration_ms": 1200
+        }
+      ],
+      "why_it_works_claims": [
+        {
+          "category": "growth",
+          "claim": "Opening 2.5s achieves 80% hook strength via early sound and visual tension"
+        },
+        {
+          "category": "retention",
+          "claim": "Scene cut pacing (1 cut every 6.0s) maintains engagement"
+        },
+        {
+          "category": "emotion",
+          "claim": "Depiction stimulates viewer empathy and grounds core value proposition"
+        }
+      ]
+    },
+    "test_golden_c0ef3823": {
+      "video_id": "test_golden_c0ef3823",
+      "indexed_at": "2026-10-28T06:55:31.139682+00:00",
+      "category": "e_commerce",
+      "duration_s": 6.0,
+      "frame_count": 6,
+      "virality": {
+        "tier": "Tier-4 Organic Distribution",
+        "views": 0.0,
+        "likes": 0.0,
+        "shares": 0.0,
+        "comments": 0.0,
+        "like_ratio": 0.0,
+        "share_ratio": 0.0,
+        "archetype": "High-Entropy Emotional Suspense & Negative Curiosity Hook",
+        "source": "acoustic_heuristic",
+        "social_metadata": {}
+      },
+      "scores": {
+        "hook": 80,
+        "retention": 86,
+        "emotion": 90,
+        "clarity": 50,
+        "cta": 30,
+        "composite": 66
+      },
+      "hook_dna": {
+        "type": "High-Entropy Emotional Suspense & Negative Curiosity Hook",
+        "technique": "Extreme close-up macro cut with rapid audio onset",
+        "first_3s_words": "",
+        "opening_ocr": [],
+        "hold_score": 80
+      },
+      "pacing_dna": {
+        "cuts_count": 1,
+        "cuts_per_minute": 10.0,
+        "cut_rhythm_s": 6.0,
+        "silence_ratio": 0.0
+      },
+      "style_dna": {
+        "palette": [
+          "#7d8080",
+          "#7d7f80",
+          "#7e7f80"
+        ],
+        "lighting": "Balanced natural daylight key lighting with neutral contrast",
+        "motion": "Stable deliberate medium-pacing cadence"
+      },
+      "blueprint": [
+        {
+          "role": "hook",
+          "technique": "Extreme close-up macro cut with rapid audio onset",
+          "duration_ms": 2500
+        },
+        {
+          "role": "problem",
+          "technique": "Handheld visceral frustration framing",
+          "duration_ms": 1000
+        },
+        {
+          "role": "demo",
+          "technique": "Smooth tracking shot illustrating mechanism in action",
+          "duration_ms": 2100
+        },
+        {
+          "role": "cta",
+          "technique": "Closing brand outro",
+          "duration_ms": 1200
+        }
+      ],
+      "why_it_works_claims": [
+        {
+          "category": "growth",
+          "claim": "Opening 2.5s achieves 80% hook strength via early sound and visual tension"
+        },
+        {
+          "category": "retention",
+          "claim": "Scene cut pacing (1 cut every 6.0s) maintains engagement"
+        },
+        {
+          "category": "emotion",
+          "claim": "Depiction stimulates viewer empathy and grounds core value proposition"
+        }
+      ]
+    },
+    "test_analysis_60cd273a": {
+      "video_id": "test_analysis_60cd273a",
+      "indexed_at": "2026-10-28T06:56:47.044725+00:00",
+      "category": "e_commerce",
+      "duration_s": 6.0,
+      "frame_count": 6,
+      "virality": {
+        "tier": "Tier-4 Organic Distribution",
+        "views": 0.0,
+        "likes": 0.0,
+        "shares": 0.0,
+        "comments": 0.0,
+        "like_ratio": 0.0,
+        "share_ratio": 0.0,
+        "archetype": "High-Entropy Emotional Suspense & Negative Curiosity Hook",
+        "source": "acoustic_heuristic",
+        "social_metadata": {}
+      },
+      "scores": {
+        "hook": 80,
+        "retention": 86,
+        "emotion": 90,
+        "clarity": 50,
+        "cta": 30,
+        "composite": 66
+      },
+      "hook_dna": {
+        "type": "High-Entropy Emotional Suspense & Negative Curiosity Hook",
+        "technique": "Extreme close-up macro cut with rapid audio onset",
+        "first_3s_words": "",
+        "opening_ocr": [],
+        "hold_score": 80
+      },
+      "pacing_dna": {
+        "cuts_count": 1,
+        "cuts_per_minute": 10.0,
+        "cut_rhythm_s": 6.0,
+        "silence_ratio": 0.0
+      },
+      "style_dna": {
+        "palette": [
+          "#7d8080",
+          "#7d7f80",
+          "#7e7f80"
+        ],
+        "lighting": "Balanced natural daylight key lighting with neutral contrast",
+        "motion": "Stable deliberate medium-pacing cadence"
+      },
+      "blueprint": [
+        {
+          "role": "hook",
+          "technique": "Extreme close-up macro cut with rapid audio onset",
+          "duration_ms": 2500
+        },
+        {
+          "role": "problem",
+          "technique": "Handheld visceral frustration framing",
+          "duration_ms": 1000
+        },
+        {
+          "role": "demo",
+          "technique": "Smooth tracking shot illustrating mechanism in action",
+          "duration_ms": 2100
+        },
+        {
+          "role": "cta",
+          "technique": "Closing brand outro",
+          "duration_ms": 1200
+        }
+      ],
+      "why_it_works_claims": [
+        {
+          "category": "growth",
+          "claim": "Opening 2.5s achieves 80% hook strength via early sound and visual tension"
+        },
+        {
+          "category": "retention",
+          "claim": "Scene cut pacing (1 cut every 6.0s) maintains engagement"
+        },
+        {
+          "category": "emotion",
+          "claim": "Depiction stimulates viewer empathy and grounds core value proposition"
+        }
+      ]
+    },
+    "test_golden_4ce53317": {
+      "video_id": "test_golden_4ce53317",
+      "indexed_at": "2026-10-28T06:57:06.983738+00:00",
+      "category": "e_commerce",
+      "duration_s": 6.0,
+      "frame_count": 6,
+      "virality": {
+        "tier": "Tier-4 Organic Distribution",
+        "views": 0.0,
+        "likes": 0.0,
+        "shares": 0.0,
+        "comments": 0.0,
+        "like_ratio": 0.0,
+        "share_ratio": 0.0,
+        "archetype": "High-Entropy Emotional Suspense & Negative Curiosity Hook",
+        "source": "acoustic_heuristic",
+        "social_metadata": {}
+      },
+      "scores": {
+        "hook": 80,
+        "retention": 86,
+        "emotion": 90,
+        "clarity": 50,
+        "cta": 30,
+        "composite": 66
+      },
+      "hook_dna": {
+        "type": "High-Entropy Emotional Suspense & Negative Curiosity Hook",
+        "technique": "Extreme close-up macro cut with rapid audio onset",
+        "first_3s_words": "",
+        "opening_ocr": [],
+        "hold_score": 80
+      },
+      "pacing_dna": {
+        "cuts_count": 1,
+        "cuts_per_minute": 10.0,
+        "cut_rhythm_s": 6.0,
+        "silence_ratio": 0.0
+      },
+      "style_dna": {
+        "palette": [
+          "#7d8080",
+          "#7d7f80",
+          "#7e7f80"
+        ],
+        "lighting": "Balanced natural daylight key lighting with neutral contrast",
+        "motion": "Stable deliberate medium-pacing cadence"
+      },
+      "blueprint": [
+        {
+          "role": "hook",
+          "technique": "Extreme close-up macro cut with rapid audio onset",
+          "duration_ms": 2500
+        },
+        {
+          "role": "problem",
+          "technique": "Handheld visceral frustration framing",
+          "duration_ms": 1000
+        },
+        {
+          "role": "demo",
+          "technique": "Smooth tracking shot illustrating mechanism in action",
+          "duration_ms": 2100
+        },
+        {
+          "role": "cta",
+          "technique": "Closing brand outro",
+          "duration_ms": 1200
+        }
+      ],
+      "why_it_works_claims": [
+        {
+          "category": "growth",
+          "claim": "Opening 2.5s achieves 80% hook strength via early sound and visual tension"
+        },
+        {
+          "category": "retention",
+          "claim": "Scene cut pacing (1 cut every 6.0s) maintains engagement"
+        },
+        {
+          "category": "emotion",
+          "claim": "Depiction stimulates viewer empathy and grounds core value proposition"
+        }
+      ]
+    },
+    "b547015c-6491-4353-85fc-5de444075633": {
+      "video_id": "b547015c-6491-4353-85fc-5de444075633",
+      "indexed_at": "2026-10-28T07:00:54.954978+00:00",
+      "category": "saas_app",
+      "duration_s": 45.696,
+      "frame_count": 68,
+      "virality": {
+        "tier": "Tier-4 Organic Distribution",
+        "views": 39214.0,
+        "likes": 596.0,
+        "shares": 0.0,
+        "comments": 14.0,
+        "like_ratio": 1.52,
+        "share_ratio": 0.0,
+        "archetype": "High-Velocity Narrative Acceleration Hook",
+        "source": "ytdlp",
+        "social_metadata": {
+          "platform": "youtube",
+          "title": "iPhone Type C loose issue! #shorts #elementec",
+          "author": "Elementec",
+          "duration": 46
+        }
+      },
+      "scores": {
+        "hook": 90,
+        "retention": 93,
+        "emotion": 75,
+        "clarity": 60,
+        "cta": 75,
+        "composite": 80
+      },
+      "hook_dna": {
+        "type": "High-Velocity Narrative Acceleration Hook",
+        "technique": "Extreme close-up macro cut with rapid audio onset",
+        "first_3s_words": "بہت سارے لوگ کمپلین کریں کہ ان کے iphone 15 series",
+        "opening_ocr": [],
+        "hold_score": 90
+      },
+      "pacing_dna": {
+        "cuts_count": 22,
+        "cuts_per_minute": 28.9,
+        "cut_rhythm_s": 2.08,
+        "silence_ratio": 0.0
+      },
+      "style_dna": {
+        "palette": [
+          "#828389",
+          "#7d7d77",
+          "#7d666a"
+        ],
+        "lighting": "Balanced natural daylight key lighting with neutral contrast",
+        "motion": "Rapid dynamic multi-cut cadence"
+      },
+      "blueprint": [
+        {
+          "role": "hook",
+          "technique": "Extreme close-up macro cut with rapid audio onset",
+          "duration_ms": 2500
+        },
+        {
+          "role": "problem",
+          "technique": "Handheld visceral frustration framing",
+          "duration_ms": 18062
+        },
+        {
+          "role": "demo",
+          "technique": "Smooth tracking shot illustrating mechanism in action",
+          "duration_ms": 15994
+        },
+        {
+          "role": "cta",
+          "technique": "Hero product framing with friction-free direct action",
+          "duration_ms": 9139
+        }
+      ],
+      "why_it_works_claims": [
+        {
+          "category": "growth",
+          "claim": "Opening 2.5s achieves 90% hook strength via early sound and visual tension"
+        },
+        {
+          "category": "retention",
+          "claim": "Scene cut pacing (1 cut every 2.0s) maintains engagement"
+        },
+        {
+          "category": "emotion",
+          "claim": "Depiction stimulates viewer empathy and grounds core value proposition"
+        }
+      ]
+    },
+    "8d6001bb-6579-4203-a203-841985d1df92": {
+      "video_id": "8d6001bb-6579-4203-a203-841985d1df92",
+      "indexed_at": "2026-10-28T08:24:20.666559+00:00",
+      "category": "saas_app",
+      "duration_s": 213.04,
+      "frame_count": 340,
+      "virality": {
+        "tier": "Tier-1 Mega-Viral Unicorn",
+        "views": 1831224986.0,
+        "likes": 19491769.0,
+        "shares": 0.0,
+        "comments": 2400000.0,
+        "like_ratio": 1.06,
+        "share_ratio": 0.0,
+        "archetype": "Direct Character & Situational Intrigue Hook",
+        "source": "ytdlp",
+        "social_metadata": {
+          "platform": "youtube",
+          "title": "Rick Astley - Never Gonna Give You Up (Official Video) (4K Remaster)",
+          "author": "Rick Astley",
+          "duration": 213
+        }
+      },
+      "scores": {
+        "hook": 96,
+        "retention": 98,
+        "emotion": 97,
+        "clarity": 88,
+        "cta": 94,
+        "composite": 95
+      },
+      "hook_dna": {
+        "type": "Direct Character & Situational Intrigue Hook",
+        "technique": "Direct Character & Situational Intrigue Hook",
+        "first_3s_words": "",
+        "opening_ocr": [],
+        "hold_score": 96
+      },
+      "pacing_dna": {
+        "cuts_count": 127,
+        "cuts_per_minute": 35.8,
+        "cut_rhythm_s": 1.68,
+        "silence_ratio": 0.02
+      },
+      "style_dna": {
+        "palette": [
+          "#665861",
+          "#605b69",
+          "#666a76"
+        ],
+        "lighting": "Balanced natural daylight key lighting with neutral contrast",
+        "motion": "Rapid dynamic multi-cut cadence"
+      },
+      "blueprint": [
+        {
+          "role": "hook",
+          "technique": "Direct Character & Situational Intrigue Hook",
+          "duration_ms": 2500
+        },
+        {
+          "role": "problem",
+          "technique": "Handheld visceral frustration framing",
+          "duration_ms": 93368
+        },
+        {
+          "role": "demo",
+          "technique": "Smooth tracking shot illustrating mechanism in action",
+          "duration_ms": 74564
+        },
+        {
+          "role": "cta",
+          "technique": "Hero product framing with friction-free direct action",
+          "duration_ms": 42608
+        }
+      ],
+      "why_it_works_claims": [
+        {
+          "category": "growth",
+          "claim": "Empirical 99th-percentile thumb-stop power verified by 1831.2M views and 19.5M likes. Emotional tension halts feed scroll momentum."
+        },
+        {
+          "category": "retention",
+          "claim": "Intimate single-shot continuous framing sustains viewer attention through unbroken narrative anticipation and facial micro-expressions."
+        },
+        {
+          "category": "emotion",
+          "claim": "Primal emotional vulnerability triggers visceral viewer empathy and compulsive curiosity for the narrative resolution."
+        }
+      ]
+    }
+  },
+  "categories": {
+    "e_commerce": [
+      "test_analysis_1911c0de",
+      "test_analysis_2e6fa1d7",
+      "405ed88c-413f-43d3-8807-cd1bd5b3e5b1",
+      "test_analysis_dd5467c9",
+      "test_golden_40638f82",
+      "test_golden_c165d71b",
+      "8aaa2324-a7c7-4b3b-8a2b-98557d65640f",
+      "test_golden_ecda4254",
+      "test_analysis_aa82aeeb",
+      "df0e99f1-affe-44a2-b55c-fd224e97f39c",
+      "5b07a029-dc91-4c83-a5dc-01d10d1aa0a2",
+      "test_analysis_976f73a8",
+      "test_golden_b46ff568",
+      "test_analysis_3898a255",
+      "test_golden_ddba5dc3",
+      "test_golden_57fef2b8",
+      "test_golden_g1",
+      "c3973cba-72ae-4a03-b93b-728f827f7c46",
+      "test_analysis_f54ad4a6",
+      "test_golden_ffb090a8",
+      "test_golden_7be61441",
+      "test_analysis_504a7409",
+      "test_golden_36fd734c",
+      "test_analysis_e3f6d980",
+      "test_analysis_78f415b6",
+      "16e555cf-e66a-44c5-bb0b-7111916152b4",
+      "test_golden_96db4262",
+      "d5022ec0-c62d-410b-819e-8b6e4385956b",
+      "test_golden_f32dcbfb",
+      "a6d3362a-2a5f-4c19-a7d7-fe8b07ccc5ed",
+      "test_analysis_51a0d3b4",
+      "test_golden_8b68ad6e",
+      "c14e120f-7a95-4be6-97d0-d136b523b062",
+      "877c2ce6-fab8-4a30-b016-35e3d1b9ff2c",
+      "b7db7ccf-c10b-4e25-a909-9364efec5beb",
+      "8494b96c-54e2-4c01-8615-8c5076bb90cb",
+      "test_analysis_899f0c01",
+      "test_golden_c0ef3823",
+      "test_analysis_60cd273a",
+      "test_golden_4ce53317"
+    ],
+    "saas_app": [
+      "b7db7ccf-c10b-4e25-a909-9364efec5beb",
+      "b547015c-6491-4353-85fc-5de444075633",
+      "8d6001bb-6579-4203-a203-841985d1df92"
+    ],
+    "creator_ugc": [],
+    "lifestyle": [],
+    "general": []
+  },
+  "patterns": {
+    "hooks": [
+      {
+        "archetype": "Direct Character & Situational Intrigue Hook",
+        "frequency": 1,
+        "avg_hook_score": 96.0,
+        "techniques": [
+          "Direct Character & Situational Intrigue Hook"
+        ],
+        "recommended_for": "Fast-scroll feeds (TikTok & Instagram Reels)"
+      },
+      {
+        "archetype": "High-Velocity Narrative Acceleration Hook",
+        "frequency": 1,
+        "avg_hook_score": 90.0,
+        "techniques": [
+          "Extreme close-up macro cut with rapid audio onset"
+        ],
+        "recommended_for": "Fast-scroll feeds (TikTok & Instagram Reels)"
+      },
+      {
+        "archetype": "High-Entropy Emotional Suspense & Negative Curiosity Hook",
+        "frequency": 5,
+        "avg_hook_score": 83.4,
+        "techniques": [
+          "High-Entropy Emotional Suspense & Negative Curiosity Hook",
+          "Extreme close-up macro cut with rapid audio onset"
+        ],
+        "recommended_for": "Fast-scroll feeds (TikTok & Instagram Reels)"
+      },
+      {
+        "archetype": "Micro-Cut Visual Shock",
+        "frequency": 4,
+        "avg_hook_score": 73.0,
+        "techniques": [
+          "Opening visual setup",
+          "Extreme close-up macro cut with rapid audio onset"
+        ],
+        "recommended_for": "Fast-scroll feeds (TikTok & Instagram Reels)"
+      },
+      {
+        "archetype": "Pattern Interrupt",
+        "frequency": 31,
+        "avg_hook_score": 45.4,
+        "techniques": [
+          "Opening visual setup"
+        ],
+        "recommended_for": "Fast-scroll feeds (TikTok & Instagram Reels)"
+      }
+    ],
+    "pacing": {
+      "avg_cuts_per_minute": 14.0,
+      "avg_cut_rhythm_s": 6.28,
+      "optimal_silence_ratio": 0.02,
+      "recommendation": "Pace cuts every 6.28s (14.0 cuts/min) to maximize viewer momentum without disorientation."
+    },
+    "styles": {
+      "top_palette_accents": [
+        "#7d8080",
+        "#7d7f80",
+        "#7e7f80",
+        "#c5c5c5",
+        "#546959",
+        "#292929"
+      ],
+      "dominant_camera_motions": [
+        "Push-in macro (Hook)",
+        "Dynamic handheld tracking (Problem)",
+        "Smooth linear slider (Payoff)"
+      ],
+      "lighting_formula": "Soft directional 45° key light with subtle rim separation."
+    },
+    "blueprints": [
+      {
+        "sequence": "Hook → Problem → Demo → Cta",
+        "occurrences": 42,
+        "avg_composite_score": 61.2
+      }
+    ],
+    "mega_viral_hall_of_fame": [
+      {
+        "video_id": "b7db7ccf-c10b-4e25-a909-9364efec5beb",
+        "tier": "Tier-1 Mega-Viral Unicorn",
+        "views": 167905836.0,
+        "likes": 25598023.0,
+        "shares": 3323366.0,
+        "like_ratio": 15.25,
+        "hook_type": "High-Entropy Emotional Suspense & Negative Curiosity Hook",
+        "technique": "High-Entropy Emotional Suspense & Negative Curiosity Hook",
+        "author": "Julia Delgiorno (@tiktok)",
+        "title": "i’m scared"
+      },
+      {
+        "video_id": "8d6001bb-6579-4203-a203-841985d1df92",
+        "tier": "Tier-1 Mega-Viral Unicorn",
+        "views": 1831224986.0,
+        "likes": 19491769.0,
+        "shares": 0.0,
+        "like_ratio": 1.06,
+        "hook_type": "Direct Character & Situational Intrigue Hook",
+        "technique": "Direct Character & Situational Intrigue Hook",
+        "author": "Rick Astley",
+        "title": "Rick Astley - Never Gonna Give You Up (Official Video) (4K Remaster)"
+      }
+    ]
+  },
+  "metrics": {
+    "total_videos": 42,
+    "total_frames_analyzed": 838,
+    "total_views_analyzed": 1999170036.0,
+    "total_likes_analyzed": 45090388.0,
+    "mega_viral_count": 2,
+    "avg_hook_score": 54.8,
+    "avg_retention_score": 83.5
+  }
+}

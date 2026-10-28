@@ -10,10 +10,13 @@ from typing import Any
 # Configure logger
 logger = logging.getLogger("reelbrain.api")
 
-# Ensure monorepo root is on sys.path when deployed via Vercel Services
-ROOT_DIR = Path(__file__).resolve().parent.parent.parent
-if str(ROOT_DIR) not in sys.path:
-    sys.path.insert(0, str(ROOT_DIR))
+# Ensure both local directory and monorepo root are on sys.path
+CURRENT_DIR = Path(__file__).resolve().parent
+ROOT_DIR = CURRENT_DIR.parent.parent
+
+for p in [str(CURRENT_DIR), str(ROOT_DIR)]:
+    if p not in sys.path:
+        sys.path.insert(0, p)
 
 from fastapi import (
     BackgroundTasks,
@@ -30,7 +33,15 @@ from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field
 from sse_starlette.sse import EventSourceResponse
 
-from apps.api.config import settings
+try:
+    from apps.api.config import settings
+except ImportError:
+    import config as api_config
+    settings = api_config.settings
+    sys.modules["apps"] = sys.modules.get("apps", type(sys)("apps"))
+    sys.modules["apps.api"] = sys.modules.get("apps.api", type(sys)("apps.api"))
+    sys.modules["apps.api.config"] = api_config
+
 from workers.pipeline import get_or_create_pipeline_state, run_media_pipeline
 
 app = FastAPI(

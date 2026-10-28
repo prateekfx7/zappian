@@ -37,6 +37,7 @@ import { RemixStudio } from "../components/RemixStudio";
 import { BrainViewer } from "../components/BrainViewer";
 import { AutopsyScanner } from "../components/AutopsyScanner";
 import { IngestProgressCard } from "../components/IngestProgressCard";
+import { SystemSpecs } from "../components/SystemSpecs";
 import { API_BASE_URL } from "../lib/api";
 
 interface PipelineProgress {
@@ -91,7 +92,7 @@ interface PipelineData {
 }
 
 export default function Home() {
-  const [appMode, setAppMode] = useState<"autopsy" | "brain" | "compare" | "remix">("autopsy");
+  const [appMode, setAppMode] = useState<"autopsy" | "brain" | "compare" | "remix" | "system">("autopsy");
   const [remixPrefill, setRemixPrefill] = useState<{
     topic?: string;
     platform?: "tiktok" | "reels" | "youtube_shorts";
@@ -421,11 +422,11 @@ export default function Home() {
           />
         </div>
 
-        {/* Center: Monochrome 4-Mode Segmented Pill */}
+        {/* Center: Monochrome 5-Mode Segmented Pill */}
         <div className="flex items-center bg-neutral p-0.5 rounded-full border border-border">
           <button
             onClick={() => setAppMode("autopsy")}
-            className={`px-3.5 py-1 rounded-full text-xs font-medium transition cursor-pointer ${
+            className={`px-3 py-1 rounded-full text-xs font-medium transition cursor-pointer ${
               appMode === "autopsy"
                 ? "bg-surface text-primary border border-border shadow-none"
                 : "text-secondary hover:text-primary"
@@ -435,7 +436,7 @@ export default function Home() {
           </button>
           <button
             onClick={() => setAppMode("brain")}
-            className={`px-3.5 py-1 rounded-full text-xs font-medium transition cursor-pointer ${
+            className={`px-3 py-1 rounded-full text-xs font-medium transition cursor-pointer ${
               appMode === "brain"
                 ? "bg-surface text-primary border border-border shadow-none"
                 : "text-secondary hover:text-primary"
@@ -445,7 +446,7 @@ export default function Home() {
           </button>
           <button
             onClick={() => setAppMode("compare")}
-            className={`px-3.5 py-1 rounded-full text-xs font-medium transition cursor-pointer ${
+            className={`px-3 py-1 rounded-full text-xs font-medium transition cursor-pointer ${
               appMode === "compare"
                 ? "bg-surface text-primary border border-border shadow-none"
                 : "text-secondary hover:text-primary"
@@ -455,13 +456,23 @@ export default function Home() {
           </button>
           <button
             onClick={() => setAppMode("remix")}
-            className={`px-3.5 py-1 rounded-full text-xs font-medium transition cursor-pointer ${
+            className={`px-3 py-1 rounded-full text-xs font-medium transition cursor-pointer ${
               appMode === "remix"
                 ? "bg-surface text-primary border border-border shadow-none"
                 : "text-secondary hover:text-primary"
             }`}
           >
             Remix
+          </button>
+          <button
+            onClick={() => setAppMode("system")}
+            className={`px-3 py-1 rounded-full text-xs font-medium transition cursor-pointer ${
+              appMode === "system"
+                ? "bg-surface text-primary border border-border shadow-none"
+                : "text-secondary hover:text-primary"
+            }`}
+          >
+            System
           </button>
         </div>
 
@@ -476,11 +487,20 @@ export default function Home() {
           </button>
 
           {showOverflowMenu && (
-            <div className="absolute right-0 mt-2 w-52 bg-surface rounded-md border border-border p-1.5 z-50 text-xs space-y-0.5">
+            <div className="absolute right-0 mt-2 w-56 bg-surface rounded-md border border-border p-1.5 z-50 text-xs space-y-0.5 shadow-sm">
               <div className="px-3 py-2 border-b border-border flex items-center justify-between text-secondary">
                 <span>Backend API</span>
                 <span className="font-mono text-[11px] text-primary">Port 8001</span>
               </div>
+              <button
+                onClick={() => {
+                  setShowOverflowMenu(false);
+                  setAppMode("system");
+                }}
+                className="w-full text-left px-3 py-2 rounded-sm hover:bg-neutral text-primary font-normal transition cursor-pointer"
+              >
+                System Specs &amp; Upgrades
+              </button>
               <button
                 onClick={() => {
                   setShowOverflowMenu(false);
@@ -1088,6 +1108,9 @@ export default function Home() {
             initialDurationS={remixPrefill.durationS}
           />
         )}
+
+        {/* MODE E: SYSTEM SPECS, STACK & UPGRADE BLUEPRINT */}
+        {appMode === "system" && <SystemSpecs />}
       </main>
 
       {/* Global Stats Drawer Modal */}
@@ -1113,7 +1136,12 @@ export default function Home() {
             <span className="text-secondary/60">&copy; 2026. Video Autopsy &amp; Remix Engine.</span>
           </div>
           <div className="flex items-center gap-6">
-            <span className="hover:text-primary cursor-pointer transition">Docs</span>
+            <span
+              onClick={() => setAppMode("system")}
+              className="hover:text-primary cursor-pointer transition font-medium text-primary/80"
+            >
+              System &amp; Architecture
+            </span>
             <span className="hover:text-primary cursor-pointer transition">Privacy</span>
             <span className="hover:text-primary cursor-pointer transition">Originality Policy</span>
           </div>

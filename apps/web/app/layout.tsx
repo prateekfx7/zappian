@@ -5,6 +5,15 @@ export const metadata: Metadata = {
   title: "ReelBrain — Video Autopsy & Remix Engine",
   description:
     "Analyze reels and TikToks frame by frame, uncover retention mechanics with timestamped evidence, and remix original concepts.",
+  icons: {
+    icon: [
+      { url: "/favicon.ico", sizes: "any" },
+      { url: "/icon.png", type: "image/png", sizes: "512x512" },
+    ],
+    apple: [
+      { url: "/apple-touch-icon.png", sizes: "180x180", type: "image/png" },
+    ],
+  },
 };
 
 export default function RootLayout({

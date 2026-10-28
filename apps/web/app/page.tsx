@@ -412,12 +412,13 @@ export default function Home() {
             setVideoId(null);
             setPipelineProgress(null);
           }}
-          className="flex items-center gap-2.5 cursor-pointer"
+          className="flex items-center gap-2.5 cursor-pointer select-none"
         >
-          <div className="w-6 h-6 rounded-sm bg-primary flex items-center justify-center text-tertiary font-medium text-xs">
-            ▲
-          </div>
-          <span className="font-medium text-sm tracking-tight text-primary">ReelBrain</span>
+          <img
+            src="/logo.png"
+            alt="ReelBrain"
+            className="h-6 w-auto object-contain hover:opacity-90 transition"
+          />
         </div>
 
         {/* Center: Monochrome 4-Mode Segmented Pill */}
@@ -1103,12 +1104,13 @@ export default function Home() {
       {/* Minimal Footer */}
       <footer className="border-t border-border py-8 px-6 bg-surface mt-16 text-xs text-secondary">
         <div className="max-w-5xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
-          <div className="flex items-center gap-2">
-            <div className="w-5 h-5 rounded-sm bg-primary flex items-center justify-center text-tertiary text-[10px] font-medium">
-              ▲
-            </div>
-            <span className="font-medium text-primary">ReelBrain</span>
-            <span>&copy; 2026. Video Autopsy &amp; Remix Engine.</span>
+          <div className="flex items-center gap-2.5">
+            <img
+              src="/logo.png"
+              alt="ReelBrain"
+              className="h-4 w-auto object-contain opacity-80"
+            />
+            <span className="text-secondary/60">&copy; 2026. Video Autopsy &amp; Remix Engine.</span>
           </div>
           <div className="flex items-center gap-6">
             <span className="hover:text-primary cursor-pointer transition">Docs</span>

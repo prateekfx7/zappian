@@ -15,8 +15,9 @@ from typing import Any
 from packages.providers.tts import LocalTTSProvider
 from packages.providers.videogen import LTXVideoGenProvider, WanVideoGenProvider
 from workers.assembly.assembler import assemble_draft_video, probe_audio_duration
+from workers.pipeline import STORAGE_BASE
 
-STORAGE_DIR = Path("storage")
+STORAGE_DIR = STORAGE_BASE
 CONCEPTS_DIR = STORAGE_DIR / "concepts"
 DRAFTS_DIR = STORAGE_DIR / "drafts"
 
@@ -30,7 +31,11 @@ def run_draft_generation(
     """
     concept_file = CONCEPTS_DIR / f"{concept_id}.json"
     if not concept_file.exists():
-        raise FileNotFoundError(f"Concept '{concept_id}' not found.")
+        fallback_concept = Path("storage/concepts") / f"{concept_id}.json"
+        if fallback_concept.exists():
+            concept_file = fallback_concept
+        else:
+            raise FileNotFoundError(f"Concept '{concept_id}' not found.")
 
     concept = json.loads(concept_file.read_text(encoding="utf-8"))
 

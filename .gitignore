@@ -42,7 +42,11 @@ out/
 *.tsbuildinfo
 
 # Media & Storage
-/storage/
+/storage/**
+!/storage/
+!/storage/brain_memory.json
+!/storage/analyses/
+!/storage/analyses/g1_product_ad/**
 /data/
 *.mp4
 *.mov

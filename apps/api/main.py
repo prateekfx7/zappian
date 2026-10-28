@@ -1,10 +1,14 @@
 import asyncio
 import json
+import logging
 import sys
 import uuid
 from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
+
+# Configure logger
+logger = logging.getLogger("reelbrain.api")
 
 # Ensure monorepo root is on sys.path when deployed via Vercel Services
 ROOT_DIR = Path(__file__).resolve().parent.parent.parent
@@ -47,8 +51,21 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Local storage directories
-STORAGE_DIR = Path("storage")
+# Storage directory resolution with /tmp fallback for serverless read-only environments
+def get_storage_dir() -> Path:
+    base = Path("storage")
+    try:
+        base.mkdir(parents=True, exist_ok=True)
+        test_file = base / ".write_test"
+        test_file.touch()
+        test_file.unlink(missing_ok=True)
+        return base
+    except OSError:
+        tmp_base = Path("/tmp/storage")
+        tmp_base.mkdir(parents=True, exist_ok=True)
+        return tmp_base
+
+STORAGE_DIR = get_storage_dir()
 ORIGINALS_DIR = STORAGE_DIR / "originals"
 PROXIES_DIR = STORAGE_DIR / "proxies"
 FRAMES_DIR = STORAGE_DIR / "frames"
@@ -60,10 +77,27 @@ CONCEPTS_DIR = STORAGE_DIR / "concepts"
 DRAFTS_DIR = STORAGE_DIR / "drafts"
 
 for d in [ORIGINALS_DIR, PROXIES_DIR, FRAMES_DIR, THUMBS_DIR, AUDIO_DIR, ANALYSES_DIR, COMPARES_DIR, CONCEPTS_DIR, DRAFTS_DIR]:
-    d.mkdir(parents=True, exist_ok=True)
+    try:
+        d.mkdir(parents=True, exist_ok=True)
+    except OSError:
+        pass
 
 # Mount local storage for serving proxy videos and frame thumbnails to frontend
-app.mount("/storage", StaticFiles(directory="storage"), name="storage")
+try:
+    STORAGE_DIR.mkdir(parents=True, exist_ok=True)
+    app.mount("/storage", StaticFiles(directory=str(STORAGE_DIR)), name="storage")
+except Exception as e:
+    logger.warning(f"StaticFiles mount skipped or failed: {e}")
+
+from fastapi.responses import JSONResponse
+
+@app.exception_handler(Exception)
+async def global_exception_handler(request, exc):
+    logger.error(f"Unhandled error on {request.method} {request.url}: {exc}", exc_info=True)
+    return JSONResponse(
+        status_code=500,
+        content={"detail": f"Internal server error: {exc!s}"},
+    )
 
 
 class HealthResponse(BaseModel):
@@ -119,10 +153,6 @@ class VideoResponse(BaseModel):
     storage_key: str | None = None
     created_at: datetime
 
-
-import logging
-
-logger = logging.getLogger("reelbrain.api")
 
 ALLOWED_EXTENSIONS = {".mp4", ".mov", ".webm", ".mkv"}
 
@@ -328,49 +358,58 @@ async def create_video(
     payload: VideoCreateRequest,
     background_tasks: BackgroundTasks,
 ) -> VideoResponse:
-    if not payload.rights_confirmed:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Rights confirmation is required. You must certify rights to analyze this video.",
-        )
-    video_id = str(uuid.uuid4())
-    state = get_or_create_pipeline_state(video_id)
+    try:
+        if not payload.rights_confirmed:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Rights confirmation is required. You must certify rights to analyze this video.",
+            )
+        video_id = str(uuid.uuid4())
+        state = get_or_create_pipeline_state(video_id)
 
-    if payload.source_url and payload.source_url.strip():
-        clean_url = payload.source_url.strip()
-        state.update("ingest", 5, "Video link queued. Connecting to stream...")
+        if payload.source_url and payload.source_url.strip():
+            clean_url = payload.source_url.strip()
+            state.update("ingest", 5, "Video link queued. Connecting to stream...")
 
-        user_stats: list[dict[str, Any]] = []
-        now_iso = datetime.now(UTC).isoformat()
-        if payload.known_views is not None and payload.known_views > 0:
-            user_stats.append({"metric": "views", "value": payload.known_views, "source": "manual", "fetched_at": now_iso})
-        if payload.known_likes is not None and payload.known_likes > 0:
-            user_stats.append({"metric": "likes", "value": payload.known_likes, "source": "manual", "fetched_at": now_iso})
-        if payload.known_shares is not None and payload.known_shares > 0:
-            user_stats.append({"metric": "shares", "value": payload.known_shares, "source": "manual", "fetched_at": now_iso})
-        if payload.known_comments is not None and payload.known_comments > 0:
-            user_stats.append({"metric": "comments", "value": payload.known_comments, "source": "manual", "fetched_at": now_iso})
+            user_stats: list[dict[str, Any]] = []
+            now_iso = datetime.now(UTC).isoformat()
+            if payload.known_views is not None and payload.known_views > 0:
+                user_stats.append({"metric": "views", "value": payload.known_views, "source": "manual", "fetched_at": now_iso})
+            if payload.known_likes is not None and payload.known_likes > 0:
+                user_stats.append({"metric": "likes", "value": payload.known_likes, "source": "manual", "fetched_at": now_iso})
+            if payload.known_shares is not None and payload.known_shares > 0:
+                user_stats.append({"metric": "shares", "value": payload.known_shares, "source": "manual", "fetched_at": now_iso})
+            if payload.known_comments is not None and payload.known_comments > 0:
+                user_stats.append({"metric": "comments", "value": payload.known_comments, "source": "manual", "fetched_at": now_iso})
 
-        background_tasks.add_task(download_and_process_url_background, video_id, clean_url, user_stats=user_stats)
+            background_tasks.add_task(download_and_process_url_background, video_id, clean_url, user_stats=user_stats)
 
+            return VideoResponse(
+                id=video_id,
+                source_type=payload.source_type,
+                status="processing",
+                stage="ingest",
+                storage_key=f"urls/{video_id}",
+                created_at=datetime.now(UTC),
+            )
+
+        # Reservation for direct upload
         return VideoResponse(
             id=video_id,
             source_type=payload.source_type,
-            status="processing",
+            status="queued",
             stage="ingest",
-            storage_key=f"urls/{video_id}",
+            storage_key=None,
             created_at=datetime.now(UTC),
         )
-
-    # Reservation for direct upload
-    return VideoResponse(
-        id=video_id,
-        source_type=payload.source_type,
-        status="queued",
-        stage="ingest",
-        storage_key=None,
-        created_at=datetime.now(UTC),
-    )
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Failed to queue video: {e}", exc_info=True)
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Server queue error: {e!s}",
+        )
 
 
 @app.post(

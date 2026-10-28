@@ -361,14 +361,15 @@ export default function Home() {
         });
 
         if (!response.ok) {
+          const rawText = await response.text().catch(() => "");
           let errorDetail = `Upload failed (HTTP ${response.status})`;
           try {
-            const errData = await response.json();
+            const errData = JSON.parse(rawText);
             errorDetail = errData.detail || errData.message || errorDetail;
           } catch {
-            const text = await response.text().catch(() => "");
-            if (text) {
-              errorDetail = `${errorDetail}: ${text.slice(0, 150)}`;
+            if (rawText) {
+              const cleanText = rawText.replace(/<[^>]*>/g, " ").replace(/\s+/g, " ").trim();
+              if (cleanText) errorDetail = `${errorDetail}: ${cleanText.slice(0, 160)}`;
             }
           }
           throw new Error(errorDetail);
@@ -391,14 +392,15 @@ export default function Home() {
         });
 
         if (!response.ok) {
+          const rawText = await response.text().catch(() => "");
           let errorDetail = `Failed to queue URL (HTTP ${response.status})`;
           try {
-            const errData = await response.json();
+            const errData = JSON.parse(rawText);
             errorDetail = errData.detail || errData.message || errorDetail;
           } catch {
-            const text = await response.text().catch(() => "");
-            if (text) {
-              errorDetail = `${errorDetail}: ${text.slice(0, 150)}`;
+            if (rawText) {
+              const cleanText = rawText.replace(/<[^>]*>/g, " ").replace(/\s+/g, " ").trim();
+              if (cleanText) errorDetail = `${errorDetail}: ${cleanText.slice(0, 160)}`;
             }
           }
           throw new Error(errorDetail);

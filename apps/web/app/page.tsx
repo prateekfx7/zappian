@@ -99,6 +99,9 @@ export default function Home() {
   }>({});
   const [sourceType, setSourceType] = useState<"upload" | "youtube">("upload");
   const [videoUrl, setVideoUrl] = useState("");
+  const [knownViews, setKnownViews] = useState("");
+  const [knownLikes, setKnownLikes] = useState("");
+  const [showEngagementInputs, setShowEngagementInputs] = useState(false);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [isDragging, setIsDragging] = useState(false);
   const [rightsConfirmed, setRightsConfirmed] = useState(false);
@@ -111,6 +114,21 @@ export default function Home() {
   const [selectedFrame, setSelectedFrame] = useState<FrameItem | null>(null);
   const [selectedTimestamp, setSelectedTimestamp] = useState<number | null>(null);
   const [activeTab, setActiveTab] = useState<"autopsy" | "assets">("autopsy");
+
+  const parseCount = (val: string): number | null => {
+    if (!val || !val.trim()) return null;
+    const clean = val.trim().toLowerCase();
+    if (clean.endsWith("m")) {
+      const n = parseFloat(clean.replace("m", ""));
+      return isNaN(n) ? null : n * 1_000_000;
+    }
+    if (clean.endsWith("k")) {
+      const n = parseFloat(clean.replace("k", ""));
+      return isNaN(n) ? null : n * 1_000;
+    }
+    const num = parseFloat(clean.replace(/,/g, ""));
+    return isNaN(num) ? null : num;
+  };
 
   // Stats Drawer, Compare Engine & Remix
   const [showStatsDrawer, setShowStatsDrawer] = useState(false);
@@ -326,10 +344,15 @@ export default function Home() {
     setIsSubmitting(true);
 
     try {
+      const viewsNum = parseCount(knownViews);
+      const likesNum = parseCount(knownLikes);
+
       if (sourceType === "upload" && selectedFile) {
         const formData = new FormData();
         formData.append("file", selectedFile);
         formData.append("rights_confirmed", "true");
+        if (viewsNum !== null && viewsNum > 0) formData.append("known_views", viewsNum.toString());
+        if (likesNum !== null && likesNum > 0) formData.append("known_likes", likesNum.toString());
 
         const response = await fetch(`${API_BASE_URL}/v1/videos/upload`, {
           method: "POST",
@@ -352,6 +375,8 @@ export default function Home() {
             source_type: "youtube",
             source_url: videoUrl.trim(),
             rights_confirmed: true,
+            known_views: viewsNum || undefined,
+            known_likes: likesNum || undefined,
           }),
         });
 
@@ -603,6 +628,50 @@ export default function Home() {
                         </div>
                       </div>
                     )}
+
+                    {/* Optional Real-World Engagement Disclosure */}
+                    <div className="pt-1">
+                      <button
+                        type="button"
+                        onClick={() => setShowEngagementInputs(!showEngagementInputs)}
+                        className="text-xs text-secondary hover:text-primary transition flex items-center gap-1.5 cursor-pointer font-mono"
+                      >
+                        <span>{showEngagementInputs ? "▾" : "▸"}</span>
+                        <span>Optional: Known views &amp; likes</span>
+                        {sourceType === "youtube" && (
+                          <span className="text-[10px] text-secondary">(Auto-extracted if link has metrics)</span>
+                        )}
+                      </button>
+
+                      {showEngagementInputs && (
+                        <div className="grid grid-cols-2 gap-3 mt-2.5 p-3 bg-neutral rounded-md border border-border animate-fade-in">
+                          <div>
+                            <label className="text-[11px] font-mono text-secondary block mb-1">
+                              Views (e.g. 167M or 100000)
+                            </label>
+                            <input
+                              type="text"
+                              value={knownViews}
+                              onChange={(e) => setKnownViews(e.target.value)}
+                              placeholder="167.9M"
+                              className="input-minimal w-full text-xs"
+                            />
+                          </div>
+                          <div>
+                            <label className="text-[11px] font-mono text-secondary block mb-1">
+                              Likes (e.g. 25.5M or 50000)
+                            </label>
+                            <input
+                              type="text"
+                              value={knownLikes}
+                              onChange={(e) => setKnownLikes(e.target.value)}
+                              placeholder="25.6M"
+                              className="input-minimal w-full text-xs"
+                            />
+                          </div>
+                        </div>
+                      )}
+                    </div>
 
                     {/* Rights Checkbox */}
                     <div className="flex items-center gap-2.5 pt-1">

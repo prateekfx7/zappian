@@ -31,16 +31,35 @@ export interface BrainVideoRecord {
   hook_type: string;
   cut_rhythm_s: number;
   indexed_at: string;
+  views?: number;
+  likes?: number;
+  shares?: number;
+  virality_tier?: string;
 }
 
 export interface BrainSummary {
   metrics: {
     total_videos: number;
     total_frames_analyzed: number;
+    total_views_analyzed?: number;
+    total_likes_analyzed?: number;
+    mega_viral_count?: number;
     avg_hook_score: number;
     avg_retention_score: number;
   };
   patterns: {
+    mega_viral_hall_of_fame?: {
+      video_id: string;
+      tier: string;
+      views: number;
+      likes: number;
+      shares: number;
+      like_ratio: number;
+      hook_type: string;
+      technique: string;
+      author?: string;
+      title?: string;
+    }[];
     hooks: {
       archetype: string;
       frequency: number;
@@ -117,6 +136,13 @@ export function BrainViewer({ onLaunchRemix, onSelectVideoForAutopsy }: BrainVie
   const [recommendation, setRecommendation] = useState<BrainRecommendation | null>(null);
   const [isLoadingRecs, setIsLoadingRecs] = useState(false);
   const [syncStatusMsg, setSyncStatusMsg] = useState<string | null>(null);
+
+  const formatMetricNumber = (num?: number) => {
+    if (!num || num <= 0) return "0";
+    if (num >= 1_000_000) return `${(num / 1_000_000).toFixed(1)}M`;
+    if (num >= 1_000) return `${(num / 1_000).toFixed(1)}K`;
+    return num.toLocaleString();
+  };
 
   // Fetch Brain Summary
   const fetchBrainSummary = async () => {
@@ -251,30 +277,95 @@ export function BrainViewer({ onLaunchRemix, onSelectVideoForAutopsy }: BrainVie
           </div>
 
           <div className="p-4 bg-neutral rounded-md border border-border">
-            <div className="text-xs text-secondary mb-1">Frames Analyzed</div>
+            <div className="text-xs text-secondary mb-1">Market Views Analyzed</div>
             <div className="text-2xl md:text-3xl font-medium tracking-tight text-primary">
-              {summary?.metrics.total_frames_analyzed || 0}
+              {formatMetricNumber(summary?.metrics.total_views_analyzed)}
             </div>
-            <div className="text-[11px] text-secondary mt-1">Vision &amp; OCR keyframes</div>
+            <div className="text-[11px] text-secondary mt-1">Cross-platform feed reach</div>
           </div>
 
           <div className="p-4 bg-neutral rounded-md border border-border">
-            <div className="text-xs text-secondary mb-1">Empirical Avg Hook Score</div>
+            <div className="text-xs text-secondary mb-1">Likes &amp; Social Proof</div>
+            <div className="text-2xl md:text-3xl font-medium tracking-tight text-primary">
+              {formatMetricNumber(summary?.metrics.total_likes_analyzed)}
+            </div>
+            <div className="text-[11px] text-secondary mt-1">Verified audience conviction</div>
+          </div>
+
+          <div className="p-4 bg-neutral rounded-md border border-border">
+            <div className="text-xs text-secondary mb-1">Empirical Avg Hook Hold</div>
             <div className="text-2xl md:text-3xl font-medium tracking-tight text-primary">
               {summary?.metrics.avg_hook_score || 0}%
             </div>
             <div className="text-[11px] text-secondary mt-1">First 3 seconds hold power</div>
           </div>
-
-          <div className="p-4 bg-neutral rounded-md border border-border">
-            <div className="text-xs text-secondary mb-1">Avg Retention Score</div>
-            <div className="text-2xl md:text-3xl font-medium tracking-tight text-primary">
-              {summary?.metrics.avg_retention_score || 0}%
-            </div>
-            <div className="text-[11px] text-secondary mt-1">Full watch-through benchmark</div>
-          </div>
         </div>
       </section>
+
+      {/* 1.5 MEGA-VIRAL UNICORNS HALL OF FAME */}
+      {summary?.patterns?.mega_viral_hall_of_fame && summary.patterns.mega_viral_hall_of_fame.length > 0 && (
+        <section className="bg-surface rounded-md p-6 md:p-8 border border-border space-y-4">
+          <div className="flex items-center justify-between">
+            <div className="space-y-1">
+              <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-medium bg-neutral border border-border text-primary font-mono">
+                <span className="w-1.5 h-1.5 rounded-full bg-accent animate-pulse" />
+                <span>Tier-1 Mega-Viral Unicorns</span>
+              </div>
+              <h2 className="text-lg md:text-xl font-normal tracking-tight text-primary">
+                Unicorn Pattern Archive (10M+ Views / 1M+ Likes)
+              </h2>
+              <p className="text-xs text-secondary">
+                Deconstructed psychological blueprints from videos with massive algorithmic momentum.
+              </p>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-2">
+            {summary.patterns.mega_viral_hall_of_fame.map((unicorn) => (
+              <div
+                key={unicorn.video_id}
+                className="p-5 bg-neutral rounded-md border border-border flex flex-col justify-between space-y-4"
+              >
+                <div>
+                  <div className="flex items-center justify-between text-xs font-mono text-secondary mb-1.5">
+                    <span className="truncate max-w-[180px]">ID: {unicorn.video_id}</span>
+                    {unicorn.author && <span>@{unicorn.author}</span>}
+                  </div>
+                  <h4 className="text-sm font-medium text-primary">
+                    {unicorn.title ? `"${unicorn.title}"` : unicorn.hook_type}
+                  </h4>
+                  <p className="text-xs text-secondary mt-1 leading-relaxed">
+                    Archetype: <span className="text-primary font-medium">{unicorn.hook_type}</span>.
+                    {unicorn.technique && ` Technique: ${unicorn.technique}.`}
+                  </p>
+                </div>
+
+                <div className="flex items-center justify-between pt-3 border-t border-border">
+                  <div className="flex items-center gap-3 text-xs font-mono">
+                    <span className="text-primary font-medium">{formatMetricNumber(unicorn.views)} Views</span>
+                    <span>•</span>
+                    <span className="text-primary font-medium">{formatMetricNumber(unicorn.likes)} Likes</span>
+                    {unicorn.like_ratio > 0 && (
+                      <>
+                        <span>•</span>
+                        <span className="text-secondary">{unicorn.like_ratio}% Ratio</span>
+                      </>
+                    )}
+                  </div>
+                  {onSelectVideoForAutopsy && (
+                    <button
+                      onClick={() => onSelectVideoForAutopsy(unicorn.video_id)}
+                      className="text-xs font-mono text-primary hover:underline cursor-pointer"
+                    >
+                      Inspect Autopsy &rarr;
+                    </button>
+                  )}
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
+      )}
 
       {/* 2. CREATE NEW VIDEO FROM BRAIN (The Core User Request) */}
       <section className="bg-surface rounded-md p-6 md:p-8 border border-border space-y-6">
@@ -699,6 +790,7 @@ export function BrainViewer({ onLaunchRemix, onSelectVideoForAutopsy }: BrainVie
             <thead className="bg-neutral text-secondary font-medium border-b border-border">
               <tr>
                 <th className="py-2.5 px-4">Video ID</th>
+                <th className="py-2.5 px-4">Virality &amp; Reach</th>
                 <th className="py-2.5 px-4">Category</th>
                 <th className="py-2.5 px-4">Duration</th>
                 <th className="py-2.5 px-4">Composite</th>
@@ -710,7 +802,7 @@ export function BrainViewer({ onLaunchRemix, onSelectVideoForAutopsy }: BrainVie
             <tbody className="divide-y divide-border text-primary font-normal">
               {filteredVideos.length === 0 ? (
                 <tr>
-                  <td colSpan={7} className="py-8 text-center text-secondary">
+                  <td colSpan={8} className="py-8 text-center text-secondary">
                     No indexed videos match your search.
                   </td>
                 </tr>
@@ -719,6 +811,17 @@ export function BrainViewer({ onLaunchRemix, onSelectVideoForAutopsy }: BrainVie
                   <tr key={vid.video_id} className="hover:bg-neutral/50 transition">
                     <td className="py-3 px-4 font-mono text-[11px] truncate max-w-[140px]">
                       {vid.video_id}
+                    </td>
+                    <td className="py-3 px-4">
+                      {vid.views && vid.views > 0 ? (
+                        <div className="flex items-center gap-1.5 font-mono text-[11px]">
+                          <span className="font-medium text-primary">{formatMetricNumber(vid.views)}</span>
+                          <span className="text-secondary">•</span>
+                          <span className="text-secondary">{formatMetricNumber(vid.likes)} likes</span>
+                        </div>
+                      ) : (
+                        <span className="text-[10px] text-secondary font-mono">Organic</span>
+                      )}
                     </td>
                     <td className="py-3 px-4">
                       <span className="px-2 py-0.5 rounded-full text-[10px] font-mono bg-neutral border border-border text-primary">

@@ -80,6 +80,8 @@ def run_media_pipeline(
     original_video_path: Path,
     whisper_model_size: str = "base",
     on_progress: Callable[[dict[str, Any]], None] | None = None,
+    initial_stats: list[dict[str, Any]] | None = None,
+    social_metadata: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
     """
     Executes stages 0 through 5:
@@ -99,7 +101,7 @@ def run_media_pipeline(
     cache_file = data_dir / "pipeline_data.json"
 
     # Idempotency check: if pipeline_data.json already exists and is complete, return it
-    if cache_file.exists():
+    if cache_file.exists() and not initial_stats:
         try:
             with open(cache_file, "r") as f:
                 cached_data = json.load(f)
@@ -108,7 +110,11 @@ def run_media_pipeline(
         except (json.JSONDecodeError, OSError):
             pass
 
-    results: dict[str, Any] = {"video_id": video_id}
+    results: dict[str, Any] = {
+        "video_id": video_id,
+        "stats": initial_stats or [],
+        "social_metadata": social_metadata or {},
+    }
 
     try:
         # Stage 0: Ingest & Probe

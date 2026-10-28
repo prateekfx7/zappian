@@ -96,6 +96,10 @@ class VideoCreateRequest(BaseModel):
         ...,
         description="Mandatory user confirmation: I own this video or have permission to analyse it.",
     )
+    known_views: float | None = Field(None, description="Optional manual views count")
+    known_likes: float | None = Field(None, description="Optional manual likes count")
+    known_shares: float | None = Field(None, description="Optional manual shares count")
+    known_comments: float | None = Field(None, description="Optional manual comments count")
 
 
 class VideoResponse(BaseModel):
@@ -116,17 +120,31 @@ logger = logging.getLogger("reelbrain.api")
 ALLOWED_EXTENSIONS = {".mp4", ".mov", ".webm", ".mkv"}
 
 
-def execute_pipeline_background(video_id: str, file_path: Path) -> None:
+def execute_pipeline_background(
+    video_id: str,
+    file_path: Path,
+    initial_stats: list[dict[str, Any]] | None = None,
+    social_metadata: dict[str, Any] | None = None,
+) -> None:
     """Runs media pipeline in the background and updates pipeline state."""
     try:
-        run_media_pipeline(video_id=video_id, original_video_path=file_path)
+        run_media_pipeline(
+            video_id=video_id,
+            original_video_path=file_path,
+            initial_stats=initial_stats,
+            social_metadata=social_metadata,
+        )
     except Exception as e:  # noqa: BLE001
         state = get_or_create_pipeline_state(video_id)
         state.update("failed", state.progress_pct, f"Pipeline execution failed: {e!s}")
 
 
-def download_and_process_url_background(video_id: str, url: str) -> None:
-    """Downloads video from URL via dedicated resolver or yt-dlp, then executes the media pipeline."""
+def download_and_process_url_background(
+    video_id: str,
+    url: str,
+    user_stats: list[dict[str, Any]] | None = None,
+) -> None:
+    """Downloads video from URL via dedicated resolver or yt-dlp, then executes the media pipeline with full virality telemetry."""
     state = get_or_create_pipeline_state(video_id)
     target_dir = ORIGINALS_DIR / video_id
     target_dir.mkdir(parents=True, exist_ok=True)
@@ -134,11 +152,13 @@ def download_and_process_url_background(video_id: str, url: str) -> None:
     try:
         state.update("ingest", 5, "Connecting to video link...")
         downloaded_file: Path | None = None
+        extracted_stats: list[dict[str, Any]] = list(user_stats or [])
+        social_meta: dict[str, Any] = {}
 
         # 1. Dedicated TikTok Resolver (Bypasses regional ISP blocks on tiktok.com via clean CDN stream)
         is_tiktok = any(d in url.lower() for d in ["tiktok.com", "vt.tiktok", "vm.tiktok"])
         if is_tiktok:
-            state.update("ingest", 10, "Resolving TikTok stream via proxy...")
+            state.update("ingest", 10, "Resolving TikTok stream and engagement metrics via proxy...")
             try:
                 import json
                 import shutil
@@ -150,7 +170,35 @@ def download_and_process_url_background(video_id: str, url: str) -> None:
                     api_data = json.loads(resp.read().decode())
 
                 if api_data.get("code") == 0 and api_data.get("data", {}).get("play"):
-                    cdn_url = api_data["data"]["play"]
+                    tdata = api_data["data"]
+                    now_iso = datetime.now(UTC).isoformat()
+
+                    play_count = float(tdata.get("play_count") or 0)
+                    digg_count = float(tdata.get("digg_count") or 0)
+                    share_count = float(tdata.get("share_count") or 0)
+                    comment_count = float(tdata.get("comment_count") or 0)
+
+                    # Append verified connector stats if not already supplied manually
+                    existing_metrics = {s.get("metric") for s in extracted_stats}
+                    if "views" not in existing_metrics and play_count > 0:
+                        extracted_stats.append({"metric": "views", "value": play_count, "source": "connector", "fetched_at": now_iso})
+                    if "likes" not in existing_metrics and digg_count > 0:
+                        extracted_stats.append({"metric": "likes", "value": digg_count, "source": "connector", "fetched_at": now_iso})
+                    if "shares" not in existing_metrics and share_count > 0:
+                        extracted_stats.append({"metric": "shares", "value": share_count, "source": "connector", "fetched_at": now_iso})
+                    if "comments" not in existing_metrics and comment_count > 0:
+                        extracted_stats.append({"metric": "comments", "value": comment_count, "source": "connector", "fetched_at": now_iso})
+
+                    author_info = tdata.get("author") or {}
+                    social_meta = {
+                        "platform": "tiktok",
+                        "title": tdata.get("title", ""),
+                        "author": author_info.get("nickname") or author_info.get("unique_id", ""),
+                        "music": (tdata.get("music_info") or {}).get("title", ""),
+                        "duration": tdata.get("duration", 0),
+                    }
+
+                    cdn_url = tdata["play"]
                     target_file = target_dir / "downloaded_tiktok.mp4"
                     state.update("ingest", 15, "Downloading high-resolution stream...")
                     vid_req = urllib.request.Request(
@@ -195,7 +243,31 @@ def download_and_process_url_background(video_id: str, url: str) -> None:
             }
 
             with yt_dlp.YoutubeDL(ydl_opts) as ydl:
-                ydl.download([url])
+                info = ydl.extract_info(url, download=True)
+                if info:
+                    now_iso = datetime.now(UTC).isoformat()
+                    existing_metrics = {s.get("metric") for s in extracted_stats}
+                    views = float(info.get("view_count") or 0)
+                    likes = float(info.get("like_count") or 0)
+                    comments = float(info.get("comment_count") or 0)
+                    reposts = float(info.get("repost_count") or 0)
+
+                    if "views" not in existing_metrics and views > 0:
+                        extracted_stats.append({"metric": "views", "value": views, "source": "ytdlp", "fetched_at": now_iso})
+                    if "likes" not in existing_metrics and likes > 0:
+                        extracted_stats.append({"metric": "likes", "value": likes, "source": "ytdlp", "fetched_at": now_iso})
+                    if "shares" not in existing_metrics and reposts > 0:
+                        extracted_stats.append({"metric": "shares", "value": reposts, "source": "ytdlp", "fetched_at": now_iso})
+                    if "comments" not in existing_metrics and comments > 0:
+                        extracted_stats.append({"metric": "comments", "value": comments, "source": "ytdlp", "fetched_at": now_iso})
+
+                    if not social_meta:
+                        social_meta = {
+                            "platform": "youtube" if any(k in url.lower() for k in ["youtube.com", "youtu.be"]) else "web",
+                            "title": info.get("title", ""),
+                            "author": info.get("uploader") or info.get("channel", ""),
+                            "duration": info.get("duration", 0),
+                        }
 
             candidates = list(target_dir.glob("downloaded_*.*"))
             if not candidates:
@@ -203,7 +275,12 @@ def download_and_process_url_background(video_id: str, url: str) -> None:
             downloaded_file = candidates[0]
 
         state.update("ingest", 25, "Download complete. Starting media pipeline...")
-        run_media_pipeline(video_id=video_id, original_video_path=downloaded_file)
+        run_media_pipeline(
+            video_id=video_id,
+            original_video_path=downloaded_file,
+            initial_stats=extracted_stats,
+            social_metadata=social_meta,
+        )
 
     except Exception as e:
         err_str = str(e)
@@ -249,25 +326,42 @@ async def create_video(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="Rights confirmation is required. You must certify rights to analyze this video.",
         )
-    if not payload.source_url or not payload.source_url.strip():
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Source URL is required for video link ingestion.",
-        )
-
-    clean_url = payload.source_url.strip()
     video_id = str(uuid.uuid4())
     state = get_or_create_pipeline_state(video_id)
-    state.update("ingest", 5, "Video link queued. Connecting to stream...")
 
-    background_tasks.add_task(download_and_process_url_background, video_id, clean_url)
+    if payload.source_url and payload.source_url.strip():
+        clean_url = payload.source_url.strip()
+        state.update("ingest", 5, "Video link queued. Connecting to stream...")
 
+        user_stats: list[dict[str, Any]] = []
+        now_iso = datetime.now(UTC).isoformat()
+        if payload.known_views is not None and payload.known_views > 0:
+            user_stats.append({"metric": "views", "value": payload.known_views, "source": "manual", "fetched_at": now_iso})
+        if payload.known_likes is not None and payload.known_likes > 0:
+            user_stats.append({"metric": "likes", "value": payload.known_likes, "source": "manual", "fetched_at": now_iso})
+        if payload.known_shares is not None and payload.known_shares > 0:
+            user_stats.append({"metric": "shares", "value": payload.known_shares, "source": "manual", "fetched_at": now_iso})
+        if payload.known_comments is not None and payload.known_comments > 0:
+            user_stats.append({"metric": "comments", "value": payload.known_comments, "source": "manual", "fetched_at": now_iso})
+
+        background_tasks.add_task(download_and_process_url_background, video_id, clean_url, user_stats=user_stats)
+
+        return VideoResponse(
+            id=video_id,
+            source_type=payload.source_type,
+            status="processing",
+            stage="ingest",
+            storage_key=f"urls/{video_id}",
+            created_at=datetime.now(UTC),
+        )
+
+    # Reservation for direct upload
     return VideoResponse(
         id=video_id,
         source_type=payload.source_type,
-        status="processing",
+        status="queued",
         stage="ingest",
-        storage_key=f"urls/{video_id}",
+        storage_key=None,
         created_at=datetime.now(UTC),
     )
 
@@ -282,6 +376,10 @@ async def upload_video(
     background_tasks: BackgroundTasks,
     file: UploadFile = File(...),  # noqa: B008
     rights_confirmed: bool = Form(...),
+    known_views: float | None = Form(None),
+    known_likes: float | None = Form(None),
+    known_shares: float | None = Form(None),
+    known_comments: float | None = Form(None),
 ) -> VideoResponse:
     if not rights_confirmed:
         raise HTTPException(
@@ -316,10 +414,26 @@ async def upload_video(
                 )
             buffer.write(chunk)
 
+    initial_stats: list[dict[str, Any]] = []
+    now_iso = datetime.now(UTC).isoformat()
+    if known_views is not None and known_views > 0:
+        initial_stats.append({"metric": "views", "value": known_views, "source": "manual", "fetched_at": now_iso})
+    if known_likes is not None and known_likes > 0:
+        initial_stats.append({"metric": "likes", "value": known_likes, "source": "manual", "fetched_at": now_iso})
+    if known_shares is not None and known_shares > 0:
+        initial_stats.append({"metric": "shares", "value": known_shares, "source": "manual", "fetched_at": now_iso})
+    if known_comments is not None and known_comments > 0:
+        initial_stats.append({"metric": "comments", "value": known_comments, "source": "manual", "fetched_at": now_iso})
+
     # Initialize state and schedule pipeline execution
     state = get_or_create_pipeline_state(video_id)
     state.update("ingest", 5, "Upload received. Scheduling media pipeline...")
-    background_tasks.add_task(execute_pipeline_background, video_id, target_file)
+    background_tasks.add_task(
+        execute_pipeline_background,
+        video_id,
+        target_file,
+        initial_stats=initial_stats if initial_stats else None,
+    )
 
     return VideoResponse(
         id=video_id,

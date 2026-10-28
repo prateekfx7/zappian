@@ -142,6 +142,42 @@ class BrainMemoryEngine:
             total_silence_ms = sum(g.get("duration_ms", 0) for g in audio_features["silence_gaps"])
             silence_ratio = round(total_silence_ms / (duration_s * 1000), 2)
 
+        # Extract Virality & Social Telemetry
+        stats = pipeline_data.get("stats", [])
+        social_metadata = pipeline_data.get("social_metadata", {})
+        analysis_virality = analysis.get("virality_telemetry", {})
+
+        stat_map = {s.get("metric"): float(s.get("value", 0)) for s in stats if "metric" in s}
+        views = stat_map.get("views", analysis_virality.get("views", 0.0))
+        likes = stat_map.get("likes", analysis_virality.get("likes", 0.0))
+        shares = stat_map.get("shares", analysis_virality.get("shares", 0.0))
+        comments = stat_map.get("comments", analysis_virality.get("comments", 0.0))
+
+        like_ratio = (likes / views * 100.0) if views > 0 else 0.0
+        share_ratio = (shares / views * 100.0) if views > 0 else 0.0
+
+        if likes >= 1_000_000 or views >= 10_000_000:
+            v_tier = "Tier-1 Mega-Viral Unicorn"
+        elif likes >= 100_000 or views >= 1_000_000:
+            v_tier = "Tier-2 Viral Breakthrough"
+        elif likes >= 10_000 or views >= 100_000:
+            v_tier = "Tier-3 High Performer"
+        else:
+            v_tier = "Tier-4 Organic Distribution"
+
+        virality_data = {
+            "tier": analysis_virality.get("tier", v_tier),
+            "views": views,
+            "likes": likes,
+            "shares": shares,
+            "comments": comments,
+            "like_ratio": round(like_ratio, 2),
+            "share_ratio": round(share_ratio, 2),
+            "archetype": analysis_virality.get("archetype", hook_type),
+            "source": stats[0].get("source", "connector") if stats else "acoustic_heuristic",
+            "social_metadata": social_metadata,
+        }
+
         # 3. Assemble Video Memory Record
         memory_record = {
             "video_id": video_id,
@@ -149,13 +185,14 @@ class BrainMemoryEngine:
             "category": category,
             "duration_s": duration_s,
             "frame_count": len(frames),
+            "virality": virality_data,
             "scores": {
                 "hook": scores.get("hook", 85),
                 "retention": scores.get("retention", 82),
                 "emotion": scores.get("emotion", 80),
                 "clarity": scores.get("clarity", 88),
                 "cta": scores.get("cta", 84),
-                "composite": round(
+                "composite": scores.get("sales_potential_estimate") or round(
                     scores.get("hook", 85) * 0.35 +
                     scores.get("retention", 82) * 0.25 +
                     scores.get("emotion", 80) * 0.20 +
@@ -163,7 +200,7 @@ class BrainMemoryEngine:
                 ),
             },
             "hook_dna": {
-                "type": hook_type,
+                "type": analysis_virality.get("archetype", hook_type),
                 "technique": hook_technique,
                 "first_3s_words": " ".join(hook_words),
                 "opening_ocr": hook_ocr,
@@ -205,7 +242,7 @@ class BrainMemoryEngine:
         self._reaggregate_patterns()
         self.save()
 
-        logger.info(f"Brain successfully indexed video {video_id} in category '{category}'")
+        logger.info(f"Brain successfully indexed video {video_id} in category '{category}' with tier '{virality_data['tier']}'")
         return memory_record
 
     def _reaggregate_patterns(self) -> None:
@@ -216,15 +253,40 @@ class BrainMemoryEngine:
 
         total_videos = len(videos)
         total_frames = sum(v["frame_count"] for v in videos)
+        total_views = sum(v.get("virality", {}).get("views", 0) for v in videos)
+        total_likes = sum(v.get("virality", {}).get("likes", 0) for v in videos)
         avg_hook = round(sum(v["scores"]["hook"] for v in videos) / total_videos, 1)
         avg_retention = round(sum(v["scores"]["retention"] for v in videos) / total_videos, 1)
+
+        mega_virals = [
+            {
+                "video_id": v["video_id"],
+                "tier": v.get("virality", {}).get("tier", "Tier-1 Mega-Viral Unicorn"),
+                "views": v.get("virality", {}).get("views", 0),
+                "likes": v.get("virality", {}).get("likes", 0),
+                "shares": v.get("virality", {}).get("shares", 0),
+                "like_ratio": v.get("virality", {}).get("like_ratio", 0),
+                "hook_type": v["hook_dna"]["type"],
+                "technique": v["hook_dna"]["technique"],
+                "author": v.get("virality", {}).get("social_metadata", {}).get("author", ""),
+                "title": v.get("virality", {}).get("social_metadata", {}).get("title", ""),
+            }
+            for v in videos
+            if v.get("virality", {}).get("tier") == "Tier-1 Mega-Viral Unicorn"
+            or v.get("virality", {}).get("likes", 0) >= 1_000_000
+            or v.get("virality", {}).get("views", 0) >= 10_000_000
+        ]
 
         self.data["metrics"] = {
             "total_videos": total_videos,
             "total_frames_analyzed": total_frames,
+            "total_views_analyzed": total_views,
+            "total_likes_analyzed": total_likes,
+            "mega_viral_count": len(mega_virals),
             "avg_hook_score": avg_hook,
             "avg_retention_score": avg_retention,
         }
+        self.data["patterns"]["mega_viral_hall_of_fame"] = mega_virals
 
         # 1. Aggregate Hook Formulas
         hook_types: dict[str, list[dict[str, Any]]] = {}
@@ -330,6 +392,10 @@ class BrainMemoryEngine:
                     "hook_type": v["hook_dna"]["type"],
                     "cut_rhythm_s": v["pacing_dna"]["cut_rhythm_s"],
                     "indexed_at": v["indexed_at"],
+                    "views": v.get("virality", {}).get("views", 0),
+                    "likes": v.get("virality", {}).get("likes", 0),
+                    "shares": v.get("virality", {}).get("shares", 0),
+                    "virality_tier": v.get("virality", {}).get("tier", "Tier-4 Organic"),
                 }
                 for v in self.data.get("videos", {}).values()
             ],

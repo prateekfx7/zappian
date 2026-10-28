@@ -133,6 +133,32 @@
         },
         "additionalProperties": false
       }
+    },
+    "social_metadata": {
+      "type": "object",
+      "properties": {
+        "platform": { "type": "string" },
+        "title": { "type": "string" },
+        "author": { "type": "string" },
+        "music": { "type": "string" },
+        "duration": { "type": "number" }
+      },
+      "additionalProperties": true
+    },
+    "virality_telemetry": {
+      "type": "object",
+      "properties": {
+        "tier": { "type": "string" },
+        "views": { "type": "number" },
+        "likes": { "type": "number" },
+        "shares": { "type": "number" },
+        "comments": { "type": "number" },
+        "like_ratio": { "type": "number" },
+        "share_ratio": { "type": "number" },
+        "archetype": { "type": "string" },
+        "source": { "type": "string" }
+      },
+      "additionalProperties": true
     }
   },
   "additionalProperties": false

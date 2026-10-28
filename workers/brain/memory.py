@@ -380,6 +380,7 @@ class BrainMemoryEngine:
         return {
             "metrics": self.data.get("metrics", {}),
             "patterns": self.data.get("patterns", {}),
+            "creator_psychology_rules": self.data.get("creator_psychology_rules", []),
             "categories": {
                 k: len(v) for k, v in self.data.get("categories", {}).items()
             },
@@ -396,11 +397,80 @@ class BrainMemoryEngine:
                     "likes": v.get("virality", {}).get("likes", 0),
                     "shares": v.get("virality", {}).get("shares", 0),
                     "virality_tier": v.get("virality", {}).get("tier", "Tier-4 Organic"),
+                    "creator_thoughts": v.get("creator_thoughts"),
                 }
                 for v in self.data.get("videos", {}).values()
             ],
             "last_updated": self.data.get("last_updated"),
         }
+
+    def learn_creator_thought(self, video_id: str, thought: dict[str, Any]) -> dict[str, Any]:
+        """
+        Stores user-provided viral psychology insights, building blocks, and thoughts
+        for a specific video and indexes them into the global cross-video intelligence network.
+        """
+        now_iso = datetime.now(UTC).isoformat()
+        video_rec = self.data.get("videos", {}).get(video_id, {})
+        category = video_rec.get("category", "general")
+        tier = video_rec.get("virality", {}).get("tier", "Viral")
+
+        thought_record = {
+            "video_id": video_id,
+            "created_at": now_iso,
+            "category": category,
+            "virality_tier": tier,
+            "what": thought.get("what", "").strip(),
+            "why": thought.get("why", "").strip(),
+            "how": thought.get("how", "").strip(),
+            "psychology": thought.get("psychology", "").strip(),
+            "visual_build": thought.get("visual_build", "").strip(),
+            "notes": thought.get("notes", "").strip(),
+            "tags": thought.get("tags") or [],
+        }
+
+        # 1. Attach to specific video
+        if "videos" not in self.data:
+            self.data["videos"] = {}
+        if video_id in self.data["videos"]:
+            self.data["videos"][video_id]["creator_thoughts"] = thought_record
+
+        # 2. Add to global psychology learnings
+        if "creator_psychology_rules" not in self.data:
+            self.data["creator_psychology_rules"] = []
+
+        # Remove previous entry for this video if updating
+        self.data["creator_psychology_rules"] = [
+            r for r in self.data["creator_psychology_rules"] if r.get("video_id") != video_id
+        ]
+        self.data["creator_psychology_rules"].insert(0, thought_record)
+
+        self.save()
+
+        # Also write to storage/analyses/{video_id}/creator_thoughts.json
+        try:
+            target_analysis_dir = ANALYSES_DIR / video_id
+            target_analysis_dir.mkdir(parents=True, exist_ok=True)
+            with open(target_analysis_dir / "creator_thoughts.json", "w", encoding="utf-8") as f:
+                json.dump(thought_record, f, indent=2, ensure_ascii=False)
+        except Exception as e:
+            logger.warning(f"Could not write creator_thoughts.json: {e}")
+
+        logger.info(f"Brain memorized creator psychology thought for video {video_id} ({len(self.data['creator_psychology_rules'])} total rules learned)")
+        return thought_record
+
+    def get_creator_thoughts(self, video_id: str) -> dict[str, Any] | None:
+        """Retrieves creator thoughts for a video if available."""
+        if video_id in self.data.get("videos", {}) and "creator_thoughts" in self.data["videos"][video_id]:
+            return self.data["videos"][video_id]["creator_thoughts"]
+        
+        file_path = ANALYSES_DIR / video_id / "creator_thoughts.json"
+        if file_path.exists():
+            try:
+                with open(file_path, "r", encoding="utf-8") as f:
+                    return json.load(f)
+            except Exception:
+                pass
+        return None
 
     def get_creation_recommendations(
         self,
@@ -417,6 +487,7 @@ class BrainMemoryEngine:
         top_hooks = self.data.get("patterns", {}).get("hooks", [])
         pacing = self.data.get("patterns", {}).get("pacing", {})
         blueprints = self.data.get("patterns", {}).get("blueprints", [])
+        creator_rules = self.data.get("creator_psychology_rules", [])
 
         # Best Hook Formula from Brain
         best_hook = top_hooks[0] if top_hooks else {
@@ -456,8 +527,9 @@ class BrainMemoryEngine:
             },
             "recommended_blueprint": best_blueprint,
             "recommended_style_lock": style_prompt,
+            "creator_psychology_rules": creator_rules[:5],
             "supporting_memory_count": len(videos),
-            "intelligence_source": f"Synthesized from {len(videos)} videos and {self.data.get('metrics', {}).get('total_frames_analyzed', 0)} frames in ReelBrain memory.",
+            "intelligence_source": f"Synthesized from {len(videos)} videos and {self.data.get('metrics', {}).get('total_frames_analyzed', 0)} frames + {len(creator_rules)} creator psychology rules in ReelBrain memory.",
         }
 
 

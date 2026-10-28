@@ -890,6 +890,32 @@ async def sync_brain_memory() -> dict[str, Any]:
     return {"status": "ok", "synced": synced, "total_videos": len(brain_memory.data.get("videos", {}))}
 
 
+class CreatorThoughtsRequest(BaseModel):
+    what: str = Field("", description="What happens visually in the video")
+    why: str = Field("", description="Why this video captures attention and hooks viewers")
+    how: str = Field("", description="How the video is engineered / pacing and psychology")
+    psychology: str | None = Field("", description="Psychological triggers and audience emotion")
+    visual_build: str | None = Field("", description="Visual construction, cuts, camera motions")
+    notes: str | None = Field("", description="Additional creator reflections or takeaways")
+    tags: list[str] | None = Field(default_factory=list)
+
+
+@app.get("/v1/videos/{video_id}/thoughts", tags=["Brain"])
+async def get_video_thoughts(video_id: str) -> dict[str, Any]:
+    """Retrieves creator psychology and viral thoughts for a video."""
+    from workers.brain.memory import brain_memory
+    thoughts = brain_memory.get_creator_thoughts(video_id)
+    return {"video_id": video_id, "thoughts": thoughts}
+
+
+@app.post("/v1/videos/{video_id}/thoughts", tags=["Brain"])
+async def save_video_thoughts(video_id: str, payload: CreatorThoughtsRequest) -> dict[str, Any]:
+    """Saves creator viral thoughts and indexes them into the global cross-video Brain."""
+    from workers.brain.memory import brain_memory
+    record = brain_memory.learn_creator_thought(video_id, payload.model_dump())
+    return {"status": "ok", "thoughts": record}
+
+
 if __name__ == "__main__":
     import uvicorn
 

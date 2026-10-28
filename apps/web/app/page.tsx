@@ -114,7 +114,20 @@ export default function Home() {
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [selectedFrame, setSelectedFrame] = useState<FrameItem | null>(null);
   const [selectedTimestamp, setSelectedTimestamp] = useState<number | null>(null);
-  const [activeTab, setActiveTab] = useState<"autopsy" | "assets">("autopsy");
+  const [activeTab, setActiveTab] = useState<"autopsy" | "assets" | "thoughts">("autopsy");
+
+  // Director Thoughts & Viral Psychology State
+  const [creatorThoughts, setCreatorThoughts] = useState({
+    what: "",
+    why: "",
+    how: "",
+    psychology: "",
+    visual_build: "",
+    notes: "",
+  });
+  const [isSavingThoughts, setIsSavingThoughts] = useState(false);
+  const [thoughtsSavedTime, setThoughtsSavedTime] = useState<string | null>(null);
+  const [allBrainThoughts, setAllBrainThoughts] = useState<any[]>([]);
 
   const parseCount = (val: string): number | null => {
     if (!val || !val.trim()) return null;
@@ -190,10 +203,88 @@ export default function Home() {
           setActiveTab("autopsy");
         }
         if (!compareVideoIdA) setCompareVideoIdA(vid);
+
+        // Fetch creator thoughts for this video
+        fetch(`${API_BASE_URL}/v1/videos/${vid}/thoughts`)
+          .then((r) => r.json())
+          .then((td) => {
+            if (td?.thoughts) {
+              setCreatorThoughts(td.thoughts);
+              setThoughtsSavedTime(td.thoughts.created_at);
+            } else {
+              setCreatorThoughts({
+                what: "",
+                why: "",
+                how: "",
+                psychology: "",
+                visual_build: "",
+                notes: "",
+              });
+              setThoughtsSavedTime(null);
+            }
+          })
+          .catch(() => {});
+
+        // Fetch global cross-video brain rules
+        fetch(`${API_BASE_URL}/v1/brain`)
+          .then((r) => r.json())
+          .then((bd) => {
+            if (bd?.creator_psychology_rules) {
+              setAllBrainThoughts(bd.creator_psychology_rules);
+            }
+          })
+          .catch(() => {});
       }
     } catch (err) {
       console.error("Error loading pipeline data", err);
     }
+  };
+
+  const handleSaveThoughts = async (overrides?: any) => {
+    if (!videoId) return;
+    setIsSavingThoughts(true);
+    const payload = overrides || creatorThoughts;
+    try {
+      const res = await fetch(`${API_BASE_URL}/v1/videos/${videoId}/thoughts`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+      if (res.ok) {
+        const d = await res.json();
+        setThoughtsSavedTime(d.thoughts.created_at);
+        const bRes = await fetch(`${API_BASE_URL}/v1/brain`);
+        if (bRes.ok) {
+          const bd = await bRes.json();
+          setAllBrainThoughts(bd.creator_psychology_rules || []);
+        }
+      }
+    } catch (err) {
+      console.error("Failed to save creator thoughts", err);
+    } finally {
+      setIsSavingThoughts(false);
+    }
+  };
+
+  const handleAutoSuggestThoughts = () => {
+    if (!pipelineData?.analysis) return;
+    const rep = pipelineData.analysis;
+    const openingWords = rep.blueprint?.[0]?.technique || "Pattern interrupt opening with fast hook";
+    const whyItWorks = rep.why_it_works?.[0]?.claim || rep.verdict;
+    const psychologyTrigger = rep.why_it_works?.find(w => w.category === "emotion" || w.category === "retention")?.claim || "High curiosity gap with immediate visual contrast and dopamine spike";
+    const scenesCount = pipelineData.scenes?.length || 1;
+    const cutSec = (pipelineData.metadata.duration_s / Math.max(scenesCount, 1)).toFixed(1);
+
+    const newThoughts = {
+      what: `Visual: ${rep.design_language?.motion_style || 'Dynamic tracking'}. Opening: ${openingWords}. Rhythm: 1 cut every ${cutSec}s across ${scenesCount} scenes.`,
+      why: whyItWorks || "Bold premise challenges viewer expectation in first 2 seconds.",
+      how: `Hook holds ${rep.scores?.hook || 85}% retention score. Emotional curve climbs from curiosity to payoff without dead air.`,
+      psychology: psychologyTrigger,
+      visual_build: rep.blueprint?.map((b: any) => `${b.role}: ${b.technique}`).slice(0, 3).join(" → ") || "Hook → Agitation → Payoff",
+      notes: "Auto-extracted from frame autopsy. Edit or refine your own creator intuition.",
+    };
+    setCreatorThoughts(newThoughts);
+    handleSaveThoughts(newThoughts);
   };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -786,6 +877,20 @@ export default function Home() {
                       <Film className="w-3.5 h-3.5" />
                       <span>Extracted Assets</span>
                     </button>
+                    <button
+                      onClick={() => setActiveTab("thoughts")}
+                      className={`px-4 py-1.5 rounded-full text-xs font-medium transition flex items-center gap-2 ${
+                        activeTab === "thoughts"
+                          ? "bg-surface text-primary border border-border"
+                          : "text-secondary hover:text-primary"
+                      }`}
+                    >
+                      <Brain className="w-3.5 h-3.5" />
+                      <span>Viral Thoughts &amp; Psychology</span>
+                      {thoughtsSavedTime && (
+                        <span className="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                      )}
+                    </button>
                   </div>
 
                   <div className="flex items-center gap-2">
@@ -906,15 +1011,124 @@ export default function Home() {
                 {activeTab === "autopsy" && (
                   <div>
                     {pipelineData.analysis ? (
-                      <ReportViewer
-                        videoId={pipelineData.video_id}
-                        report={pipelineData.analysis}
-                        durationMs={pipelineData.metadata.duration_ms}
-                        onSelectTimestamp={handleSelectTimestamp}
-                        selectedTimestamp={selectedTimestamp}
-                        onOpenStatsDrawer={() => setShowStatsDrawer(true)}
-                        onOpenRemix={() => setAppMode("remix")}
-                      />
+                      <>
+                        <ReportViewer
+                          videoId={pipelineData.video_id}
+                          report={pipelineData.analysis}
+                          durationMs={pipelineData.metadata.duration_ms}
+                          onSelectTimestamp={handleSelectTimestamp}
+                          selectedTimestamp={selectedTimestamp}
+                          onOpenStatsDrawer={() => setShowStatsDrawer(true)}
+                          onOpenRemix={() => setAppMode("remix")}
+                        />
+
+                        {/* Inline Creator Viral Mind Box */}
+                        <div className="mt-8 bg-surface rounded-md p-6 border border-border">
+                          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-border">
+                            <div className="flex items-center gap-2.5">
+                              <div className="w-8 h-8 rounded-full bg-neutral border border-border flex items-center justify-center text-primary">
+                                <Brain className="w-4 h-4" />
+                              </div>
+                              <div>
+                                <h3 className="text-sm font-medium text-primary">
+                                  Teach the Brain: What, Why &amp; How Did This Go Viral?
+                                </h3>
+                                <p className="text-[11px] text-secondary">
+                                  Store your insights into the Brain memory so future videos understand the psychology &amp; visual build.
+                                </p>
+                              </div>
+                            </div>
+                            <div className="flex items-center gap-2">
+                              <button
+                                type="button"
+                                onClick={handleAutoSuggestThoughts}
+                                className="btn-secondary text-xs flex items-center gap-1.5 py-1 px-3 cursor-pointer"
+                              >
+                                <Sparkles className="w-3.5 h-3.5 text-secondary" />
+                                <span>Auto-Fill from Autopsy</span>
+                              </button>
+                              <button
+                                type="button"
+                                onClick={() => setActiveTab("thoughts")}
+                                className="btn-secondary text-xs flex items-center gap-1 py-1 px-3 cursor-pointer"
+                              >
+                                <span>Full Mind &amp; Cross-Video Stream</span>
+                                <ChevronRight className="w-3 h-3" />
+                              </button>
+                            </div>
+                          </div>
+
+                          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-5">
+                            <div>
+                              <div className="flex items-center justify-between mb-1.5">
+                                <label className="text-xs font-mono font-medium text-primary">
+                                  1. WHAT is happening visually?
+                                </label>
+                              </div>
+                              <textarea
+                                rows={3}
+                                value={creatorThoughts.what}
+                                onChange={(e) => setCreatorThoughts({ ...creatorThoughts, what: e.target.value })}
+                                placeholder="e.g. Extreme macro push-in on product, bold text pop, 0.4s fast micro-cuts."
+                                className="input-minimal w-full text-xs p-3 resize-none font-normal"
+                              />
+                            </div>
+
+                            <div>
+                              <div className="flex items-center justify-between mb-1.5">
+                                <label className="text-xs font-mono font-medium text-primary">
+                                  2. WHY did this go viral?
+                                </label>
+                              </div>
+                              <textarea
+                                rows={3}
+                                value={creatorThoughts.why}
+                                onChange={(e) => setCreatorThoughts({ ...creatorThoughts, why: e.target.value })}
+                                placeholder="e.g. Bold contrarian statement challenges viewer belief; high curiosity gap with zero fluff."
+                                className="input-minimal w-full text-xs p-3 resize-none font-normal"
+                              />
+                            </div>
+
+                            <div>
+                              <div className="flex items-center justify-between mb-1.5">
+                                <label className="text-xs font-mono font-medium text-primary">
+                                  3. HOW does the psychology work?
+                                </label>
+                              </div>
+                              <textarea
+                                rows={3}
+                                value={creatorThoughts.how}
+                                onChange={(e) => setCreatorThoughts({ ...creatorThoughts, how: e.target.value })}
+                                placeholder="e.g. Pattern interrupt breaks doomscroll trance; dopamine release at 0:03 keeps retention high."
+                                className="input-minimal w-full text-xs p-3 resize-none font-normal"
+                              />
+                            </div>
+                          </div>
+
+                          <div className="flex items-center justify-between pt-4 mt-4 border-t border-border">
+                            <span className="text-[11px] text-secondary font-mono">
+                              {thoughtsSavedTime ? (
+                                <span className="text-emerald-500 flex items-center gap-1.5">
+                                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 inline-block animate-pulse"></span>
+                                  Stored in Brain Memory ({allBrainThoughts.length} cross-video rules active)
+                                </span>
+                              ) : (
+                                "Record what you observed to train the Brain."
+                              )}
+                            </span>
+
+                            <button
+                              type="button"
+                              onClick={() => handleSaveThoughts()}
+                              disabled={isSavingThoughts}
+                              className="btn-primary text-xs py-1.5 px-4 flex items-center gap-1.5"
+                            >
+                              <Brain className="w-3.5 h-3.5" />
+                              <span>{isSavingThoughts ? "Memorizing..." : "Save & Feed into Brain"}</span>
+                            </button>
+                          </div>
+                        </div>
+                      </>
                     ) : isAnalyzing ? (
                       <AutopsyScanner
                         durationS={pipelineData.metadata.duration_s}
@@ -1005,6 +1219,228 @@ export default function Home() {
                       </div>
                     </div>
                   </section>
+                )}
+
+                {/* TAB 3: VIRAL THOUGHTS & CROSS-VIDEO PSYCHOLOGY */}
+                {activeTab === "thoughts" && (
+                  <div className="space-y-8 animate-fade-in">
+                    {/* Top Header Card */}
+                    <div className="bg-surface rounded-md p-6 md:p-8 border border-border">
+                      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-6 border-b border-border">
+                        <div>
+                          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium bg-neutral border border-border text-primary mb-2">
+                            <Brain className="w-3.5 h-3.5 text-primary" />
+                            <span>Director Brain &amp; Cross-Video Psychology</span>
+                          </div>
+                          <h2 className="text-2xl font-normal tracking-tight text-primary">
+                            Train the Brain on Why This Video Works
+                          </h2>
+                          <p className="text-xs text-secondary mt-1 max-w-2xl">
+                            Type your thoughts on the visual building blocks and subconscious psychology. The Brain memorizes this video-by-video so future videos automatically cross-reference these patterns.
+                          </p>
+                        </div>
+
+                        <div className="flex items-center gap-2">
+                          <button
+                            type="button"
+                            onClick={handleAutoSuggestThoughts}
+                            className="btn-secondary text-xs flex items-center gap-1.5"
+                          >
+                            <Sparkles className="w-3.5 h-3.5" />
+                            <span>Auto-Fill from Autopsy</span>
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => handleSaveThoughts()}
+                            disabled={isSavingThoughts}
+                            className="btn-primary text-xs flex items-center gap-1.5"
+                          >
+                            <Brain className="w-3.5 h-3.5" />
+                            <span>{isSavingThoughts ? "Memorizing..." : "Save to Brain Mind"}</span>
+                          </button>
+                        </div>
+                      </div>
+
+                      {/* 3 Core Fields */}
+                      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-6">
+                        <div className="space-y-2">
+                          <div className="flex items-center justify-between">
+                            <label className="text-xs font-mono font-medium text-primary">
+                              1. WHAT is happening visually?
+                            </label>
+                            <span className="text-[10px] text-secondary font-mono">Visual Build</span>
+                          </div>
+                          <textarea
+                            rows={4}
+                            value={creatorThoughts.what}
+                            onChange={(e) => setCreatorThoughts({ ...creatorThoughts, what: e.target.value })}
+                            placeholder="Describe visual framing, props, text overlays, motion, color grading, and camera cut rhythm."
+                            className="input-minimal w-full text-xs p-3 font-normal"
+                          />
+                          <p className="text-[11px] text-secondary">
+                            e.g. 0.3s micro-cuts, dynamic macro tracking, eye-level contrast, zero camera shake.
+                          </p>
+                        </div>
+
+                        <div className="space-y-2">
+                          <div className="flex items-center justify-between">
+                            <label className="text-xs font-mono font-medium text-primary">
+                              2. WHY did this go viral?
+                            </label>
+                            <span className="text-[10px] text-secondary font-mono">Virality Hook</span>
+                          </div>
+                          <textarea
+                            rows={4}
+                            value={creatorThoughts.why}
+                            onChange={(e) => setCreatorThoughts({ ...creatorThoughts, why: e.target.value })}
+                            placeholder="What stops doomscrolling? What sparks shares, comments, or looping?"
+                            className="input-minimal w-full text-xs p-3 font-normal"
+                          />
+                          <p className="text-[11px] text-secondary">
+                            e.g. Contrarian opening challenges status quo; curiosity gap forces viewer to watch till 0:15.
+                          </p>
+                        </div>
+
+                        <div className="space-y-2">
+                          <div className="flex items-center justify-between">
+                            <label className="text-xs font-mono font-medium text-primary">
+                              3. HOW does the psychology work?
+                            </label>
+                            <span className="text-[10px] text-secondary font-mono">Subconscious Trigger</span>
+                          </div>
+                          <textarea
+                            rows={4}
+                            value={creatorThoughts.how}
+                            onChange={(e) => setCreatorThoughts({ ...creatorThoughts, how: e.target.value })}
+                            placeholder="Subconscious emotional drivers: identity affirmation, fear of missing out, dopamine spikes, cognitive ease."
+                            className="input-minimal w-full text-xs p-3 font-normal"
+                          />
+                          <p className="text-[11px] text-secondary">
+                            e.g. Audience feels understood in first 2 seconds; tension builds with proof before climax.
+                          </p>
+                        </div>
+                      </div>
+
+                      {/* Additional Notes & Blueprint */}
+                      <div className="mt-6 pt-6 border-t border-border grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                          <label className="text-xs font-mono font-medium text-primary block mb-2">
+                            Visual Building Blocks &amp; Blueprint Sequence
+                          </label>
+                          <textarea
+                            rows={2}
+                            value={creatorThoughts.visual_build}
+                            onChange={(e) => setCreatorThoughts({ ...creatorThoughts, visual_build: e.target.value })}
+                            placeholder="e.g. Beat 1: Hook (0-3s) → Beat 2: Problem agitation → Beat 3: Visual demo → Beat 4: Resolution CTA"
+                            className="input-minimal w-full text-xs p-3 font-normal"
+                          />
+                        </div>
+
+                        <div>
+                          <label className="text-xs font-mono font-medium text-primary block mb-2">
+                            Creator Takeaway &amp; Golden Rule
+                          </label>
+                          <textarea
+                            rows={2}
+                            value={creatorThoughts.notes}
+                            onChange={(e) => setCreatorThoughts({ ...creatorThoughts, notes: e.target.value })}
+                            placeholder="e.g. Never spend more than 1.5 seconds establishing context; cut straight to the visual transformation."
+                            className="input-minimal w-full text-xs p-3 font-normal"
+                          />
+                        </div>
+                      </div>
+
+                      <div className="flex items-center justify-between pt-4 mt-4 border-t border-border">
+                        <div className="flex items-center gap-2">
+                          {thoughtsSavedTime ? (
+                            <span className="text-xs text-emerald-500 font-mono flex items-center gap-1.5">
+                              <span className="w-2 h-2 rounded-full bg-emerald-500 inline-block animate-pulse"></span>
+                              Active in Brain Mind • Last synchronized: {new Date(thoughtsSavedTime).toLocaleTimeString()}
+                            </span>
+                          ) : (
+                            <span className="text-xs text-secondary font-mono">
+                              Draft not yet persisted into Brain.
+                            </span>
+                          )}
+                        </div>
+
+                        <button
+                          type="button"
+                          onClick={() => handleSaveThoughts()}
+                          disabled={isSavingThoughts}
+                          className="btn-primary text-xs py-2 px-5 flex items-center gap-2"
+                        >
+                          <Brain className="w-4 h-4" />
+                          <span>{isSavingThoughts ? "Memorizing..." : "Save & Feed into Brain"}</span>
+                        </button>
+                      </div>
+                    </div>
+
+                    {/* Cross-Video Brain Intelligence Archive */}
+                    <div className="bg-surface rounded-md p-6 md:p-8 border border-border">
+                      <div className="flex items-center justify-between pb-4 border-b border-border">
+                        <div>
+                          <h3 className="text-base font-normal text-primary flex items-center gap-2">
+                            <Layers className="w-4 h-4 text-primary" />
+                            <span>Cumulative Brain Memory ({allBrainThoughts.length} Learned Rules)</span>
+                          </h3>
+                          <p className="text-xs text-secondary mt-0.5">
+                            Cross-video psychological principles stored across all analyzed videos.
+                          </p>
+                        </div>
+                        <button
+                          type="button"
+                          onClick={() => setAppMode("brain")}
+                          className="btn-secondary text-xs flex items-center gap-1"
+                        >
+                          <span>Open Brain Studio</span>
+                          <ChevronRight className="w-3 h-3" />
+                        </button>
+                      </div>
+
+                      {allBrainThoughts.length > 0 ? (
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
+                          {allBrainThoughts.map((rule, idx) => (
+                            <div key={idx} className="p-4 bg-neutral rounded-md border border-border space-y-3">
+                              <div className="flex items-center justify-between">
+                                <span className="chip-minimal text-[10px] font-mono">
+                                  {rule.category?.toUpperCase() || "CREATIVE"} • {rule.virality_tier || "VIRAL"}
+                                </span>
+                                <span className="text-[10px] text-secondary font-mono">
+                                  {rule.created_at ? new Date(rule.created_at).toLocaleDateString() : "Saved"}
+                                </span>
+                              </div>
+
+                              {rule.what && (
+                                <div>
+                                  <div className="text-[10px] font-mono text-secondary uppercase">What happens</div>
+                                  <div className="text-xs text-primary font-normal mt-0.5 line-clamp-2">{rule.what}</div>
+                                </div>
+                              )}
+
+                              {rule.why && (
+                                <div>
+                                  <div className="text-[10px] font-mono text-secondary uppercase">Why it works</div>
+                                  <div className="text-xs text-primary font-normal mt-0.5 line-clamp-2">{rule.why}</div>
+                                </div>
+                              )}
+
+                              {rule.psychology && (
+                                <div>
+                                  <div className="text-[10px] font-mono text-secondary uppercase">Psychology trigger</div>
+                                  <div className="text-xs text-emerald-400 font-normal mt-0.5 line-clamp-2">{rule.psychology}</div>
+                                </div>
+                              )}
+                            </div>
+                          ))}
+                        </div>
+                      ) : (
+                        <div className="py-8 text-center text-xs text-secondary">
+                          No cross-video thoughts recorded yet. Fill out the fields above to start training the Brain!
+                        </div>
+                      )}
+                    </div>
+                  </div>
                 )}
               </div>
             )}

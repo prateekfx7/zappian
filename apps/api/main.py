@@ -126,44 +126,82 @@ def execute_pipeline_background(video_id: str, file_path: Path) -> None:
 
 
 def download_and_process_url_background(video_id: str, url: str) -> None:
-    """Downloads video from URL via yt-dlp, then executes the media pipeline."""
+    """Downloads video from URL via dedicated resolver or yt-dlp, then executes the media pipeline."""
     state = get_or_create_pipeline_state(video_id)
     target_dir = ORIGINALS_DIR / video_id
     target_dir.mkdir(parents=True, exist_ok=True)
 
     try:
         state.update("ingest", 5, "Connecting to video link...")
-        import yt_dlp
+        downloaded_file: Path | None = None
 
-        def progress_hook(d: dict[str, Any]) -> None:
-            if d.get("status") == "downloading":
-                total = d.get("total_bytes") or d.get("total_bytes_estimate") or 0
-                downloaded = d.get("downloaded_bytes") or 0
-                if total > 0:
-                    pct = min(20, int((downloaded / total) * 15) + 5)
-                    state.update("ingest", pct, f"Downloading video stream: {int((downloaded / total) * 100)}%")
+        # 1. Dedicated TikTok Resolver (Bypasses regional ISP blocks on tiktok.com via clean CDN stream)
+        is_tiktok = any(d in url.lower() for d in ["tiktok.com", "vt.tiktok", "vm.tiktok"])
+        if is_tiktok:
+            state.update("ingest", 10, "Resolving TikTok stream via proxy...")
+            try:
+                import json
+                import shutil
+                import urllib.request
 
-        out_template = str(target_dir / "downloaded_%(id)s.%(ext)s")
-        ydl_opts = {
-            "outtmpl": out_template,
-            "format": "bestvideo[ext=mp4]+bestaudio[ext=m4a]/best[ext=mp4]/best",
-            "merge_output_format": "mp4",
-            "max_filesize": settings.max_upload_size_mb * 1024 * 1024,
-            "no_playlist": True,
-            "quiet": True,
-            "no_warnings": True,
-            "progress_hooks": [progress_hook],
-            "socket_timeout": 30,
-        }
+                api_url = f"https://www.tikwm.com/api/?url={url.strip()}"
+                req = urllib.request.Request(api_url, headers={"User-Agent": "Mozilla/5.0"})
+                with urllib.request.urlopen(req, timeout=12) as resp:
+                    api_data = json.loads(resp.read().decode())
 
-        with yt_dlp.YoutubeDL(ydl_opts) as ydl:
-            ydl.download([url])
+                if api_data.get("code") == 0 and api_data.get("data", {}).get("play"):
+                    cdn_url = api_data["data"]["play"]
+                    target_file = target_dir / "downloaded_tiktok.mp4"
+                    state.update("ingest", 15, "Downloading high-resolution stream...")
+                    vid_req = urllib.request.Request(
+                        cdn_url,
+                        headers={"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)"},
+                    )
+                    with urllib.request.urlopen(vid_req, timeout=40) as vresp, open(target_file, "wb") as out_f:
+                        shutil.copyfileobj(vresp, out_f)
 
-        candidates = list(target_dir.glob("downloaded_*.*"))
-        if not candidates:
-            raise RuntimeError("No media stream could be extracted from this link.")
+                    if target_file.exists() and target_file.stat().st_size > 1000:
+                        downloaded_file = target_file
+            except Exception as e:
+                logger.warning(f"TikTok proxy resolver attempt failed: {e}")
 
-        downloaded_file = candidates[0]
+        # 2. General Engine: yt-dlp (YouTube, Shorts, Direct MP4, Vimeo, etc.)
+        if not downloaded_file:
+            import yt_dlp
+
+            def progress_hook(d: dict[str, Any]) -> None:
+                if d.get("status") == "downloading":
+                    total = d.get("total_bytes") or d.get("total_bytes_estimate") or 0
+                    downloaded = d.get("downloaded_bytes") or 0
+                    if total > 0:
+                        pct = min(20, int((downloaded / total) * 15) + 5)
+                        state.update("ingest", pct, f"Downloading video stream: {int((downloaded / total) * 100)}%")
+
+            out_template = str(target_dir / "downloaded_%(id)s.%(ext)s")
+            ydl_opts = {
+                "outtmpl": out_template,
+                "format": "bestvideo*+bestaudio/best",
+                "merge_output_format": "mp4",
+                "max_filesize": settings.max_upload_size_mb * 1024 * 1024,
+                "no_playlist": True,
+                "quiet": True,
+                "no_warnings": True,
+                "progress_hooks": [progress_hook],
+                "socket_timeout": 30,
+                "http_headers": {
+                    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36",
+                    "Accept-Language": "en-US,en;q=0.9",
+                },
+            }
+
+            with yt_dlp.YoutubeDL(ydl_opts) as ydl:
+                ydl.download([url])
+
+            candidates = list(target_dir.glob("downloaded_*.*"))
+            if not candidates:
+                raise RuntimeError("No media stream could be extracted from this link.")
+            downloaded_file = candidates[0]
+
         state.update("ingest", 25, "Download complete. Starting media pipeline...")
         run_media_pipeline(video_id=video_id, original_video_path=downloaded_file)
 
@@ -171,15 +209,17 @@ def download_and_process_url_background(video_id: str, url: str) -> None:
         err_str = str(e)
         logger.error(f"Failed to ingest URL for video {video_id}: {err_str}")
 
-        clean_msg = "This link couldn't be downloaded. Please upload the video file directly instead."
-        if any(term in err_str.lower() for term in ["empty media response", "login", "not granting access", "cookie", "sign in"]):
-            clean_msg = "This platform requires user authentication/login (e.g. private Instagram or TikTok). Please save the video to your device and use 'File Upload' to analyze."
+        is_instagram = "instagram.com" in url.lower()
+        if is_instagram or any(term in err_str.lower() for term in ["empty media response", "login", "not granting access", "cookie", "sign in"]):
+            clean_msg = "Instagram / TikTok has account login barriers on this video. Please save or download the video file to your device and use the 'Upload Video' tab — it analyzes the exact same frame-by-frame data in seconds."
         elif "unsupported url" in err_str.lower():
             clean_msg = "Unsupported video link format. Please paste a valid YouTube, TikTok, or direct video URL, or use 'File Upload'."
         elif "max-filesize" in err_str.lower() or "too large" in err_str.lower():
             clean_msg = f"Video exceeds maximum allowed size of {settings.max_upload_size_mb}MB."
         elif "timed out" in err_str.lower():
-            clean_msg = "The download connection timed out. Please check the URL or use 'File Upload'."
+            clean_msg = "The download connection timed out due to regional firewall blocks. Please use the 'Upload Video' tab."
+        else:
+            clean_msg = "This link could not be accessed directly. Please upload the video file instead."
 
         state.update("failed", 0, clean_msg, error=clean_msg)
 

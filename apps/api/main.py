@@ -148,72 +148,113 @@ def download_and_process_url_background(
     state = get_or_create_pipeline_state(video_id)
     target_dir = ORIGINALS_DIR / video_id
     target_dir.mkdir(parents=True, exist_ok=True)
+    resolved_dir = target_dir.resolve()
 
     try:
-        state.update("ingest", 5, "Connecting to video link...")
+        state.update("ingest", 5, "Connecting to video stream...")
         downloaded_file: Path | None = None
         extracted_stats: list[dict[str, Any]] = list(user_stats or [])
         social_meta: dict[str, Any] = {}
 
-        # 1. Dedicated TikTok Resolver (Bypasses regional ISP blocks on tiktok.com via clean CDN stream)
+        # 1. Dedicated TikTok Stream & Telemetry Resolver with TLS fingerprinting
         is_tiktok = any(d in url.lower() for d in ["tiktok.com", "vt.tiktok", "vm.tiktok"])
         if is_tiktok:
-            state.update("ingest", 10, "Resolving TikTok stream and engagement metrics via proxy...")
+            state.update("ingest", 10, "Resolving TikTok stream and engagement metrics...")
             try:
-                import json
-                import shutil
-                import urllib.request
+                from curl_cffi import requests as cureq
 
-                api_url = f"https://www.tikwm.com/api/?url={url.strip()}"
-                req = urllib.request.Request(api_url, headers={"User-Agent": "Mozilla/5.0"})
-                with urllib.request.urlopen(req, timeout=12) as resp:
-                    api_data = json.loads(resp.read().decode())
+                clean_url = url.strip()
+                try:
+                    head_res = cureq.head(clean_url, allow_redirects=True, timeout=10, impersonate="chrome124")
+                    if head_res.url:
+                        clean_url = head_res.url
+                except Exception:
+                    pass
 
-                if api_data.get("code") == 0 and api_data.get("data", {}).get("play"):
-                    tdata = api_data["data"]
-                    now_iso = datetime.now(UTC).isoformat()
+                api_res = cureq.post(
+                    "https://www.tikwm.com/api/",
+                    data={"url": clean_url, "hd": 1},
+                    impersonate="chrome124",
+                    timeout=20,
+                )
 
-                    play_count = float(tdata.get("play_count") or 0)
-                    digg_count = float(tdata.get("digg_count") or 0)
-                    share_count = float(tdata.get("share_count") or 0)
-                    comment_count = float(tdata.get("comment_count") or 0)
+                if api_res.status_code == 200:
+                    api_data = api_res.json()
+                    if api_data.get("code") == 0 and api_data.get("data", {}).get("play"):
+                        tdata = api_data["data"]
+                        now_iso = datetime.now(UTC).isoformat()
 
-                    # Append verified connector stats if not already supplied manually
-                    existing_metrics = {s.get("metric") for s in extracted_stats}
-                    if "views" not in existing_metrics and play_count > 0:
-                        extracted_stats.append({"metric": "views", "value": play_count, "source": "connector", "fetched_at": now_iso})
-                    if "likes" not in existing_metrics and digg_count > 0:
-                        extracted_stats.append({"metric": "likes", "value": digg_count, "source": "connector", "fetched_at": now_iso})
-                    if "shares" not in existing_metrics and share_count > 0:
-                        extracted_stats.append({"metric": "shares", "value": share_count, "source": "connector", "fetched_at": now_iso})
-                    if "comments" not in existing_metrics and comment_count > 0:
-                        extracted_stats.append({"metric": "comments", "value": comment_count, "source": "connector", "fetched_at": now_iso})
+                        play_count = float(tdata.get("play_count") or 0)
+                        digg_count = float(tdata.get("digg_count") or 0)
+                        share_count = float(tdata.get("share_count") or 0)
+                        comment_count = float(tdata.get("comment_count") or 0)
 
-                    author_info = tdata.get("author") or {}
-                    social_meta = {
-                        "platform": "tiktok",
-                        "title": tdata.get("title", ""),
-                        "author": author_info.get("nickname") or author_info.get("unique_id", ""),
-                        "music": (tdata.get("music_info") or {}).get("title", ""),
-                        "duration": tdata.get("duration", 0),
-                    }
+                        existing_metrics = {s.get("metric") for s in extracted_stats}
+                        if "views" not in existing_metrics and play_count > 0:
+                            extracted_stats.append({"metric": "views", "value": play_count, "source": "connector", "fetched_at": now_iso})
+                        if "likes" not in existing_metrics and digg_count > 0:
+                            extracted_stats.append({"metric": "likes", "value": digg_count, "source": "connector", "fetched_at": now_iso})
+                        if "shares" not in existing_metrics and share_count > 0:
+                            extracted_stats.append({"metric": "shares", "value": share_count, "source": "connector", "fetched_at": now_iso})
+                        if "comments" not in existing_metrics and comment_count > 0:
+                            extracted_stats.append({"metric": "comments", "value": comment_count, "source": "connector", "fetched_at": now_iso})
 
-                    cdn_url = tdata["play"]
-                    target_file = target_dir / "downloaded_tiktok.mp4"
-                    state.update("ingest", 15, "Downloading high-resolution stream...")
-                    vid_req = urllib.request.Request(
-                        cdn_url,
-                        headers={"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)"},
-                    )
-                    with urllib.request.urlopen(vid_req, timeout=40) as vresp, open(target_file, "wb") as out_f:
-                        shutil.copyfileobj(vresp, out_f)
+                        author_info = tdata.get("author") or {}
+                        social_meta = {
+                            "platform": "tiktok",
+                            "title": tdata.get("title", ""),
+                            "author": author_info.get("nickname") or author_info.get("unique_id", ""),
+                            "music": (tdata.get("music_info") or {}).get("title", ""),
+                            "duration": tdata.get("duration", 0),
+                        }
 
-                    if target_file.exists() and target_file.stat().st_size > 1000:
-                        downloaded_file = target_file
+                        cdn_url = tdata.get("hdplay") or tdata["play"]
+                        target_file = resolved_dir / "downloaded_tiktok.mp4"
+                        state.update("ingest", 15, "Downloading high-definition TikTok stream...")
+
+                        stream_resp = cureq.get(cdn_url, impersonate="chrome124", timeout=60)
+                        if stream_resp.status_code == 200 and len(stream_resp.content) > 1000:
+                            with open(target_file, "wb") as f_out:
+                                f_out.write(stream_resp.content)
+                            if target_file.exists() and target_file.stat().st_size > 1000:
+                                downloaded_file = target_file
             except Exception as e:
                 logger.warning(f"TikTok proxy resolver attempt failed: {e}")
 
-        # 2. General Engine: yt-dlp (YouTube, Shorts, Direct MP4, Vimeo, etc.)
+        # 2. Instagram Specialized Resolver
+        is_instagram = "instagram.com" in url.lower()
+        if not downloaded_file and is_instagram:
+            state.update("ingest", 10, "Extracting Instagram Reel media stream...")
+            try:
+                import parth_dl
+
+                target_file = resolved_dir / "downloaded_instagram.mp4"
+                parth_dl.download(url.strip(), output_path=str(target_file))
+                if target_file.exists() and target_file.stat().st_size > 1000:
+                    downloaded_file = target_file
+                    social_meta = {"platform": "instagram", "title": "Instagram Reel"}
+            except Exception as e:
+                logger.warning(f"parth_dl resolver failed: {e}")
+
+        # 3. Direct MP4 / Video URL Streaming Check
+        clean_url_base = url.lower().split("?")[0]
+        if not downloaded_file and any(clean_url_base.endswith(ext) for ext in [".mp4", ".mov", ".webm", ".m4v"]):
+            try:
+                from curl_cffi import requests as cureq
+
+                state.update("ingest", 15, "Downloading direct video file...")
+                target_file = resolved_dir / "downloaded_direct.mp4"
+                with cureq.get(url.strip(), impersonate="chrome124", timeout=45) as r:
+                    if r.status_code == 200 and len(r.content) > 1000:
+                        with open(target_file, "wb") as f:
+                            f.write(r.content)
+                        if target_file.exists() and target_file.stat().st_size > 1000:
+                            downloaded_file = target_file
+                            social_meta = {"platform": "web", "title": "Direct Video"}
+            except Exception as e:
+                logger.warning(f"Direct video download failed: {e}")
+
+        # 4. Universal Engine: yt-dlp (YouTube Shorts, YouTube, Facebook, Twitter, Vimeo)
         if not downloaded_file:
             import yt_dlp
 
@@ -225,25 +266,46 @@ def download_and_process_url_background(
                         pct = min(20, int((downloaded / total) * 15) + 5)
                         state.update("ingest", pct, f"Downloading video stream: {int((downloaded / total) * 100)}%")
 
-            out_template = str(target_dir / "downloaded_%(id)s.%(ext)s")
-            ydl_opts = {
+            out_template = str(resolved_dir / "downloaded_%(id)s.%(ext)s")
+            ydl_opts: dict[str, Any] = {
                 "outtmpl": out_template,
-                "format": "bestvideo*+bestaudio/best",
-                "merge_output_format": "mp4",
+                "format": "best[ext=mp4]/bestvideo[ext=mp4]+bestaudio[ext=m4a]/best",
+                "nopart": True,
                 "max_filesize": settings.max_upload_size_mb * 1024 * 1024,
                 "no_playlist": True,
                 "quiet": True,
                 "no_warnings": True,
                 "progress_hooks": [progress_hook],
-                "socket_timeout": 30,
+                "socket_timeout": 35,
+                "retries": 3,
+                "extractor_args": {
+                    "youtube": {
+                        "player_client": ["android", "ios", "web"]
+                    }
+                },
                 "http_headers": {
-                    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36",
+                    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36",
                     "Accept-Language": "en-US,en;q=0.9",
                 },
             }
 
+            cookie_candidates = [
+                Path("cookies.txt"),
+                STORAGE_DIR / "cookies.txt",
+            ]
+            cookie_file = next((str(p.resolve()) for p in cookie_candidates if p.exists()), None)
+            if cookie_file:
+                ydl_opts["cookiefile"] = cookie_file
+
+            # If curl_cffi is available, enable browser impersonation
+            try:
+                from yt_dlp.networking.impersonate import ImpersonateTarget
+                ydl_opts["impersonate"] = ImpersonateTarget.from_str("chrome")
+            except Exception:
+                pass
+
             with yt_dlp.YoutubeDL(ydl_opts) as ydl:
-                info = ydl.extract_info(url, download=True)
+                info = ydl.extract_info(url.strip(), download=True)
                 if info:
                     now_iso = datetime.now(UTC).isoformat()
                     existing_metrics = {s.get("metric") for s in extracted_stats}
@@ -269,7 +331,7 @@ def download_and_process_url_background(
                             "duration": info.get("duration", 0),
                         }
 
-            candidates = list(target_dir.glob("downloaded_*.*"))
+            candidates = list(resolved_dir.glob("downloaded_*.*"))
             if not candidates:
                 raise RuntimeError("No media stream could be extracted from this link.")
             downloaded_file = candidates[0]
@@ -287,16 +349,21 @@ def download_and_process_url_background(
         logger.error(f"Failed to ingest URL for video {video_id}: {err_str}")
 
         is_instagram = "instagram.com" in url.lower()
-        if is_instagram or any(term in err_str.lower() for term in ["empty media response", "login", "not granting access", "cookie", "sign in"]):
-            clean_msg = "Instagram / TikTok has account login barriers on this video. Please save or download the video file to your device and use the 'Upload Video' tab — it analyzes the exact same frame-by-frame data in seconds."
-        elif "unsupported url" in err_str.lower():
-            clean_msg = "Unsupported video link format. Please paste a valid YouTube, TikTok, or direct video URL, or use 'File Upload'."
+        is_tiktok = any(d in url.lower() for d in ["tiktok.com", "vt.tiktok", "vm.tiktok"])
+        is_youtube = any(d in url.lower() for d in ["youtube.com", "youtu.be"])
+
+        if is_instagram:
+            clean_msg = "Instagram Reels require an active user session due to Meta privacy protections. Please download the reel and upload the video file directly in the 'Upload Video' tab — all frames are extracted instantly!"
+        elif is_tiktok and ("timed out" in err_str.lower() or "connection" in err_str.lower()):
+            clean_msg = "TikTok connection timed out. Please verify the link or upload the video file directly."
+        elif is_youtube and "unavailable" in err_str.lower():
+            clean_msg = "This YouTube video is unavailable or restricted. Please check that the video is public."
         elif "max-filesize" in err_str.lower() or "too large" in err_str.lower():
             clean_msg = f"Video exceeds maximum allowed size of {settings.max_upload_size_mb}MB."
-        elif "timed out" in err_str.lower():
-            clean_msg = "The download connection timed out due to regional firewall blocks. Please use the 'Upload Video' tab."
+        elif "unsupported url" in err_str.lower():
+            clean_msg = "Unsupported video link format. Please paste a valid YouTube, TikTok, or direct video URL, or use 'File Upload'."
         else:
-            clean_msg = "This link could not be accessed directly. Please upload the video file instead."
+            clean_msg = f"Could not stream video from this link ({err_str[:90]}). Please upload the video file directly for instant analysis."
 
         state.update("failed", 0, clean_msg, error=clean_msg)
 

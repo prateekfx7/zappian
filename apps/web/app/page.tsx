@@ -369,11 +369,16 @@ export default function Home() {
         setVideoId(data.id);
         setCompareVideoIdA(data.id);
       } else {
+        const urlLower = videoUrl.trim().toLowerCase();
+        let detectedPlatform = "youtube";
+        if (urlLower.includes("tiktok.com")) detectedPlatform = "tiktok";
+        else if (urlLower.includes("instagram.com")) detectedPlatform = "instagram";
+
         const response = await fetch(`${API_BASE_URL}/v1/videos`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
-            source_type: "youtube",
+            source_type: detectedPlatform,
             source_url: videoUrl.trim(),
             rights_confirmed: true,
             known_views: viewsNum || undefined,
@@ -643,9 +648,13 @@ export default function Home() {
                             type="url"
                             value={videoUrl}
                             onChange={(e) => setVideoUrl(e.target.value)}
-                            placeholder="Paste video link (YouTube, TikTok, Reels)"
+                            placeholder="Paste video link (YouTube Shorts, YouTube, TikTok, Direct MP4)"
                             className="input-minimal has-left-icon w-full pr-4"
                           />
+                        </div>
+                        <div className="mt-1.5 flex items-center gap-1.5 text-[11px] text-secondary font-mono">
+                          <span className="inline-block w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                          <span>YouTube Shorts, YouTube, &amp; TikTok supported directly.</span>
                         </div>
                       </div>
                     )}

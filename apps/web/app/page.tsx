@@ -35,6 +35,8 @@ import { CompareViewer, CompareReport } from "../components/CompareViewer";
 import { StatsDrawer } from "../components/StatsDrawer";
 import { RemixStudio } from "../components/RemixStudio";
 import { BrainViewer } from "../components/BrainViewer";
+import { AutopsyScanner } from "../components/AutopsyScanner";
+import { IngestProgressCard } from "../components/IngestProgressCard";
 import { API_BASE_URL } from "../lib/api";
 
 interface PipelineProgress {
@@ -624,23 +626,9 @@ export default function Home() {
                       <span>{isSubmitting ? "Queueing Video..." : "Analyze Video"}</span>
                     </button>
 
-                    {/* Pipeline Progress */}
+                    {/* Forensic Pipeline Progress Card */}
                     {pipelineProgress && (
-                      <div className="p-4 bg-neutral rounded-md border border-border space-y-2.5 animate-fade-in">
-                        <div className="flex items-center justify-between text-xs font-medium text-primary">
-                          <span className="flex items-center gap-2">
-                            <Activity className="w-3.5 h-3.5 text-primary animate-spin" />
-                            <span className="capitalize">{pipelineProgress.stage.replace(/_/g, " ")}</span>
-                          </span>
-                          <span className="font-mono text-secondary">{pipelineProgress.progress_pct}%</span>
-                        </div>
-                        <div className="w-full h-1 bg-border rounded-full overflow-hidden">
-                          <div
-                            className="h-full bg-primary transition-all duration-300"
-                            style={{ width: `${pipelineProgress.progress_pct}%` }}
-                          />
-                        </div>
-                      </div>
+                      <IngestProgressCard progress={pipelineProgress} />
                     )}
 
                     {errorMessage && (
@@ -828,6 +816,12 @@ export default function Home() {
                         onOpenStatsDrawer={() => setShowStatsDrawer(true)}
                         onOpenRemix={() => setAppMode("remix")}
                       />
+                    ) : isAnalyzing ? (
+                      <AutopsyScanner
+                        durationS={pipelineData.metadata.duration_s}
+                        frameCount={pipelineData.frames.length}
+                        cutCount={pipelineData.scenes.length}
+                      />
                     ) : (
                       <div className="p-12 bg-surface rounded-md border border-border text-center space-y-4">
                         <div className="w-12 h-12 rounded-full bg-neutral border border-border flex items-center justify-center text-primary mx-auto">
@@ -844,7 +838,7 @@ export default function Home() {
                           disabled={isAnalyzing}
                           className="btn-primary"
                         >
-                          {isAnalyzing ? "Running Analysis..." : "Generate Autopsy Report"}
+                          Generate Autopsy Report
                         </button>
                       </div>
                     )}

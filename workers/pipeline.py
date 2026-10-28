@@ -195,6 +195,13 @@ def run_media_pipeline(
         with open(cache_file, "w") as f:
             json.dump(results, f, indent=2)
 
+        # Index in Brain Memory Engine for cross-video intelligence
+        try:
+            from workers.brain.memory import brain_memory
+            brain_memory.index_video(video_id=video_id, pipeline_data=results)
+        except Exception:
+            pass
+
         return results
 
     except Exception as e:

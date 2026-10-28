@@ -19,6 +19,7 @@ import {
   ChevronDown,
   ChevronUp,
   SlidersHorizontal,
+  Brain,
 } from "lucide-react";
 import { DraftPlayer, DraftData } from "./DraftPlayer";
 import { API_BASE_URL } from "../lib/api";
@@ -29,6 +30,14 @@ export interface RemixConcept {
   product_or_topic: string;
   target_audience: string;
   platform: string;
+  brain_intelligence?: {
+    memory_source: string;
+    total_supporting_videos: number;
+    total_supporting_frames: number;
+    applied_hook_archetype: string;
+    proven_hold_rate: string;
+    target_cut_rhythm: string;
+  };
   hooks: {
     rank: number;
     type: string;
@@ -68,18 +77,28 @@ export interface RemixConcept {
 
 interface RemixStudioProps {
   sourceVideoId: string;
+  initialProductOrTopic?: string;
+  initialPlatform?: "tiktok" | "reels" | "youtube_shorts";
+  initialDurationS?: number;
   onGenerationReady?: (conceptId: string) => void;
 }
 
-export function RemixStudio({ sourceVideoId, onGenerationReady }: RemixStudioProps) {
-  const [productOrTopic, setProductOrTopic] = useState("");
+export function RemixStudio({
+  sourceVideoId,
+  initialProductOrTopic,
+  initialPlatform,
+  initialDurationS,
+  onGenerationReady,
+}: RemixStudioProps) {
+  const [productOrTopic, setProductOrTopic] = useState(initialProductOrTopic || "");
   const [targetAudience, setTargetAudience] = useState("remote workers & creators");
-  const [platform, setPlatform] = useState<"tiktok" | "reels" | "youtube_shorts">("reels");
-  const [durationS, setDurationS] = useState(30);
+  const [platform, setPlatform] = useState<"tiktok" | "reels" | "youtube_shorts">(initialPlatform || "reels");
+  const [durationS, setDurationS] = useState(initialDurationS || 30);
   const [goal, setGoal] = useState("conversions");
   const [tone, setTone] = useState("energetic");
   const [customStyleLock, setCustomStyleLock] = useState("");
   const [showAdvancedOptions, setShowAdvancedOptions] = useState(false);
+  const [useBrainMemory, setUseBrainMemory] = useState(true);
 
   const [isGenerating, setIsGenerating] = useState(false);
   const [concept, setConcept] = useState<RemixConcept | null>(null);
@@ -94,6 +113,13 @@ export function RemixStudio({ sourceVideoId, onGenerationReady }: RemixStudioPro
   // Phase 5: Draft Video Generation & Player
   const [draftData, setDraftData] = useState<DraftData | null>(null);
   const [isGeneratingDraft, setIsGeneratingDraft] = useState(false);
+
+  // Sync initial props if passed from BrainViewer
+  useEffect(() => {
+    if (initialProductOrTopic) setProductOrTopic(initialProductOrTopic);
+    if (initialPlatform) setPlatform(initialPlatform);
+    if (initialDurationS) setDurationS(initialDurationS);
+  }, [initialProductOrTopic, initialPlatform, initialDurationS]);
 
   // Check if draft was already generated for this concept
   useEffect(() => {
@@ -128,6 +154,7 @@ export function RemixStudio({ sourceVideoId, onGenerationReady }: RemixStudioPro
           goal: goal,
           tone: tone,
           custom_style_lock: customStyleLock.trim() || undefined,
+          use_brain_memory: useBrainMemory,
         }),
       });
 
@@ -334,7 +361,20 @@ export function RemixStudio({ sourceVideoId, onGenerationReady }: RemixStudioPro
             )}
           </div>
 
-          <div className="flex items-center justify-end pt-2 border-t border-border">
+          <div className="flex flex-col sm:flex-row items-center justify-between pt-2 border-t border-border gap-3">
+            <label className="flex items-center gap-2 cursor-pointer text-xs text-secondary hover:text-primary transition select-none">
+              <input
+                type="checkbox"
+                checked={useBrainMemory}
+                onChange={(e) => setUseBrainMemory(e.target.checked)}
+                className="rounded border-border text-primary focus:ring-0 w-3.5 h-3.5 cursor-pointer accent-primary"
+              />
+              <span className="flex items-center gap-1.5 font-medium text-primary">
+                <Brain className="w-3.5 h-3.5" />
+                <span>Infuse Brain Memory Patterns</span>
+              </span>
+            </label>
+
             <button
               type="submit"
               disabled={isGenerating || !productOrTopic.trim()}
@@ -357,6 +397,32 @@ export function RemixStudio({ sourceVideoId, onGenerationReady }: RemixStudioPro
       {/* 2. Concept Results & Originality Audit Display */}
       {concept && (
         <div className="space-y-6 animate-fade-in">
+          {/* Brain Intelligence Infusion Notice */}
+          {concept.brain_intelligence && (
+            <div className="bg-surface rounded-md p-4 border border-border flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+              <div className="flex items-center gap-2.5">
+                <div className="w-7 h-7 rounded-full bg-neutral border border-border flex items-center justify-center text-primary flex-shrink-0">
+                  <Brain className="w-3.5 h-3.5" />
+                </div>
+                <div>
+                  <div className="text-xs font-medium text-primary flex items-center gap-2">
+                    <span>Brain Intelligence Infused</span>
+                    <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-neutral border border-border text-secondary">
+                      {concept.brain_intelligence.applied_hook_archetype}
+                    </span>
+                  </div>
+                  <p className="text-[11px] text-secondary mt-0.5">
+                    Synthesized from {concept.brain_intelligence.total_supporting_videos} analyzed videos &amp; {concept.brain_intelligence.total_supporting_frames} frames • Proven hold rate {concept.brain_intelligence.proven_hold_rate}
+                  </p>
+                </div>
+              </div>
+
+              <div className="text-right text-[11px] font-mono text-secondary self-end sm:self-center">
+                Target cut cadence: <span className="text-primary font-medium">{concept.brain_intelligence.target_cut_rhythm}</span>
+              </div>
+            </div>
+          )}
+
           {/* A. Originality Audit Badge */}
           <div className="bg-surface rounded-md p-6 border border-border">
             <div className="flex flex-col md:flex-row md:items-center justify-between pb-4 border-b border-border gap-4 mb-4">

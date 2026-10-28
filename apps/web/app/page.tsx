@@ -28,11 +28,13 @@ import {
   Trophy,
   Wand2,
   MoreHorizontal,
+  Brain,
 } from "lucide-react";
 import { ReportViewer, AnalysisReport } from "../components/ReportViewer";
 import { CompareViewer, CompareReport } from "../components/CompareViewer";
 import { StatsDrawer } from "../components/StatsDrawer";
 import { RemixStudio } from "../components/RemixStudio";
+import { BrainViewer } from "../components/BrainViewer";
 import { API_BASE_URL } from "../lib/api";
 
 interface PipelineProgress {
@@ -87,7 +89,12 @@ interface PipelineData {
 }
 
 export default function Home() {
-  const [appMode, setAppMode] = useState<"autopsy" | "compare" | "remix">("autopsy");
+  const [appMode, setAppMode] = useState<"autopsy" | "brain" | "compare" | "remix">("autopsy");
+  const [remixPrefill, setRemixPrefill] = useState<{
+    topic?: string;
+    platform?: "tiktok" | "reels" | "youtube_shorts";
+    durationS?: number;
+  }>({});
   const [sourceType, setSourceType] = useState<"upload" | "youtube">("upload");
   const [videoUrl, setVideoUrl] = useState("");
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
@@ -386,7 +393,7 @@ export default function Home() {
           <span className="font-medium text-sm tracking-tight text-primary">ReelBrain</span>
         </div>
 
-        {/* Center: Monochrome 3-Mode Segmented Pill */}
+        {/* Center: Monochrome 4-Mode Segmented Pill */}
         <div className="flex items-center bg-neutral p-0.5 rounded-full border border-border">
           <button
             onClick={() => setAppMode("autopsy")}
@@ -397,6 +404,16 @@ export default function Home() {
             }`}
           >
             Autopsy
+          </button>
+          <button
+            onClick={() => setAppMode("brain")}
+            className={`px-3.5 py-1 rounded-full text-xs font-medium transition cursor-pointer ${
+              appMode === "brain"
+                ? "bg-surface text-primary border border-border shadow-none"
+                : "text-secondary hover:text-primary"
+            }`}
+          >
+            Brain
           </button>
           <button
             onClick={() => setAppMode("compare")}
@@ -979,10 +996,32 @@ export default function Home() {
           </div>
         )}
 
-        {/* MODE C: REMIX CONCEPT STUDIO */}
+        {/* MODE C: PERSISTENT BRAIN MEMORY & CREATION INTELLIGENCE */}
+        {appMode === "brain" && (
+          <BrainViewer
+            onLaunchRemix={(product, platform, durationS) => {
+              setRemixPrefill({
+                topic: product,
+                platform: platform as any,
+                durationS: durationS,
+              });
+              setAppMode("remix");
+            }}
+            onSelectVideoForAutopsy={(vidId) => {
+              setVideoId(vidId);
+              fetchPipelineData(vidId);
+              setAppMode("autopsy");
+            }}
+          />
+        )}
+
+        {/* MODE D: REMIX CONCEPT STUDIO */}
         {appMode === "remix" && (
           <RemixStudio
             sourceVideoId={pipelineData?.video_id || compareVideoIdA || "g1_product_ad"}
+            initialProductOrTopic={remixPrefill.topic}
+            initialPlatform={remixPrefill.platform}
+            initialDurationS={remixPrefill.durationS}
           />
         )}
       </main>

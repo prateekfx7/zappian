@@ -120,6 +120,10 @@
         }
       },
       "additionalProperties": false
+    },
+    "brain_intelligence": {
+      "type": ["object", "null"],
+      "description": "Cross-video intelligence recommendations infused from BrainMemoryEngine"
     }
   },
   "additionalProperties": false

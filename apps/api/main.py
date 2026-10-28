@@ -75,6 +75,7 @@ class RemixConceptRequest(BaseModel):
     goal: str = "conversions"
     tone: str = "energetic"
     custom_style_lock: str | None = None
+    use_brain_memory: bool = True
 
 
 class StatInput(BaseModel):
@@ -546,6 +547,7 @@ async def create_remix_concept(payload: RemixConceptRequest) -> dict[str, Any]:
         goal=payload.goal,
         tone=payload.tone,
         custom_style_lock=payload.custom_style_lock,
+        use_brain_memory=payload.use_brain_memory,
     )
 
     concept_file = CONCEPTS_DIR / f"{concept['concept_id']}.json"
@@ -634,7 +636,37 @@ async def export_concept_draft_video(concept_id: str) -> FileResponse:
     )
 
 
+# ---------------------------------------------------------
+# Brain Persistent Knowledge Base Routes
+# ---------------------------------------------------------
 
+@app.get("/v1/brain", tags=["Brain"])
+async def get_brain_memory() -> dict[str, Any]:
+    """Returns the persistent frame-by-frame memory metrics, categorized patterns, and indexed video registry."""
+    from workers.brain.memory import brain_memory
+    return brain_memory.get_brain_summary()
+
+
+@app.get("/v1/brain/recommendations", tags=["Brain"])
+async def get_brain_recommendations(
+    product: str,
+    platform: str = "reels",
+    duration_s: int = 30,
+    goal: str = "conversions",
+) -> dict[str, Any]:
+    """Synthesizes cross-video patterns across all clips in the Brain to recommend optimal hooks, rhythm, and style."""
+    from workers.brain.memory import brain_memory
+    return brain_memory.get_creation_recommendations(
+        product_or_topic=product, platform=platform, target_duration_s=duration_s, goal=goal
+    )
+
+
+@app.post("/v1/brain/sync", tags=["Brain"])
+async def sync_brain_memory() -> dict[str, Any]:
+    """Scans and indexes any unindexed historical video analyses into persistent brain memory."""
+    from workers.brain.memory import brain_memory
+    synced = brain_memory.sync_existing_analyses()
+    return {"status": "ok", "synced": synced, "total_videos": len(brain_memory.data.get("videos", {}))}
 
 
 if __name__ == "__main__":

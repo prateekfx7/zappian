@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "last_updated": "2026-10-28T11:08:22.888990+00:00",
+  "last_updated": "2026-10-28T15:39:54.237055+00:00",
   "videos": {
     "test_analysis_1911c0de": {
       "video_id": "test_analysis_1911c0de",
@@ -6067,6 +6067,181 @@
           "claim": "Depiction stimulates viewer empathy and grounds core value proposition"
         }
       ]
+    },
+    "7112104a-1934-4361-844b-883908c5c5b4": {
+      "video_id": "7112104a-1934-4361-844b-883908c5c5b4",
+      "indexed_at": "2026-10-28T11:14:43.512710+00:00",
+      "category": "saas_app",
+      "duration_s": 54.187,
+      "frame_count": 79,
+      "virality": {
+        "tier": "Tier-3 High Performer",
+        "views": 847372.0,
+        "likes": 35065.0,
+        "shares": 0.0,
+        "comments": 218.0,
+        "like_ratio": 4.14,
+        "share_ratio": 0.0,
+        "archetype": "High-Velocity Narrative Acceleration Hook",
+        "source": "ytdlp",
+        "social_metadata": {
+          "platform": "youtube",
+          "title": "3 Free Android Apps. BUT, Useful 😎",
+          "author": "mobiscrub",
+          "duration": 54
+        }
+      },
+      "scores": {
+        "hook": 86,
+        "retention": 85,
+        "emotion": 83,
+        "clarity": 83,
+        "cta": 76,
+        "composite": 83
+      },
+      "hook_dna": {
+        "type": "High-Velocity Narrative Acceleration Hook",
+        "technique": "Extreme close-up macro cut with rapid audio onset",
+        "first_3s_words": "If you're an android user, do not miss out on these apps.",
+        "opening_ocr": [],
+        "hold_score": 86
+      },
+      "pacing_dna": {
+        "cuts_count": 25,
+        "cuts_per_minute": 27.7,
+        "cut_rhythm_s": 2.17,
+        "silence_ratio": 0.01
+      },
+      "style_dna": {
+        "palette": [
+          "#91857d",
+          "#61503f",
+          "#605140"
+        ],
+        "lighting": "Balanced natural daylight key lighting with neutral contrast",
+        "motion": "Rapid dynamic multi-cut cadence"
+      },
+      "blueprint": [
+        {
+          "role": "hook",
+          "technique": "Extreme close-up macro cut with rapid audio onset",
+          "duration_ms": 2500
+        },
+        {
+          "role": "problem",
+          "technique": "Handheld visceral frustration framing",
+          "duration_ms": 21884
+        },
+        {
+          "role": "demo",
+          "technique": "Smooth tracking shot illustrating mechanism in action",
+          "duration_ms": 18965
+        },
+        {
+          "role": "cta",
+          "technique": "Hero product framing with friction-free direct action",
+          "duration_ms": 10838
+        }
+      ],
+      "why_it_works_claims": [
+        {
+          "category": "growth",
+          "claim": "Opening 2.5s achieves 86% hook strength via early sound and visual tension"
+        },
+        {
+          "category": "retention",
+          "claim": "Scene cut pacing (1 cut every 2.1s) maintains engagement"
+        },
+        {
+          "category": "emotion",
+          "claim": "Depiction stimulates viewer empathy and grounds core value proposition"
+        }
+      ]
+    },
+    "4dfbaea6-978f-4f70-9764-ef4249641948": {
+      "video_id": "4dfbaea6-978f-4f70-9764-ef4249641948",
+      "indexed_at": "2026-10-28T15:39:54.236709+00:00",
+      "category": "e_commerce",
+      "duration_s": 14.033,
+      "frame_count": 14,
+      "virality": {
+        "tier": "Tier-4 Organic Distribution",
+        "views": 0.0,
+        "likes": 0.0,
+        "shares": 0.0,
+        "comments": 0.0,
+        "like_ratio": 0.0,
+        "share_ratio": 0.0,
+        "archetype": "High-Entropy Emotional Suspense & Negative Curiosity Hook",
+        "source": "acoustic_heuristic",
+        "social_metadata": {}
+      },
+      "scores": {
+        "hook": 80,
+        "retention": 86,
+        "emotion": 90,
+        "clarity": 60,
+        "cta": 30,
+        "composite": 68
+      },
+      "hook_dna": {
+        "type": "High-Entropy Emotional Suspense & Negative Curiosity Hook",
+        "technique": "Extreme close-up macro cut with rapid audio onset",
+        "first_3s_words": "Introducing Fizzinga for the athlete's dreamers",
+        "opening_ocr": [],
+        "hold_score": 80
+      },
+      "pacing_dna": {
+        "cuts_count": 1,
+        "cuts_per_minute": 4.3,
+        "cut_rhythm_s": 14.03,
+        "silence_ratio": 0.0
+      },
+      "style_dna": {
+        "palette": [
+          "#c5c5c5",
+          "#c1c1c1",
+          "#c5c5c5"
+        ],
+        "lighting": "Bright high-key diffused lighting with high visual clarity",
+        "motion": "Stable deliberate medium-pacing cadence"
+      },
+      "blueprint": [
+        {
+          "role": "hook",
+          "technique": "Extreme close-up macro cut with rapid audio onset",
+          "duration_ms": 2500
+        },
+        {
+          "role": "problem",
+          "technique": "Handheld visceral frustration framing",
+          "duration_ms": 3814
+        },
+        {
+          "role": "demo",
+          "technique": "Smooth tracking shot illustrating mechanism in action",
+          "duration_ms": 4912
+        },
+        {
+          "role": "cta",
+          "technique": "Closing brand outro",
+          "duration_ms": 2807
+        }
+      ],
+      "why_it_works_claims": [
+        {
+          "category": "growth",
+          "claim": "Opening 2.5s achieves 80% hook strength via early sound and visual tension"
+        },
+        {
+          "category": "retention",
+          "claim": "Scene cut pacing (1 cut every 14.0s) maintains engagement"
+        },
+        {
+          "category": "emotion",
+          "claim": "Depiction stimulates viewer empathy and grounds core value proposition"
+        }
+      ]
     }
   },
   "categories": {
@@ -6115,7 +6290,8 @@
       "test_batch_713a2ab2",
       "test_batch_cdb6c9c4",
       "c347241a-29c7-4ae0-a04b-f0129ae6ff43",
-      "test_batch_c4365578"
+      "test_batch_c4365578",
+      "4dfbaea6-978f-4f70-9764-ef4249641948"
     ],
     "saas_app": [
       "b7db7ccf-c10b-4e25-a909-9364efec5beb",
@@ -6148,7 +6324,8 @@
       "test_batch_736717d7",
       "test_batch_6b5e3c85",
       "test_batch_0fce5780",
-      "test_batch_7ecb98d9"
+      "test_batch_7ecb98d9",
+      "7112104a-1934-4361-844b-883908c5c5b4"
     ],
     "creator_ugc": [],
     "lifestyle": [],
@@ -6156,25 +6333,6 @@
   },
   "patterns": {
     "hooks": [
-      {
-        "archetype": "High-Entropy Emotional Suspense & Negative Curiosity Hook",
-        "frequency": 27,
-        "avg_hook_score": 90.0,
-        "techniques": [
-          "Extreme close-up macro cut with rapid audio onset",
-          "High-Entropy Emotional Suspense & Negative Curiosity Hook"
-        ],
-        "recommended_for": "Fast-scroll feeds (TikTok & Instagram Reels)"
-      },
-      {
-        "archetype": "High-Velocity Narrative Acceleration Hook",
-        "frequency": 1,
-        "avg_hook_score": 90.0,
-        "techniques": [
-          "Extreme close-up macro cut with rapid audio onset"
-        ],
-        "recommended_for": "Fast-scroll feeds (TikTok & Instagram Reels)"
-      },
       {
         "archetype": "Direct Character & Situational Intrigue Hook",
         "frequency": 12,
@@ -6186,12 +6344,31 @@
         "recommended_for": "Fast-scroll feeds (TikTok & Instagram Reels)"
       },
       {
+        "archetype": "High-Entropy Emotional Suspense & Negative Curiosity Hook",
+        "frequency": 28,
+        "avg_hook_score": 89.6,
+        "techniques": [
+          "High-Entropy Emotional Suspense & Negative Curiosity Hook",
+          "Extreme close-up macro cut with rapid audio onset"
+        ],
+        "recommended_for": "Fast-scroll feeds (TikTok & Instagram Reels)"
+      },
+      {
+        "archetype": "High-Velocity Narrative Acceleration Hook",
+        "frequency": 2,
+        "avg_hook_score": 88.0,
+        "techniques": [
+          "Extreme close-up macro cut with rapid audio onset"
+        ],
+        "recommended_for": "Fast-scroll feeds (TikTok & Instagram Reels)"
+      },
+      {
         "archetype": "Micro-Cut Visual Shock",
         "frequency": 4,
         "avg_hook_score": 73.0,
         "techniques": [
-          "Extreme close-up macro cut with rapid audio onset",
-          "Opening visual setup"
+          "Opening visual setup",
+          "Extreme close-up macro cut with rapid audio onset"
         ],
         "recommended_for": "Fast-scroll feeds (TikTok & Instagram Reels)"
       },
@@ -6207,9 +6384,9 @@
     ],
     "pacing": {
       "avg_cuts_per_minute": 13.1,
-      "avg_cut_rhythm_s": 8.24,
+      "avg_cut_rhythm_s": 8.23,
       "optimal_silence_ratio": 0.02,
-      "recommendation": "Pace cuts every 8.24s (13.1 cuts/min) to maximize viewer momentum without disorientation."
+      "recommendation": "Pace cuts every 8.23s (13.1 cuts/min) to maximize viewer momentum without disorientation."
     },
     "styles": {
       "top_palette_accents": [
@@ -6230,8 +6407,8 @@
     "blueprints": [
       {
         "sequence": "Hook → Problem → Demo → Cta",
-        "occurrences": 75,
-        "avg_composite_score": 72.7
+        "occurrences": 77,
+        "avg_composite_score": 72.8
       }
     ],
     "mega_viral_hall_of_fame": [
@@ -6262,12 +6439,12 @@
     ]
   },
   "metrics": {
-    "total_videos": 75,
-    "total_frames_analyzed": 1509,
-    "total_views_analyzed": 2082670036.0,
-    "total_likes_analyzed": 49265388.0,
+    "total_videos": 77,
+    "total_frames_analyzed": 1602,
+    "total_views_analyzed": 2083517408.0,
+    "total_likes_analyzed": 49300453.0,
     "mega_viral_count": 2,
-    "avg_hook_score": 70.6,
+    "avg_hook_score": 70.9,
     "avg_retention_score": 86.3
   }
 }

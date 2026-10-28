@@ -20,20 +20,7 @@ from workers.media.processor import (
 )
 from workers.media.scenes import detect_scene_cuts, extract_keyframe_at_timestamp
 
-def get_storage_base() -> Path:
-    base = Path("storage")
-    try:
-        base.mkdir(parents=True, exist_ok=True)
-        test_f = base / ".write_test"
-        test_f.touch()
-        test_f.unlink(missing_ok=True)
-        return base
-    except OSError:
-        tmp_base = Path("/tmp/storage")
-        tmp_base.mkdir(parents=True, exist_ok=True)
-        return tmp_base
-
-STORAGE_BASE = get_storage_base()
+STORAGE_BASE = Path("storage")
 
 
 class PipelineState:

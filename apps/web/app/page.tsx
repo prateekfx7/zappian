@@ -349,18 +349,6 @@ export default function Home() {
       const likesNum = parseCount(knownLikes);
 
       if (sourceType === "upload" && selectedFile) {
-        // Vercel serverless request body has a strict 4.5 MB hard limit
-        const isServerlessVercel =
-          typeof window !== "undefined" &&
-          (window.location.hostname.includes("vercel.app") || window.location.protocol === "https:");
-        const maxVercelBytes = 4.5 * 1024 * 1024;
-        if (isServerlessVercel && selectedFile.size > maxVercelBytes) {
-          const sizeMB = (selectedFile.size / (1024 * 1024)).toFixed(1);
-          throw new Error(
-            `File size (${sizeMB} MB) exceeds Vercel's serverless function upload limit of 4.5 MB. Please switch to the "Paste Link" tab (YouTube, Instagram, or TikTok) for high-definition analysis without any file size limits!`
-          );
-        }
-
         const formData = new FormData();
         formData.append("file", selectedFile);
         formData.append("rights_confirmed", "true");
@@ -373,18 +361,8 @@ export default function Home() {
         });
 
         if (!response.ok) {
-          const rawText = await response.text().catch(() => "");
-          let errorDetail = `Upload failed (HTTP ${response.status})`;
-          try {
-            const errData = JSON.parse(rawText);
-            errorDetail = errData.detail || errData.message || errorDetail;
-          } catch {
-            if (rawText) {
-              const cleanText = rawText.replace(/<[^>]*>/g, " ").replace(/\s+/g, " ").trim();
-              if (cleanText) errorDetail = `${errorDetail}: ${cleanText.slice(0, 160)}`;
-            }
-          }
-          throw new Error(errorDetail);
+          const errData = await response.json().catch(() => ({ detail: "Upload failed" }));
+          throw new Error(errData.detail || "Upload rejected by media server.");
         }
 
         const data = await response.json();
@@ -404,18 +382,8 @@ export default function Home() {
         });
 
         if (!response.ok) {
-          const rawText = await response.text().catch(() => "");
-          let errorDetail = `Failed to queue URL (HTTP ${response.status})`;
-          try {
-            const errData = JSON.parse(rawText);
-            errorDetail = errData.detail || errData.message || errorDetail;
-          } catch {
-            if (rawText) {
-              const cleanText = rawText.replace(/<[^>]*>/g, " ").replace(/\s+/g, " ").trim();
-              if (cleanText) errorDetail = `${errorDetail}: ${cleanText.slice(0, 160)}`;
-            }
-          }
-          throw new Error(errorDetail);
+          const errData = await response.json().catch(() => ({ detail: "Failed to queue URL" }));
+          throw new Error(errData.detail || "Server rejected video URL request.");
         }
 
         const data = await response.json();
@@ -639,7 +607,7 @@ export default function Home() {
                               Drop video here, or <span className="underline">browse</span>
                             </div>
                             <p className="text-xs text-secondary">
-                              MP4, MOV, or WebM (up to 4.5 MB on cloud • paste link above for unlimited size)
+                              MP4, MOV, or WebM
                             </p>
                           </div>
                         ) : (

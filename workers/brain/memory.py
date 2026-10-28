@@ -13,17 +13,8 @@ from typing import Any
 
 logger = logging.getLogger("reelbrain.brain")
 
-def get_default_memory_path() -> Path:
-    tmp_path = Path("/tmp/storage/brain_memory.json")
-    if tmp_path.exists():
-        return tmp_path
-    bundled = Path("storage/brain_memory.json")
-    if bundled.exists():
-        return bundled
-    return tmp_path
-
 STORAGE_DIR = Path("storage")
-BRAIN_MEMORY_FILE = get_default_memory_path()
+BRAIN_MEMORY_FILE = STORAGE_DIR / "brain_memory.json"
 ANALYSES_DIR = STORAGE_DIR / "analyses"
 
 
@@ -33,23 +24,18 @@ class BrainMemoryEngine:
     across all uploaded videos, extracting cross-clip intelligence for new video generation.
     """
 
-    def __init__(self, memory_path: Path | None = None):
-        self.memory_path = memory_path or get_default_memory_path()
-        try:
-            self.memory_path.parent.mkdir(parents=True, exist_ok=True)
-        except OSError:
-            pass
+    def __init__(self, memory_path: Path = BRAIN_MEMORY_FILE):
+        self.memory_path = memory_path
+        self.memory_path.parent.mkdir(parents=True, exist_ok=True)
         self.data: dict[str, Any] = self._load()
 
     def _load(self) -> dict[str, Any]:
-        candidates = [self.memory_path, Path("storage/brain_memory.json"), Path("/tmp/storage/brain_memory.json")]
-        for candidate in candidates:
-            if candidate and candidate.exists():
-                try:
-                    with open(candidate, "r", encoding="utf-8") as f:
-                        return json.load(f)
-                except Exception as e:
-                    logger.debug(f"Failed to load candidate {candidate}: {e}")
+        if self.memory_path.exists():
+            try:
+                with open(self.memory_path, "r", encoding="utf-8") as f:
+                    return json.load(f)
+            except Exception as e:
+                logger.error(f"Failed to load brain memory file: {e}")
 
         # Default empty brain state
         return {
@@ -78,19 +64,11 @@ class BrainMemoryEngine:
         }
 
     def save(self) -> None:
-        """Persists brain state to memory path, with /tmp fallback if read-only."""
+        """Persists brain state to storage/brain_memory.json."""
         self.data["last_updated"] = datetime.now(UTC).isoformat()
-        targets = [self.memory_path, Path("/tmp/storage/brain_memory.json")]
         try:
-            for target in targets:
-                try:
-                    target.parent.mkdir(parents=True, exist_ok=True)
-                    with open(target, "w", encoding="utf-8") as f:
-                        json.dump(self.data, f, indent=2, ensure_ascii=False)
-                    self.memory_path = target
-                    return
-                except OSError as e:
-                    logger.debug(f"Could not persist to {target}: {e}")
+            with open(self.memory_path, "w", encoding="utf-8") as f:
+                json.dump(self.data, f, indent=2, ensure_ascii=False)
         except Exception as e:
             logger.error(f"Failed to persist brain memory: {e}")
 
@@ -374,15 +352,14 @@ class BrainMemoryEngine:
         self.data["patterns"]["blueprints"] = blueprint_patterns[:4]
 
     def sync_existing_analyses(self) -> int:
-        """Scans storage/analyses and /tmp/storage/analyses and indexes any unindexed pipeline_data.json files."""
-        candidate_dirs = [Path("storage/analyses"), Path("/tmp/storage/analyses")]
+        """Scans storage/analyses and indexes any unindexed pipeline_data.json files."""
+        if not ANALYSES_DIR.exists():
+            return 0
+
         synced = 0
-        for adir in candidate_dirs:
-            if not adir.exists():
+        for vid_dir in ANALYSES_DIR.iterdir():
+            if not vid_dir.is_dir():
                 continue
-            for vid_dir in adir.iterdir():
-                if not vid_dir.is_dir():
-                    continue
             pipe_file = vid_dir / "pipeline_data.json"
             if pipe_file.exists():
                 try:

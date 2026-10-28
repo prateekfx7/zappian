@@ -1,22 +1,9 @@
 import asyncio
 import json
-import logging
-import sys
 import uuid
 from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
-
-# Configure logger
-logger = logging.getLogger("reelbrain.api")
-
-# Ensure both local directory and monorepo root are on sys.path
-CURRENT_DIR = Path(__file__).resolve().parent
-ROOT_DIR = CURRENT_DIR.parent.parent
-
-for p in [str(CURRENT_DIR), str(ROOT_DIR)]:
-    if p not in sys.path:
-        sys.path.insert(0, p)
 
 from fastapi import (
     BackgroundTasks,
@@ -33,15 +20,7 @@ from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field
 from sse_starlette.sse import EventSourceResponse
 
-try:
-    from apps.api.config import settings
-except ImportError:
-    import config as api_config
-    settings = api_config.settings
-    sys.modules["apps"] = sys.modules.get("apps", type(sys)("apps"))
-    sys.modules["apps.api"] = sys.modules.get("apps.api", type(sys)("apps.api"))
-    sys.modules["apps.api.config"] = api_config
-
+from apps.api.config import settings
 from workers.pipeline import get_or_create_pipeline_state, run_media_pipeline
 
 app = FastAPI(
@@ -52,31 +31,17 @@ app = FastAPI(
     redoc_url="/redoc",
 )
 
-# CORS setup for Next.js web client and Vercel deployment domains
+# CORS setup for Next.js web client
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["http://localhost:3000", "http://127.0.0.1:3000"],
-    allow_origin_regex=r"https://.*\.vercel\.app|https://.*",
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
-# Storage directory resolution with /tmp fallback for serverless read-only environments
-def get_storage_dir() -> Path:
-    base = Path("storage")
-    try:
-        base.mkdir(parents=True, exist_ok=True)
-        test_file = base / ".write_test"
-        test_file.touch()
-        test_file.unlink(missing_ok=True)
-        return base
-    except OSError:
-        tmp_base = Path("/tmp/storage")
-        tmp_base.mkdir(parents=True, exist_ok=True)
-        return tmp_base
-
-STORAGE_DIR = get_storage_dir()
+# Local storage directories
+STORAGE_DIR = Path("storage")
 ORIGINALS_DIR = STORAGE_DIR / "originals"
 PROXIES_DIR = STORAGE_DIR / "proxies"
 FRAMES_DIR = STORAGE_DIR / "frames"
@@ -88,27 +53,10 @@ CONCEPTS_DIR = STORAGE_DIR / "concepts"
 DRAFTS_DIR = STORAGE_DIR / "drafts"
 
 for d in [ORIGINALS_DIR, PROXIES_DIR, FRAMES_DIR, THUMBS_DIR, AUDIO_DIR, ANALYSES_DIR, COMPARES_DIR, CONCEPTS_DIR, DRAFTS_DIR]:
-    try:
-        d.mkdir(parents=True, exist_ok=True)
-    except OSError:
-        pass
+    d.mkdir(parents=True, exist_ok=True)
 
 # Mount local storage for serving proxy videos and frame thumbnails to frontend
-try:
-    STORAGE_DIR.mkdir(parents=True, exist_ok=True)
-    app.mount("/storage", StaticFiles(directory=str(STORAGE_DIR)), name="storage")
-except Exception as e:
-    logger.warning(f"StaticFiles mount skipped or failed: {e}")
-
-from fastapi.responses import JSONResponse
-
-@app.exception_handler(Exception)
-async def global_exception_handler(request, exc):
-    logger.error(f"Unhandled error on {request.method} {request.url}: {exc}", exc_info=True)
-    return JSONResponse(
-        status_code=500,
-        content={"detail": f"Internal server error: {exc!s}"},
-    )
+app.mount("/storage", StaticFiles(directory="storage"), name="storage")
 
 
 class HealthResponse(BaseModel):
@@ -164,6 +112,10 @@ class VideoResponse(BaseModel):
     storage_key: str | None = None
     created_at: datetime
 
+
+import logging
+
+logger = logging.getLogger("reelbrain.api")
 
 ALLOWED_EXTENSIONS = {".mp4", ".mov", ".webm", ".mkv"}
 
@@ -369,65 +321,49 @@ async def create_video(
     payload: VideoCreateRequest,
     background_tasks: BackgroundTasks,
 ) -> VideoResponse:
-    try:
-        if not payload.rights_confirmed:
-            raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST,
-                detail="Rights confirmation is required. You must certify rights to analyze this video.",
-            )
-        video_id = str(uuid.uuid4())
-        state = get_or_create_pipeline_state(video_id)
+    if not payload.rights_confirmed:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Rights confirmation is required. You must certify rights to analyze this video.",
+        )
+    video_id = str(uuid.uuid4())
+    state = get_or_create_pipeline_state(video_id)
 
-        if payload.source_url and payload.source_url.strip():
-            clean_url = payload.source_url.strip()
-            state.update("ingest", 5, "Video link queued. Connecting to stream...")
+    if payload.source_url and payload.source_url.strip():
+        clean_url = payload.source_url.strip()
+        state.update("ingest", 5, "Video link queued. Connecting to stream...")
 
-            user_stats: list[dict[str, Any]] = []
-            now_iso = datetime.now(UTC).isoformat()
-            if payload.known_views is not None and payload.known_views > 0:
-                user_stats.append({"metric": "views", "value": payload.known_views, "source": "manual", "fetched_at": now_iso})
-            if payload.known_likes is not None and payload.known_likes > 0:
-                user_stats.append({"metric": "likes", "value": payload.known_likes, "source": "manual", "fetched_at": now_iso})
-            if payload.known_shares is not None and payload.known_shares > 0:
-                user_stats.append({"metric": "shares", "value": payload.known_shares, "source": "manual", "fetched_at": now_iso})
-            if payload.known_comments is not None and payload.known_comments > 0:
-                user_stats.append({"metric": "comments", "value": payload.known_comments, "source": "manual", "fetched_at": now_iso})
+        user_stats: list[dict[str, Any]] = []
+        now_iso = datetime.now(UTC).isoformat()
+        if payload.known_views is not None and payload.known_views > 0:
+            user_stats.append({"metric": "views", "value": payload.known_views, "source": "manual", "fetched_at": now_iso})
+        if payload.known_likes is not None and payload.known_likes > 0:
+            user_stats.append({"metric": "likes", "value": payload.known_likes, "source": "manual", "fetched_at": now_iso})
+        if payload.known_shares is not None and payload.known_shares > 0:
+            user_stats.append({"metric": "shares", "value": payload.known_shares, "source": "manual", "fetched_at": now_iso})
+        if payload.known_comments is not None and payload.known_comments > 0:
+            user_stats.append({"metric": "comments", "value": payload.known_comments, "source": "manual", "fetched_at": now_iso})
 
-            target_dir = ORIGINALS_DIR / video_id
-            target_dir.mkdir(parents=True, exist_ok=True)
-            try:
-                (target_dir / "queue.json").write_text(json.dumps({"url": clean_url, "user_stats": user_stats}))
-            except Exception:
-                pass
+        background_tasks.add_task(download_and_process_url_background, video_id, clean_url, user_stats=user_stats)
 
-            background_tasks.add_task(download_and_process_url_background, video_id, clean_url, user_stats=user_stats)
-
-            return VideoResponse(
-                id=video_id,
-                source_type=payload.source_type,
-                status="processing",
-                stage="ingest",
-                storage_key=f"urls/{video_id}",
-                created_at=datetime.now(UTC),
-            )
-
-        # Reservation for direct upload
         return VideoResponse(
             id=video_id,
             source_type=payload.source_type,
-            status="queued",
+            status="processing",
             stage="ingest",
-            storage_key=None,
+            storage_key=f"urls/{video_id}",
             created_at=datetime.now(UTC),
         )
-    except HTTPException:
-        raise
-    except Exception as e:
-        logger.error(f"Failed to queue video: {e}", exc_info=True)
-        raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=f"Server queue error: {e!s}",
-        )
+
+    # Reservation for direct upload
+    return VideoResponse(
+        id=video_id,
+        source_type=payload.source_type,
+        status="queued",
+        stage="ingest",
+        storage_key=None,
+        created_at=datetime.now(UTC),
+    )
 
 
 @app.post(
@@ -445,80 +381,70 @@ async def upload_video(
     known_shares: float | None = Form(None),
     known_comments: float | None = Form(None),
 ) -> VideoResponse:
-    try:
-        if not rights_confirmed:
-            raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST,
-                detail="Rights confirmation is required. You must certify rights to analyze this video.",
-            )
-
-        ext = Path(file.filename or "").suffix.lower()
-        if ext not in ALLOWED_EXTENSIONS:
-            raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST,
-                detail=f"Unsupported file extension '{ext}'. Allowed: {', '.join(sorted(ALLOWED_EXTENSIONS))}",
-            )
-
-        video_id = str(uuid.uuid4())
-        target_dir = ORIGINALS_DIR / video_id
-        target_dir.mkdir(parents=True, exist_ok=True)
-        safe_filename = Path(file.filename or "video.mp4").name
-        target_file = target_dir / safe_filename
-
-        max_bytes = settings.max_upload_size_mb * 1024 * 1024
-        size_bytes = 0
-
-        with target_file.open("wb") as buffer:
-            while chunk := await file.read(1024 * 1024):
-                size_bytes += len(chunk)
-                if size_bytes > max_bytes:
-                    buffer.close()
-                    target_file.unlink(missing_ok=True)
-                    raise HTTPException(
-                        status_code=status.HTTP_413_REQUEST_ENTITY_TOO_LARGE,
-                        detail=f"File exceeds maximum size limit of {settings.max_upload_size_mb} MB.",
-                    )
-                buffer.write(chunk)
-
-        initial_stats: list[dict[str, Any]] = []
-        now_iso = datetime.now(UTC).isoformat()
-        if known_views is not None and known_views > 0:
-            initial_stats.append({"metric": "views", "value": known_views, "source": "manual", "fetched_at": now_iso})
-        if known_likes is not None and known_likes > 0:
-            initial_stats.append({"metric": "likes", "value": known_likes, "source": "manual", "fetched_at": now_iso})
-        if known_shares is not None and known_shares > 0:
-            initial_stats.append({"metric": "shares", "value": known_shares, "source": "manual", "fetched_at": now_iso})
-        if known_comments is not None and known_comments > 0:
-            initial_stats.append({"metric": "comments", "value": known_comments, "source": "manual", "fetched_at": now_iso})
-
-        # Initialize state and schedule pipeline execution
-        state = get_or_create_pipeline_state(video_id)
-        state.update("ingest", 5, "Upload received. Scheduling media pipeline...")
-        background_tasks.add_task(
-            execute_pipeline_background,
-            video_id,
-            target_file,
-            initial_stats=initial_stats if initial_stats else None,
-        )
-
-        return VideoResponse(
-            id=video_id,
-            source_type="upload",
-            status="processing",
-            stage="ingest",
-            filename=file.filename,
-            size_bytes=size_bytes,
-            storage_key=f"originals/{video_id}/{target_file.name}",
-            created_at=datetime.now(UTC),
-        )
-    except HTTPException:
-        raise
-    except Exception as e:
-        logger.error(f"Failed to process video upload: {e}", exc_info=True)
+    if not rights_confirmed:
         raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=f"Server upload error: {e!s}",
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Rights confirmation is required. You must certify rights to analyze this video.",
         )
+
+    ext = Path(file.filename or "").suffix.lower()
+    if ext not in ALLOWED_EXTENSIONS:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=f"Unsupported file extension '{ext}'. Allowed: {', '.join(sorted(ALLOWED_EXTENSIONS))}",
+        )
+
+    video_id = str(uuid.uuid4())
+    target_dir = ORIGINALS_DIR / video_id
+    target_dir.mkdir(parents=True, exist_ok=True)
+    target_file = target_dir / (file.filename or f"video{ext}")
+
+    max_bytes = settings.max_upload_size_mb * 1024 * 1024
+    size_bytes = 0
+
+    with target_file.open("wb") as buffer:
+        while chunk := await file.read(1024 * 1024):
+            size_bytes += len(chunk)
+            if size_bytes > max_bytes:
+                buffer.close()
+                target_file.unlink(missing_ok=True)
+                raise HTTPException(
+                    status_code=status.HTTP_413_REQUEST_ENTITY_TOO_LARGE,
+                    detail=f"File exceeds maximum size limit of {settings.max_upload_size_mb} MB.",
+                )
+            buffer.write(chunk)
+
+    initial_stats: list[dict[str, Any]] = []
+    now_iso = datetime.now(UTC).isoformat()
+    if known_views is not None and known_views > 0:
+        initial_stats.append({"metric": "views", "value": known_views, "source": "manual", "fetched_at": now_iso})
+    if known_likes is not None and known_likes > 0:
+        initial_stats.append({"metric": "likes", "value": known_likes, "source": "manual", "fetched_at": now_iso})
+    if known_shares is not None and known_shares > 0:
+        initial_stats.append({"metric": "shares", "value": known_shares, "source": "manual", "fetched_at": now_iso})
+    if known_comments is not None and known_comments > 0:
+        initial_stats.append({"metric": "comments", "value": known_comments, "source": "manual", "fetched_at": now_iso})
+
+    # Initialize state and schedule pipeline execution
+    state = get_or_create_pipeline_state(video_id)
+    state.update("ingest", 5, "Upload received. Scheduling media pipeline...")
+    background_tasks.add_task(
+        execute_pipeline_background,
+        video_id,
+        target_file,
+        initial_stats=initial_stats if initial_stats else None,
+    )
+
+    return VideoResponse(
+        id=video_id,
+        source_type="upload",
+        status="processing",
+        stage="ingest",
+        filename=file.filename,
+        size_bytes=size_bytes,
+        storage_key=f"originals/{video_id}/{target_file.name}",
+        created_at=datetime.now(UTC),
+    )
 
 
 @app.get("/v1/videos/{video_id}", response_model=VideoResponse, tags=["Videos"])
@@ -539,36 +465,6 @@ async def get_video(video_id: str) -> VideoResponse:
 async def stream_video_events(video_id: str):
     """Server-Sent Events (SSE) stream for real-time stage progress."""
     state = get_or_create_pipeline_state(video_id)
-    cache_file = ANALYSES_DIR / video_id / "pipeline_data.json"
-
-    # If already finished and cached on disk, mark state ready immediately
-    if cache_file.exists():
-        state.update("ready", 100, "Autopsy analysis and evidence validation complete.")
-    elif state.stage in ("queued", "ingest"):
-        # Auto-recover pipeline execution in serverless environments where BackgroundTasks may freeze
-        target_dir = ORIGINALS_DIR / video_id
-        if target_dir.exists():
-            video_candidates = [f for f in target_dir.glob("*.*") if f.name != "queue.json"]
-            queue_file = target_dir / "queue.json"
-            if video_candidates and state.stage == "queued":
-                asyncio.create_task(
-                    asyncio.to_thread(execute_pipeline_background, video_id, video_candidates[0])
-                )
-            elif queue_file.exists() and not video_candidates:
-                try:
-                    q_data = json.loads(queue_file.read_text(encoding="utf-8"))
-                    url = q_data.get("url", "")
-                    if url:
-                        asyncio.create_task(
-                            asyncio.to_thread(
-                                download_and_process_url_background,
-                                video_id,
-                                url,
-                                q_data.get("user_stats"),
-                            )
-                        )
-                except Exception:
-                    pass
 
     async def event_generator():
         # First send current state immediately
@@ -599,7 +495,7 @@ async def stream_video_events(video_id: str):
                     if evt.get("stage") in ("ready", "failed"):
                         break
                 except TimeoutError:
-                    # Send keep-alive comment to prevent proxy timeouts
+                    # Send keep-alive comment
                     yield {"comment": "ping"}
                     if state.stage in ("ready", "failed"):
                         break

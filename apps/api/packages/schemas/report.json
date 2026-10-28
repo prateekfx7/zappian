@@ -159,8 +159,7 @@
         "source": { "type": "string" }
       },
       "additionalProperties": true
-    },
-    "evidence_coverage_pct": { "type": "number" }
+    }
   },
   "additionalProperties": false
 }

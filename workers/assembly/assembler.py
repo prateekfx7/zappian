@@ -14,7 +14,7 @@ from workers.media.processor import MediaProcessingError, probe_video, run_comma
 
 
 def probe_audio_duration(audio_path: Path) -> float:
-    """Probe duration of an audio file in seconds via ffprobe or wave fallback."""
+    """Probe duration of an audio file in seconds via ffprobe."""
     cmd = [
         "ffprobe",
         "-v",
@@ -25,27 +25,9 @@ def probe_audio_duration(audio_path: Path) -> float:
         "json",
         str(audio_path),
     ]
-    try:
-        res = run_command_safe(cmd, timeout_s=15.0)
-        data = json.loads(res.stdout)
-        dur = float(data.get("format", {}).get("duration", 0.0))
-        if dur > 0:
-            return dur
-    except Exception:
-        pass
-
-    import wave
-
-    try:
-        with wave.open(str(audio_path), "rb") as wf:
-            frames = wf.getnframes()
-            rate = wf.getframerate()
-            if rate > 0:
-                return float(frames) / float(rate)
-    except Exception:
-        pass
-
-    return 0.0
+    res = run_command_safe(cmd, timeout_s=15.0)
+    data = json.loads(res.stdout)
+    return float(data.get("format", {}).get("duration", 0.0))
 
 
 def assemble_draft_video(

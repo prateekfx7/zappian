@@ -28,39 +28,34 @@ def transcribe_audio(
 
     try:
         from faster_whisper import WhisperModel
-        model = WhisperModel(model_size, device=device, compute_type=compute_type)
-        segments, info = model.transcribe(
-            str(audio_path), word_timestamps=True, beam_size=1
-        )
+    except ImportError as e:
+        raise RuntimeError("faster-whisper package is not installed.") from e
 
-        words_list: list[dict[str, Any]] = []
-        text_segments: list[str] = []
+    model = WhisperModel(model_size, device=device, compute_type=compute_type)
+    segments, info = model.transcribe(
+        str(audio_path), word_timestamps=True, beam_size=1
+    )
 
-        for segment in segments:
-            text_segments.append(segment.text.strip())
-            if segment.words:
-                for w in segment.words:
-                    cleaned_word = w.word.strip()
-                    if cleaned_word:
-                        words_list.append(
-                            {
-                                "w": cleaned_word,
-                                "start_ms": int(w.start * 1000),
-                                "end_ms": int(w.end * 1000),
-                            }
-                        )
+    words_list: list[dict[str, Any]] = []
+    text_segments: list[str] = []
 
-        return {
-            "language": info.language if hasattr(info, "language") else "en",
-            "duration_s": round(info.duration, 2) if hasattr(info, "duration") else 0.0,
-            "text": " ".join(text_segments),
-            "words": words_list,
-        }
-    except Exception:
-        # Graceful fallback when whisper is unavailable in serverless environments
-        return {
-            "language": "en",
-            "duration_s": 0.0,
-            "text": "",
-            "words": [],
-        }
+    for segment in segments:
+        text_segments.append(segment.text.strip())
+        if segment.words:
+            for w in segment.words:
+                cleaned_word = w.word.strip()
+                if cleaned_word:
+                    words_list.append(
+                        {
+                            "w": cleaned_word,
+                            "start_ms": int(w.start * 1000),
+                            "end_ms": int(w.end * 1000),
+                        }
+                    )
+
+    return {
+        "language": info.language if hasattr(info, "language") else "en",
+        "duration_s": round(info.duration, 2) if hasattr(info, "duration") else 0.0,
+        "text": " ".join(text_segments),
+        "words": words_list,
+    }

@@ -6,13 +6,8 @@ Per architecture.md stage 5 (audio_features).
 from pathlib import Path
 from typing import Any
 
-import wave
 import numpy as np
-
-try:
-    import soundfile as sf
-except Exception:
-    sf = None
+import soundfile as sf
 
 
 def analyze_audio_features(wav_path: Path) -> dict[str, Any]:
@@ -26,40 +21,9 @@ def analyze_audio_features(wav_path: Path) -> dict[str, Any]:
     if not wav_path.exists():
         raise FileNotFoundError(f"Audio file does not exist: {wav_path}")
 
-    data = None
-    samplerate = 16000
-
-    if sf is not None:
-        try:
-            raw_data, samplerate = sf.read(str(wav_path))
-            if len(raw_data.shape) > 1:
-                raw_data = np.mean(raw_data, axis=1)
-            data = raw_data
-        except Exception:
-            data = None
-
-    if data is None:
-        try:
-            with wave.open(str(wav_path), "rb") as wf:
-                samplerate = wf.getframerate()
-                n_frames = wf.getnframes()
-                raw_bytes = wf.readframes(n_frames)
-                n_channels = wf.getnchannels()
-                sampwidth = wf.getsampwidth()
-                if sampwidth == 2:
-                    raw_data = np.frombuffer(raw_bytes, dtype=np.int16).astype(np.float32) / 32768.0
-                else:
-                    raw_data = np.frombuffer(raw_bytes, dtype=np.int8).astype(np.float32) / 128.0
-                if n_channels > 1:
-                    raw_data = raw_data.reshape(-1, n_channels).mean(axis=1)
-                data = raw_data
-        except Exception:
-            return {
-                "duration_s": 0.0,
-                "mean_energy": 0.0,
-                "silence_gaps": [],
-                "energy_curve": [],
-            }
+    data, samplerate = sf.read(str(wav_path))
+    if len(data.shape) > 1:
+        data = np.mean(data, axis=1)
 
     duration_s = len(data) / float(samplerate)
     if duration_s <= 0:

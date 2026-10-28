@@ -11,22 +11,9 @@ import subprocess
 import uuid
 from pathlib import Path
 
-def get_storage_dir() -> Path:
-    base = Path("storage")
-    try:
-        base.mkdir(parents=True, exist_ok=True)
-        return base
-    except OSError:
-        tmp_base = Path("/tmp/storage")
-        tmp_base.mkdir(parents=True, exist_ok=True)
-        return tmp_base
-
-STORAGE_DIR = get_storage_dir()
+STORAGE_DIR = Path("storage")
 DRAFTS_DIR = STORAGE_DIR / "drafts"
-try:
-    DRAFTS_DIR.mkdir(parents=True, exist_ok=True)
-except OSError:
-    pass
+DRAFTS_DIR.mkdir(parents=True, exist_ok=True)
 
 
 class LocalTTSProvider:

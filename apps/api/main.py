@@ -393,6 +393,13 @@ async def create_video(
             if payload.known_comments is not None and payload.known_comments > 0:
                 user_stats.append({"metric": "comments", "value": payload.known_comments, "source": "manual", "fetched_at": now_iso})
 
+            target_dir = ORIGINALS_DIR / video_id
+            target_dir.mkdir(parents=True, exist_ok=True)
+            try:
+                (target_dir / "queue.json").write_text(json.dumps({"url": clean_url, "user_stats": user_stats}))
+            except Exception:
+                pass
+
             background_tasks.add_task(download_and_process_url_background, video_id, clean_url, user_stats=user_stats)
 
             return VideoResponse(
@@ -532,6 +539,36 @@ async def get_video(video_id: str) -> VideoResponse:
 async def stream_video_events(video_id: str):
     """Server-Sent Events (SSE) stream for real-time stage progress."""
     state = get_or_create_pipeline_state(video_id)
+    cache_file = ANALYSES_DIR / video_id / "pipeline_data.json"
+
+    # If already finished and cached on disk, mark state ready immediately
+    if cache_file.exists():
+        state.update("ready", 100, "Autopsy analysis and evidence validation complete.")
+    elif state.stage in ("queued", "ingest"):
+        # Auto-recover pipeline execution in serverless environments where BackgroundTasks may freeze
+        target_dir = ORIGINALS_DIR / video_id
+        if target_dir.exists():
+            video_candidates = [f for f in target_dir.glob("*.*") if f.name != "queue.json"]
+            queue_file = target_dir / "queue.json"
+            if video_candidates and state.stage == "queued":
+                asyncio.create_task(
+                    asyncio.to_thread(execute_pipeline_background, video_id, video_candidates[0])
+                )
+            elif queue_file.exists() and not video_candidates:
+                try:
+                    q_data = json.loads(queue_file.read_text(encoding="utf-8"))
+                    url = q_data.get("url", "")
+                    if url:
+                        asyncio.create_task(
+                            asyncio.to_thread(
+                                download_and_process_url_background,
+                                video_id,
+                                url,
+                                q_data.get("user_stats"),
+                            )
+                        )
+                except Exception:
+                    pass
 
     async def event_generator():
         # First send current state immediately
@@ -562,7 +599,7 @@ async def stream_video_events(video_id: str):
                     if evt.get("stage") in ("ready", "failed"):
                         break
                 except TimeoutError:
-                    # Send keep-alive comment
+                    # Send keep-alive comment to prevent proxy timeouts
                     yield {"comment": "ping"}
                     if state.stage in ("ready", "failed"):
                         break

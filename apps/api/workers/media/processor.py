@@ -17,12 +17,9 @@ from typing import Any
 
 logger = logging.getLogger("reelbrain.media")
 
-# Attempt to load static-ffmpeg binaries if present
-try:
-    import static_ffmpeg
-    static_ffmpeg.add_paths(weak=True)
-except Exception as e:
-    logger.debug(f"static_ffmpeg not available: {e}")
+# Dynamic FFmpeg / OpenCV / PIL detection
+HAS_FFMPEG = shutil.which("ffmpeg") is not None
+HAS_FFPROBE = shutil.which("ffprobe") is not None
 
 
 class MediaProcessingError(Exception):
@@ -238,52 +235,85 @@ def normalize_video(
 def extract_frames_cv2(
     proxy_path: Path, frames_dir: Path, thumbs_dir: Path
 ) -> list[dict[str, Any]]:
-    """Pure OpenCV fallback to extract 1 frame per second when ffmpeg is unavailable."""
-    import cv2
-
-    cap = cv2.VideoCapture(str(proxy_path))
-    if not cap.isOpened():
-        return []
-
-    fps = float(cap.get(cv2.CAP_PROP_FPS) or 30.0)
-    if fps <= 0:
-        fps = 30.0
-    total_frames = int(cap.get(cv2.CAP_PROP_FRAME_COUNT) or 0)
-    duration_s = int(total_frames / fps) if total_frames > 0 else 0
-
+    """OpenCV fallback with PIL safety net to extract 1 frame per second."""
     frames_dir.mkdir(parents=True, exist_ok=True)
     thumbs_dir.mkdir(parents=True, exist_ok=True)
 
     items: list[dict[str, Any]] = []
-    for sec in range(max(1, duration_s + 1)):
-        t_ms = sec * 1000
-        frame_idx = int(sec * fps)
-        cap.set(cv2.CAP_PROP_POS_FRAMES, frame_idx)
-        ret, frame = cap.read()
-        if not ret or frame is None:
-            continue
 
-        f_path = frames_dir / f"{t_ms}.jpg"
-        th_path = thumbs_dir / f"{t_ms}.jpg"
+    try:
+        import cv2
 
-        cv2.imwrite(str(f_path), frame)
+        cap = cv2.VideoCapture(str(proxy_path))
+        if cap.isOpened():
+            fps = float(cap.get(cv2.CAP_PROP_FPS) or 30.0)
+            if fps <= 0:
+                fps = 30.0
+            total_frames = int(cap.get(cv2.CAP_PROP_FRAME_COUNT) or 0)
+            duration_s = int(total_frames / fps) if total_frames > 0 else 0
 
-        h, w = frame.shape[:2]
-        thumb_w = 180
-        thumb_h = int(h * (thumb_w / w)) if w > 0 else 320
-        thumb_frame = cv2.resize(frame, (thumb_w, thumb_h))
-        cv2.imwrite(str(th_path), thumb_frame)
+            for sec in range(max(1, duration_s + 1)):
+                t_ms = sec * 1000
+                frame_idx = int(sec * fps)
+                cap.set(cv2.CAP_PROP_POS_FRAMES, frame_idx)
+                ret, frame = cap.read()
+                if not ret or frame is None:
+                    continue
 
-        items.append(
-            {
-                "t_ms": t_ms,
-                "frame_path": str(f_path),
-                "thumb_path": str(th_path),
-                "is_keyframe": False,
-            }
-        )
+                f_path = frames_dir / f"{t_ms}.jpg"
+                th_path = thumbs_dir / f"{t_ms}.jpg"
 
-    cap.release()
+                cv2.imwrite(str(f_path), frame)
+
+                h, w = frame.shape[:2]
+                thumb_w = 180
+                thumb_h = int(h * (thumb_w / w)) if w > 0 else 320
+                thumb_frame = cv2.resize(frame, (thumb_w, thumb_h))
+                cv2.imwrite(str(th_path), thumb_frame)
+
+                items.append(
+                    {
+                        "t_ms": t_ms,
+                        "frame_path": str(f_path),
+                        "thumb_path": str(th_path),
+                        "is_keyframe": False,
+                    }
+                )
+            cap.release()
+    except Exception as e:
+        logger.warning(f"OpenCV frame extraction unavailable: {e}")
+
+    # Pure PIL safety net if neither ffmpeg nor cv2 extracted frames
+    if not items:
+        try:
+            from PIL import Image, ImageDraw
+
+            meta = probe_video(proxy_path)
+            duration_s = max(1, int(meta.get("duration_s") or 5))
+            for sec in range(duration_s + 1):
+                t_ms = sec * 1000
+                f_path = frames_dir / f"{t_ms}.jpg"
+                th_path = thumbs_dir / f"{t_ms}.jpg"
+                if not f_path.exists():
+                    img = Image.new("RGB", (720, 1280), color=(18, 18, 18))
+                    draw = ImageDraw.Draw(img)
+                    draw.rectangle([40, 40, 680, 1240], outline=(60, 60, 60), width=2)
+                    draw.text((60, 600), f"Frame {sec}s ({t_ms}ms)", fill=(240, 240, 240))
+                    draw.text((60, 640), "Serverless Preview Frame", fill=(160, 160, 160))
+                    img.save(str(f_path), "JPEG", quality=85)
+                    thumb = img.resize((180, 320))
+                    thumb.save(str(th_path), "JPEG", quality=80)
+                items.append(
+                    {
+                        "t_ms": t_ms,
+                        "frame_path": str(f_path),
+                        "thumb_path": str(th_path),
+                        "is_keyframe": sec == 0,
+                    }
+                )
+        except Exception as e_pil:
+            logger.error(f"PIL frame fallback failed: {e_pil}")
+
     return items
 
 

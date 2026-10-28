@@ -10,10 +10,13 @@ import {
   Zap,
   Copy,
   Check,
-  ArrowRight,
-  Terminal,
-  Activity,
+  Cpu,
   Layers,
+  ShieldCheck,
+  Volume2,
+  Video,
+  Eye,
+  Sliders,
 } from "lucide-react";
 import { API_BASE_URL } from "../lib/api";
 
@@ -58,142 +61,226 @@ export function SystemSpecs() {
   };
 
   return (
-    <div className="max-w-4xl mx-auto space-y-10 animate-fade-in pb-16">
-      {/* 1. Direct Hero (2 Lines) */}
+    <div className="max-w-4xl mx-auto space-y-12 animate-fade-in pb-20">
+      {/* 1. Header & Live Status */}
       <div className="border-b border-border pb-6 space-y-2">
         <div className="flex items-center justify-between">
           <span className="font-mono text-xs uppercase tracking-wider text-secondary">
-            ReelBrain • System &amp; API 1-Pager
+            ReelBrain • System Architecture &amp; AI Model Blueprint
           </span>
           <div className="flex items-center gap-2 font-mono text-xs text-secondary">
             <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-            <span className="text-primary font-medium">Live Stack</span>
+            <span className="text-primary font-medium">Stack Active</span>
             <span>•</span>
             <span>{brainStats.videos} Videos Indexed</span>
           </div>
         </div>
         <h1 className="text-2xl md:text-3xl font-normal tracking-tight text-primary">
-          What is ReelBrain, how does it work, and how to use the API.
+          What models are we using, and how does everything work?
         </h1>
         <p className="text-xs md:text-sm text-secondary leading-relaxed max-w-2xl">
-          ReelBrain takes any viral reel or TikTok, analyzes why it worked frame by frame,
-          and generates 100% original new videos using that exact retention blueprint.
+          A definitive breakdown of the exact AI models and algorithms powering video analysis,
+          remix script generation, idea synthesis, voice, and video rendering.
         </p>
       </div>
 
-      {/* 2. How It Works (3 Steps) */}
-      <div className="space-y-3">
-        <span className="text-xs font-mono uppercase tracking-wider text-secondary block">
-          01 • How It Works
-        </span>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-          <div className="p-4 rounded-md border border-border bg-surface space-y-1.5">
-            <div className="w-6 h-6 rounded bg-neutral border border-border flex items-center justify-center font-mono text-xs text-primary font-medium">
-              1
+      {/* 2. THE AI MODEL MATRIX: WHICH MODEL DOES WHAT */}
+      <div className="space-y-4">
+        <div className="flex items-center justify-between">
+          <span className="text-xs font-mono uppercase tracking-wider text-secondary">
+            01 • The AI Model Matrix (Which Model Does What)
+          </span>
+          <span className="text-[11px] font-mono text-secondary">
+            Analysis • Remix • Generation • Defense
+          </span>
+        </div>
+
+        <div className="space-y-4">
+          {/* CATEGORY A: ANALYSING (THE AUTOPSY) */}
+          <div className="p-5 rounded-md border border-border bg-surface space-y-4">
+            <div className="flex items-center gap-2 pb-2 border-b border-border/70">
+              <Film className="w-4 h-4 text-primary" />
+              <h3 className="text-sm font-medium text-primary">
+                A. Video Analysing (Autopsy &amp; Forensics)
+              </h3>
             </div>
-            <h3 className="text-sm font-medium text-primary">Paste Link or Upload</h3>
-            <p className="text-xs text-secondary leading-relaxed">
-              Drop any TikTok, Instagram Reel, or YouTube Shorts link. The system downloads the video
-              and extracts true view/like counts.
-            </p>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs">
+              {/* Model 1 */}
+              <div className="p-3 rounded border border-border bg-neutral/40 space-y-1.5">
+                <div className="flex items-center justify-between">
+                  <span className="font-medium text-primary">Voice &amp; Speech Timing</span>
+                  <span className="font-mono text-[10px] bg-surface px-1.5 py-0.5 rounded border border-border text-primary font-medium">
+                    OpenAI Whisper (faster-whisper)
+                  </span>
+                </div>
+                <p className="text-secondary leading-relaxed text-[11px]">
+                  <strong>How it works:</strong> Transcribes spoken audio with <em>exact millisecond start and end timestamps</em> for every word. Calculates speech rate (words per minute) and flags dead-air pauses (&gt;1.5s) where viewers swipe away.
+                </p>
+              </div>
+
+              {/* Model 2 */}
+              <div className="p-3 rounded border border-border bg-neutral/40 space-y-1.5">
+                <div className="flex items-center justify-between">
+                  <span className="font-medium text-primary">Frame &amp; Scene Decomposition</span>
+                  <span className="font-mono text-[10px] bg-surface px-1.5 py-0.5 rounded border border-border text-primary font-medium">
+                    OpenCV (`cv2`) + PySceneDetect
+                  </span>
+                </div>
+                <p className="text-secondary leading-relaxed text-[11px]">
+                  <strong>How it works:</strong> Extracts 1 fps body frames and 4 fps high-frequency frames during the first 3 seconds (the hook window). Pinpoints hard scene cuts using content-aware difference algorithms and clusters dominant color palettes.
+                </p>
+              </div>
+
+              {/* Model 3 */}
+              <div className="p-3 rounded border border-border bg-neutral/40 space-y-1.5">
+                <div className="flex items-center justify-between">
+                  <span className="font-medium text-primary">On-Screen Text Detection</span>
+                  <span className="font-mono text-[10px] bg-surface px-1.5 py-0.5 rounded border border-border text-primary font-medium">
+                    PaddleOCR (PP-OCRv4)
+                  </span>
+                </div>
+                <p className="text-secondary leading-relaxed text-[11px]">
+                  <strong>How it works:</strong> Scans keyframes to detect text bounding boxes, headlines, stickers, and subtitles. Evaluates visual cognitive load and confirms whether hook captions are present.
+                </p>
+              </div>
+
+              {/* Model 4 */}
+              <div className="p-3 rounded border border-border bg-neutral/40 space-y-1.5">
+                <div className="flex items-center justify-between">
+                  <span className="font-medium text-primary">Multimodal Frame Reasoning</span>
+                  <span className="font-mono text-[10px] bg-surface px-1.5 py-0.5 rounded border border-border text-primary font-medium">
+                    Qwen2.5-VL / Claude 3.5 Sonnet
+                  </span>
+                </div>
+                <p className="text-secondary leading-relaxed text-[11px]">
+                  <strong>How it works:</strong> Evaluates camera movements (e.g. macro push, whip pan), subject actions, viewer emotions, and retention risk factors across segments.
+                </p>
+              </div>
+            </div>
           </div>
 
-          <div className="p-4 rounded-md border border-border bg-surface space-y-1.5">
-            <div className="w-6 h-6 rounded bg-neutral border border-border flex items-center justify-center font-mono text-xs text-primary font-medium">
-              2
+          {/* CATEGORY B: REMIXING & IDEA GENERATION */}
+          <div className="p-5 rounded-md border border-border bg-surface space-y-4">
+            <div className="flex items-center gap-2 pb-2 border-b border-border/70">
+              <Sparkles className="w-4 h-4 text-primary" />
+              <h3 className="text-sm font-medium text-primary">
+                B. Remixing &amp; Idea Generation
+              </h3>
             </div>
-            <h3 className="text-sm font-medium text-primary">Frame-by-Frame Autopsy</h3>
-            <p className="text-xs text-secondary leading-relaxed">
-              AI checks the opening 3-second hook speed, voice cadence, silence gaps, and scene cuts
-              to generate an empirical retention score (0–100).
-            </p>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs">
+              {/* Remix Model 1 */}
+              <div className="p-3 rounded border border-border bg-neutral/40 space-y-1.5">
+                <div className="flex items-center justify-between">
+                  <span className="font-medium text-primary">3 Ranked Hooks Synthesis</span>
+                  <span className="font-mono text-[10px] bg-surface px-1.5 py-0.5 rounded border border-border text-primary font-medium">
+                    Qwen 2.5 7B / Claude 3.5
+                  </span>
+                </div>
+                <p className="text-secondary leading-relaxed text-[11px]">
+                  <strong>How it works:</strong> Takes the winning hook archetype from the Brain memory (e.g. <em>High-Velocity Narrative Acceleration</em> or <em>Negative Curiosity</em>), customizes it to your product, and estimates first-3-second hold rates.
+                </p>
+              </div>
+
+              {/* Remix Model 2 */}
+              <div className="p-3 rounded border border-border bg-neutral/40 space-y-1.5">
+                <div className="flex items-center justify-between">
+                  <span className="font-medium text-primary">Continuous Voiceover Script</span>
+                  <span className="font-mono text-[10px] bg-surface px-1.5 py-0.5 rounded border border-border text-primary font-medium">
+                    Qwen 2.5 7B / Claude 3.5
+                  </span>
+                </div>
+                <p className="text-secondary leading-relaxed text-[11px]">
+                  <strong>How it works:</strong> Adheres strictly to the source video&apos;s pacing rhythm. Writes a <strong>single continuous flowing paragraph</strong> with zero section headers or robotic markers.
+                </p>
+              </div>
+
+              {/* Remix Model 3 */}
+              <div className="p-3 rounded border border-border bg-neutral/40 space-y-1.5">
+                <div className="flex items-center justify-between">
+                  <span className="font-medium text-primary">Shot Prompts &amp; Style Lock</span>
+                  <span className="font-mono text-[10px] bg-surface px-1.5 py-0.5 rounded border border-border text-primary font-medium">
+                    Prompt Engineering Engine
+                  </span>
+                </div>
+                <p className="text-secondary leading-relaxed text-[11px]">
+                  <strong>How it works:</strong> Breaks the script into 3-second shots and appends an enforced <em>Style Lock</em> (35mm shallow depth of field, directional studio light, minimal palette) to keep visual generation cohesive.
+                </p>
+              </div>
+
+              {/* Remix Model 4 */}
+              <div className="p-3 rounded border border-border bg-neutral/40 space-y-1.5">
+                <div className="flex items-center justify-between">
+                  <span className="font-medium text-primary">Originality &amp; Plagiarism Guard</span>
+                  <span className="font-mono text-[10px] bg-surface px-1.5 py-0.5 rounded border border-border text-primary font-medium">
+                    5-Gram Token Auditor
+                  </span>
+                </div>
+                <p className="text-secondary leading-relaxed text-[11px]">
+                  <strong>How it works:</strong> Calculates n-gram overlap against the original video to guarantee &lt;10% text overlap and &lt;8 consecutive shared words, ensuring 100% legal originality.
+                </p>
+              </div>
+            </div>
           </div>
 
-          <div className="p-4 rounded-md border border-border bg-surface space-y-1.5">
-            <div className="w-6 h-6 rounded bg-neutral border border-border flex items-center justify-center font-mono text-xs text-primary font-medium">
-              3
+          {/* CATEGORY C: OTHER THINGS (VOICE, VIDEO & MEMORY) */}
+          <div className="p-5 rounded-md border border-border bg-surface space-y-4">
+            <div className="flex items-center gap-2 pb-2 border-b border-border/70">
+              <Zap className="w-4 h-4 text-primary" />
+              <h3 className="text-sm font-medium text-primary">
+                C. Other Capabilities (Voice, Video &amp; Memory)
+              </h3>
             </div>
-            <h3 className="text-sm font-medium text-primary">Remix into New Video</h3>
-            <p className="text-xs text-secondary leading-relaxed">
-              Enter your product or topic. It reuses the winning rhythm to write 3 hooks, a continuous
-              voiceover script, and shot-by-shot prompts.
-            </p>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-3 text-xs">
+              {/* Other 1 */}
+              <div className="p-3 rounded border border-border bg-neutral/40 space-y-1.5">
+                <div className="flex items-center justify-between">
+                  <span className="font-medium text-primary">Voiceover (TTS)</span>
+                  <span className="font-mono text-[10px] bg-surface px-1.5 py-0.5 rounded border border-border text-primary font-medium">
+                    Kokoro / Native TTS
+                  </span>
+                </div>
+                <p className="text-secondary leading-relaxed text-[11px]">
+                  Converts the continuous script into a broadcast-ready 16kHz WAV audio track via <code className="font-mono text-[10px]">packages/providers/tts.py</code>.
+                </p>
+              </div>
+
+              {/* Other 2 */}
+              <div className="p-3 rounded border border-border bg-neutral/40 space-y-1.5">
+                <div className="flex items-center justify-between">
+                  <span className="font-medium text-primary">Video Generation</span>
+                  <span className="font-mono text-[10px] bg-surface px-1.5 py-0.5 rounded border border-border text-primary font-medium">
+                    LTX-2 / Wan 2.2 / Kling
+                  </span>
+                </div>
+                <p className="text-secondary leading-relaxed text-[11px]">
+                  Generates vertical 9:16 (720x1280 30fps) video clips for each shot via <code className="font-mono text-[10px]">packages/providers/videogen.py</code>.
+                </p>
+              </div>
+
+              {/* Other 3 */}
+              <div className="p-3 rounded border border-border bg-neutral/40 space-y-1.5">
+                <div className="flex items-center justify-between">
+                  <span className="font-medium text-primary">Brain Knowledge Store</span>
+                  <span className="font-mono text-[10px] bg-surface px-1.5 py-0.5 rounded border border-border text-primary font-medium">
+                    Brain Memory Engine
+                  </span>
+                </div>
+                <p className="text-secondary leading-relaxed text-[11px]">
+                  Indexes data from every scanned video into <code className="font-mono text-[10px]">storage/brain_memory.json</code> to cluster viral hook archetypes.
+                </p>
+              </div>
+            </div>
           </div>
         </div>
       </div>
 
-      {/* 3. What We Are Using (The 4 Core Engines) */}
+      {/* 3. DIRECT API REFERENCE (HOW TO CALL IT) */}
       <div className="space-y-3">
         <span className="text-xs font-mono uppercase tracking-wider text-secondary block">
-          02 • What We Are Using
-        </span>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-          <div className="p-4 rounded-md border border-border bg-surface flex items-start gap-3">
-            <div className="w-8 h-8 rounded bg-neutral border border-border flex items-center justify-center text-primary flex-shrink-0 mt-0.5">
-              <Film className="w-4 h-4" />
-            </div>
-            <div className="space-y-0.5">
-              <div className="flex items-center justify-between">
-                <h4 className="text-xs font-medium text-primary">Video &amp; Frame Slicer</h4>
-                <span className="font-mono text-[10px] text-secondary">FFmpeg + OpenCV</span>
-              </div>
-              <p className="text-xs text-secondary leading-relaxed">
-                Samples 1 frame/sec body + 4 frames/sec in the first 3s hook window. Finds scene cuts and extracts dominant colors.
-              </p>
-            </div>
-          </div>
-
-          <div className="p-4 rounded-md border border-border bg-surface flex items-start gap-3">
-            <div className="w-8 h-8 rounded bg-neutral border border-border flex items-center justify-center text-primary flex-shrink-0 mt-0.5">
-              <Mic className="w-4 h-4" />
-            </div>
-            <div className="space-y-0.5">
-              <div className="flex items-center justify-between">
-                <h4 className="text-xs font-medium text-primary">Voice &amp; Audio Pacing</h4>
-                <span className="font-mono text-[10px] text-secondary">OpenAI Whisper</span>
-              </div>
-              <p className="text-xs text-secondary leading-relaxed">
-                Transcribes speech with exact millisecond word timestamps. Measures speaking speed (WPM) and flags awkward silence gaps.
-              </p>
-            </div>
-          </div>
-
-          <div className="p-4 rounded-md border border-border bg-surface flex items-start gap-3">
-            <div className="w-8 h-8 rounded bg-neutral border border-border flex items-center justify-center text-primary flex-shrink-0 mt-0.5">
-              <Share2 className="w-4 h-4" />
-            </div>
-            <div className="space-y-0.5">
-              <div className="flex items-center justify-between">
-                <h4 className="text-xs font-medium text-primary">Link Scraper &amp; Proxy</h4>
-                <span className="font-mono text-[10px] text-secondary">yt-dlp + TikWM Proxy</span>
-              </div>
-              <p className="text-xs text-secondary leading-relaxed">
-                Pulls watermark-free video streams from TikTok, Instagram Reels, and YouTube Shorts alongside verified public views and likes.
-              </p>
-            </div>
-          </div>
-
-          <div className="p-4 rounded-md border border-border bg-surface flex items-start gap-3">
-            <div className="w-8 h-8 rounded bg-neutral border border-border flex items-center justify-center text-primary flex-shrink-0 mt-0.5">
-              <Brain className="w-4 h-4" />
-            </div>
-            <div className="space-y-0.5">
-              <div className="flex items-center justify-between">
-                <h4 className="text-xs font-medium text-primary">AI Brain &amp; Concept Writer</h4>
-                <span className="font-mono text-[10px] text-secondary">Qwen / Claude / GPT</span>
-              </div>
-              <p className="text-xs text-secondary leading-relaxed">
-                Stores patterns in memory (`storage/brain_memory.json`). Learns what makes 25M+ like videos viral and synthesizes new scripts.
-              </p>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* 4. Direct API Reference (How to Use It) */}
-      <div className="space-y-3">
-        <span className="text-xs font-mono uppercase tracking-wider text-secondary block">
-          03 • Direct API Reference (Port 8001)
+          02 • Direct API Endpoints (Port 8001)
         </span>
         <div className="space-y-2">
           {/* Endpoint 1 */}
@@ -204,7 +291,7 @@ export function SystemSpecs() {
                   POST
                 </span>
                 <span className="text-primary">/v1/videos</span>
-                <span className="text-secondary font-sans text-[11px]">— Analyze any video link</span>
+                <span className="text-secondary font-sans text-[11px]">— Analyze any video link or upload</span>
               </div>
               <button
                 onClick={() =>
@@ -234,7 +321,7 @@ export function SystemSpecs() {
                   GET
                 </span>
                 <span className="text-primary">/v1/brain/recommendations</span>
-                <span className="text-secondary font-sans text-[11px]">— Get winning hook &amp; script for your product</span>
+                <span className="text-secondary font-sans text-[11px]">— Generate winning hooks &amp; pacing for your product</span>
               </div>
               <button
                 onClick={() =>
@@ -262,7 +349,7 @@ export function SystemSpecs() {
                   GET
                 </span>
                 <span className="text-primary">/v1/brain</span>
-                <span className="text-secondary font-sans text-[11px]">— View all aggregated viral memory &amp; patterns</span>
+                <span className="text-secondary font-sans text-[11px]">— Query all cross-video patterns and metrics</span>
               </div>
               <button
                 onClick={() => copyText(`curl -s http://localhost:8001/v1/brain`, "ep3")}
@@ -279,28 +366,28 @@ export function SystemSpecs() {
         </div>
       </div>
 
-      {/* 5. How to Upgrade (3 Direct Upgrades) */}
+      {/* 4. UPGRADE BLUEPRINT */}
       <div className="space-y-3">
         <span className="text-xs font-mono uppercase tracking-wider text-secondary block">
-          04 • How to Upgrade ReelBrain
+          03 • Scaling &amp; Upgrades
         </span>
         <div className="p-4 rounded-md border border-border bg-surface space-y-3">
           <div className="flex items-start gap-2.5">
             <span className="w-1.5 h-1.5 rounded-full bg-primary mt-1.5 flex-shrink-0" />
             <p className="text-xs text-secondary leading-relaxed">
-              <strong className="text-primary font-medium">1-Click Video Generation:</strong> Connect Remix Studio shot prompts directly to LTX-Video / Kling 1.5 API and voiceover to Kokoro / ElevenLabs to render a finished video in 60s.
+              <strong className="text-primary font-medium">1-Click Full Video Generation:</strong> Connect shot prompts to Kling 1.5 / LTX-Video API and audio to ElevenLabs to render ready-to-post 9:16 videos in 60s.
             </p>
           </div>
           <div className="flex items-start gap-2.5">
             <span className="w-1.5 h-1.5 rounded-full bg-primary mt-1.5 flex-shrink-0" />
             <p className="text-xs text-secondary leading-relaxed">
-              <strong className="text-primary font-medium">Automated Viral Spider:</strong> Add a background cron job that automatically crawls the top 50 viral TikToks daily in your niche to keep the Brain perpetually updated.
+              <strong className="text-primary font-medium">Automated Trend Spider:</strong> Run a daily background crawler ingesting the top 50 viral reels in your niche to feed the Brain memory automatically.
             </p>
           </div>
           <div className="flex items-start gap-2.5">
             <span className="w-1.5 h-1.5 rounded-full bg-primary mt-1.5 flex-shrink-0" />
             <p className="text-xs text-secondary leading-relaxed">
-              <strong className="text-primary font-medium">Native Video AI (Gemini 1.5 Pro):</strong> Send raw video files directly to Gemini 1.5 Pro (which accepts 1 hour of video tokens) for micro-expression and facial eye-contact scoring.
+              <strong className="text-primary font-medium">Native Video AI (Gemini 1.5 Pro):</strong> Send raw video directly to Gemini 1.5 Pro (which accepts 1 hour of video tokens) for micro-expression and eye-contact detection.
             </p>
           </div>
         </div>

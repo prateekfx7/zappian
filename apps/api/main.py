@@ -46,8 +46,29 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Local storage directories
-STORAGE_DIR = Path("storage")
+# Storage directory resolution with /tmp fallback for serverless read-only environments
+def get_storage_dir() -> Path:
+    base = Path("storage")
+    try:
+        base.mkdir(parents=True, exist_ok=True)
+        test_file = base / ".write_test"
+        test_file.touch()
+        test_file.unlink(missing_ok=True)
+        return base
+    except OSError:
+        tmp_base = Path("/tmp/storage")
+        tmp_base.mkdir(parents=True, exist_ok=True)
+        bundled_brain = Path("storage/brain_memory.json")
+        if bundled_brain.exists() and not (tmp_base / "brain_memory.json").exists():
+            import shutil
+            try:
+                shutil.copy2(bundled_brain, tmp_base / "brain_memory.json")
+            except Exception:
+                pass
+        return tmp_base
+
+
+STORAGE_DIR = get_storage_dir()
 ORIGINALS_DIR = STORAGE_DIR / "originals"
 PROXIES_DIR = STORAGE_DIR / "proxies"
 FRAMES_DIR = STORAGE_DIR / "frames"
@@ -59,10 +80,16 @@ CONCEPTS_DIR = STORAGE_DIR / "concepts"
 DRAFTS_DIR = STORAGE_DIR / "drafts"
 
 for d in [ORIGINALS_DIR, PROXIES_DIR, FRAMES_DIR, THUMBS_DIR, AUDIO_DIR, ANALYSES_DIR, COMPARES_DIR, CONCEPTS_DIR, DRAFTS_DIR]:
-    d.mkdir(parents=True, exist_ok=True)
+    try:
+        d.mkdir(parents=True, exist_ok=True)
+    except OSError:
+        pass
 
 # Mount local storage for serving proxy videos and frame thumbnails to frontend
-app.mount("/storage", StaticFiles(directory="storage"), name="storage")
+try:
+    app.mount("/storage", StaticFiles(directory=str(STORAGE_DIR)), name="storage")
+except Exception:
+    pass
 
 
 class HealthResponse(BaseModel):
@@ -417,6 +444,13 @@ async def create_video(
         if payload.known_comments is not None and payload.known_comments > 0:
             user_stats.append({"metric": "comments", "value": payload.known_comments, "source": "manual", "fetched_at": now_iso})
 
+        target_dir = ORIGINALS_DIR / video_id
+        target_dir.mkdir(parents=True, exist_ok=True)
+        try:
+            (target_dir / "queue.json").write_text(json.dumps({"url": clean_url, "user_stats": user_stats}))
+        except Exception:
+            pass
+
         background_tasks.add_task(download_and_process_url_background, video_id, clean_url, user_stats=user_stats)
 
         return VideoResponse(
@@ -538,6 +572,36 @@ async def get_video(video_id: str) -> VideoResponse:
 async def stream_video_events(video_id: str):
     """Server-Sent Events (SSE) stream for real-time stage progress."""
     state = get_or_create_pipeline_state(video_id)
+    cache_file = ANALYSES_DIR / video_id / "pipeline_data.json"
+
+    # If already finished and cached on disk, mark state ready immediately
+    if cache_file.exists():
+        state.update("ready", 100, "Autopsy analysis and evidence validation complete.")
+    elif state.stage in ("queued", "ingest"):
+        # Auto-recover pipeline execution in serverless environments where BackgroundTasks may freeze
+        target_dir = ORIGINALS_DIR / video_id
+        if target_dir.exists():
+            video_candidates = [f for f in target_dir.glob("*.*") if f.name != "queue.json"]
+            queue_file = target_dir / "queue.json"
+            if video_candidates and state.stage == "queued":
+                asyncio.create_task(
+                    asyncio.to_thread(execute_pipeline_background, video_id, video_candidates[0])
+                )
+            elif queue_file.exists() and not video_candidates:
+                try:
+                    q_data = json.loads(queue_file.read_text(encoding="utf-8"))
+                    url = q_data.get("url", "")
+                    if url:
+                        asyncio.create_task(
+                            asyncio.to_thread(
+                                download_and_process_url_background,
+                                video_id,
+                                url,
+                                q_data.get("user_stats"),
+                            )
+                        )
+                except Exception:
+                    pass
 
     async def event_generator():
         # First send current state immediately

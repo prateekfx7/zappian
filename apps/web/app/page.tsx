@@ -440,6 +440,10 @@ export default function Home() {
       const likesNum = parseCount(knownLikes);
 
       if (sourceType === "upload" && selectedFile) {
+        if (typeof window !== "undefined" && window.location.protocol === "https:" && selectedFile.size > 4.5 * 1024 * 1024) {
+          throw new Error("Direct upload on Vercel is limited to 4.5 MB. Please use a shorter clip (<4.5 MB) or paste a video link (YouTube / TikTok)!");
+        }
+
         const formData = new FormData();
         formData.append("file", selectedFile);
         formData.append("rights_confirmed", "true");

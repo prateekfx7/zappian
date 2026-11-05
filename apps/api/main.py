@@ -61,6 +61,28 @@ app.add_middleware(
 
 # Storage directory resolution with /tmp fallback for serverless read-only environments
 def get_storage_dir() -> Path:
+    # On Vercel / AWS Lambda, filesystem outside /tmp is strictly read-only
+    is_serverless = bool(
+        os.environ.get("VERCEL")
+        or os.environ.get("AWS_LAMBDA_FUNCTION_NAME")
+        or os.environ.get("LAMBDA_TASK_ROOT")
+    )
+    if is_serverless:
+        tmp_base = Path("/tmp/storage")
+        tmp_base.mkdir(parents=True, exist_ok=True)
+        for candidate in [
+            Path("storage/brain_memory.json"),
+            Path(__file__).resolve().parent / "storage/brain_memory.json",
+        ]:
+            if candidate.exists() and not (tmp_base / "brain_memory.json").exists():
+                import shutil
+                try:
+                    shutil.copy2(candidate, tmp_base / "brain_memory.json")
+                except Exception:
+                    pass
+                break
+        return tmp_base
+
     base = Path("storage")
     try:
         base.mkdir(parents=True, exist_ok=True)
@@ -71,13 +93,6 @@ def get_storage_dir() -> Path:
     except OSError:
         tmp_base = Path("/tmp/storage")
         tmp_base.mkdir(parents=True, exist_ok=True)
-        bundled_brain = Path("storage/brain_memory.json")
-        if bundled_brain.exists() and not (tmp_base / "brain_memory.json").exists():
-            import shutil
-            try:
-                shutil.copy2(bundled_brain, tmp_base / "brain_memory.json")
-            except Exception:
-                pass
         return tmp_base
 
 
@@ -559,6 +574,12 @@ async def upload_video(
         # Initialize state and schedule pipeline execution
         state = get_or_create_pipeline_state(video_id)
         state.update("ingest", 5, "Upload received. Scheduling media pipeline...")
+        try:
+            (target_dir / "queue.json").write_text(
+                json.dumps({"file_path": str(target_file), "initial_stats": initial_stats})
+            )
+        except Exception:
+            pass
         background_tasks.add_task(
             execute_pipeline_background,
             video_id,
@@ -615,7 +636,7 @@ async def stream_video_events(video_id: str):
         if target_dir.exists():
             video_candidates = [f for f in target_dir.glob("*.*") if f.name != "queue.json"]
             queue_file = target_dir / "queue.json"
-            if video_candidates and state.stage == "queued":
+            if video_candidates and (state.stage == "queued" or state.progress_pct <= 5):
                 asyncio.create_task(
                     asyncio.to_thread(execute_pipeline_background, video_id, video_candidates[0])
                 )

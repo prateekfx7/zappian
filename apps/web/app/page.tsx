@@ -458,13 +458,18 @@ export default function Home() {
         if (!response.ok) {
           let errorDetail = `Upload rejected (HTTP ${response.status})`;
           try {
-            const errData = await response.json();
-            errorDetail = errData.detail || errData.message || errorDetail;
-          } catch {
-            const rawText = await response.text().catch(() => "");
-            if (rawText) {
-              errorDetail = `${errorDetail}: ${rawText.slice(0, 150)}`;
+            const rawText = await response.text();
+            try {
+              const errData = JSON.parse(rawText);
+              errorDetail = errData.detail || errData.message || errorDetail;
+            } catch {
+              if (rawText) {
+                const cleanText = rawText.replace(/<[^>]*>?/gm, " ").replace(/\s+/g, " ").trim();
+                errorDetail = `${errorDetail}: ${cleanText.slice(0, 180)}`;
+              }
             }
+          } catch {
+            // response body read failed
           }
           throw new Error(errorDetail);
         }
@@ -493,13 +498,18 @@ export default function Home() {
         if (!response.ok) {
           let errorDetail = `Server rejected video URL (HTTP ${response.status})`;
           try {
-            const errData = await response.json();
-            errorDetail = errData.detail || errData.message || errorDetail;
-          } catch {
-            const rawText = await response.text().catch(() => "");
-            if (rawText) {
-              errorDetail = `${errorDetail}: ${rawText.slice(0, 150)}`;
+            const rawText = await response.text();
+            try {
+              const errData = JSON.parse(rawText);
+              errorDetail = errData.detail || errData.message || errorDetail;
+            } catch {
+              if (rawText) {
+                const cleanText = rawText.replace(/<[^>]*>?/gm, " ").replace(/\s+/g, " ").trim();
+                errorDetail = `${errorDetail}: ${cleanText.slice(0, 180)}`;
+              }
             }
+          } catch {
+            // response body read failed
           }
           throw new Error(errorDetail);
         }

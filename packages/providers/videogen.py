@@ -11,9 +11,22 @@ import subprocess
 import uuid
 from pathlib import Path
 
-STORAGE_DIR = Path("storage")
+def get_storage_dir() -> Path:
+    base = Path("storage")
+    try:
+        base.mkdir(parents=True, exist_ok=True)
+        return base
+    except OSError:
+        tmp_base = Path("/tmp/storage")
+        tmp_base.mkdir(parents=True, exist_ok=True)
+        return tmp_base
+
+STORAGE_DIR = get_storage_dir()
 DRAFTS_DIR = STORAGE_DIR / "drafts"
-DRAFTS_DIR.mkdir(parents=True, exist_ok=True)
+try:
+    DRAFTS_DIR.mkdir(parents=True, exist_ok=True)
+except OSError:
+    pass
 
 
 class LTXVideoGenProvider:

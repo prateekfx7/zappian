@@ -5,6 +5,7 @@ Emits real-time progress events for SSE.
 """
 
 import json
+import os
 from collections.abc import Callable
 from datetime import UTC, datetime
 from pathlib import Path
@@ -21,6 +22,11 @@ from workers.media.processor import (
 from workers.media.scenes import detect_scene_cuts, extract_keyframe_at_timestamp
 
 def get_storage_base() -> Path:
+    if os.environ.get("VERCEL") or os.environ.get("AWS_LAMBDA_FUNCTION_NAME") or os.environ.get("LAMBDA_TASK_ROOT"):
+        tmp_base = Path("/tmp/storage")
+        tmp_base.mkdir(parents=True, exist_ok=True)
+        return tmp_base
+
     base = Path("storage")
     try:
         base.mkdir(parents=True, exist_ok=True)

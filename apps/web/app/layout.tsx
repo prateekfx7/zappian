@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
+import "lenis/dist/lenis.css";
 import "./globals.css";
+import { SmoothScroll } from "../lib/smooth-scroll";
 
 export const metadata: Metadata = {
   title: "ReelBrain — Video Autopsy & Remix Engine",
@@ -36,7 +38,7 @@ export default function RootLayout({
         />
       </head>
       <body className="min-h-screen bg-neutral text-ink antialiased selection:bg-primary selection:text-tertiary">
-        {children}
+        <SmoothScroll>{children}</SmoothScroll>
       </body>
     </html>
   );

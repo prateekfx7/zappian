@@ -39,6 +39,8 @@ import { AutopsyScanner } from "../components/AutopsyScanner";
 import { IngestProgressCard } from "../components/IngestProgressCard";
 import { SystemSpecs } from "../components/SystemSpecs";
 import { API_BASE_URL } from "../lib/api";
+import { useLenis } from "../lib/smooth-scroll";
+import { gsap } from "../lib/gsap";
 
 interface PipelineProgress {
   stage: string;
@@ -154,6 +156,43 @@ export default function Home() {
 
   const fileInputRef = useRef<HTMLInputElement>(null);
   const inspectorRef = useRef<HTMLDivElement>(null);
+  const heroRef = useRef<HTMLDivElement>(null);
+  const modeContainerRef = useRef<HTMLDivElement>(null);
+  const tabContentRef = useRef<HTMLDivElement>(null);
+  const { scrollTo: lenisScrollTo } = useLenis();
+
+  // GSAP: Fluid hero entrance
+  useEffect(() => {
+    if (!pipelineData && heroRef.current) {
+      gsap.fromTo(
+        heroRef.current,
+        { opacity: 0, y: 24 },
+        { opacity: 1, y: 0, duration: 0.8, ease: "power3.out" }
+      );
+    }
+  }, [pipelineData, appMode]);
+
+  // GSAP: Fluid mode transitions
+  useEffect(() => {
+    if (modeContainerRef.current) {
+      gsap.fromTo(
+        modeContainerRef.current,
+        { opacity: 0, y: 14 },
+        { opacity: 1, y: 0, duration: 0.45, ease: "power2.out" }
+      );
+    }
+  }, [appMode]);
+
+  // GSAP: Fluid tab content transitions
+  useEffect(() => {
+    if (tabContentRef.current) {
+      gsap.fromTo(
+        tabContentRef.current,
+        { opacity: 0, y: 10 },
+        { opacity: 1, y: 0, duration: 0.35, ease: "power2.out" }
+      );
+    }
+  }, [activeTab]);
 
   // SSE event stream listener for real-time progress
   useEffect(() => {
@@ -340,7 +379,9 @@ export default function Home() {
         Math.abs(curr.t_ms - t_ms) < Math.abs(prev.t_ms - t_ms) ? curr : prev
       );
       setSelectedFrame(closest);
-      inspectorRef.current?.scrollIntoView({ behavior: "smooth", block: "center" });
+      if (inspectorRef.current) {
+        lenisScrollTo(inspectorRef.current, { offset: -60, duration: 0.9 });
+      }
     }
   };
 
@@ -659,12 +700,13 @@ export default function Home() {
 
       {/* 2. Main Body with Expansive Whitespace */}
       <main className="flex-1 max-w-5xl mx-auto px-6 py-12 md:py-16 w-full">
+        <div ref={modeContainerRef} className="w-full">
         {/* MODE A: AUTOPSY ENGINE */}
         {appMode === "autopsy" && (
           <div>
             {/* Centered Spotlight Dropzone */}
             {!pipelineData && (
-              <div className="max-w-xl mx-auto py-12 md:py-20 text-center animate-fade-in">
+              <div ref={heroRef} className="max-w-xl mx-auto py-12 md:py-20 text-center">
                 <h1 className="text-4xl md:text-5xl font-normal tracking-[-3.36px] text-primary mb-3">
                   Drop a video to analyze
                 </h1>
@@ -883,7 +925,7 @@ export default function Home() {
 
             {/* Active Video Results Section */}
             {pipelineData && (
-              <div className="space-y-8 animate-fade-in">
+              <div id="active-results-section" className="space-y-8 animate-fade-in">
                 {/* View Switcher Bar */}
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between bg-surface p-2.5 rounded-md border border-border gap-3">
                   <div className="flex bg-neutral p-0.5 rounded-full border border-border">
@@ -1039,6 +1081,8 @@ export default function Home() {
                   </div>
                 </div>
 
+                {/* Tabs Container Animated with GSAP */}
+                <div ref={tabContentRef} className="space-y-8">
                 {/* TAB 1: EXECUTIVE AUTOPSY */}
                 {activeTab === "autopsy" && (
                   <div>
@@ -1474,6 +1518,7 @@ export default function Home() {
                     </div>
                   </div>
                 )}
+                </div>
               </div>
             )}
           </div>
@@ -1588,6 +1633,7 @@ export default function Home() {
 
         {/* MODE E: SYSTEM SPECS, STACK & UPGRADE BLUEPRINT */}
         {appMode === "system" && <SystemSpecs />}
+        </div>
       </main>
 
       {/* Global Stats Drawer Modal */}

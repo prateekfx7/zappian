@@ -1,6 +1,7 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
+import { gsap } from "../lib/gsap";
 import {
   Sparkles,
   Flame,
@@ -121,6 +122,49 @@ export function ReportViewer({
   const [selectedCategory, setSelectedCategory] = useState<string>("all");
   const [activeBeatIndex, setActiveBeatIndex] = useState<number | null>(null);
 
+  const [animatedScore, setAnimatedScore] = useState<number>(0);
+  const circleRef = useRef<SVGCircleElement>(null);
+  const scoreCounterRef = useRef({ val: 0 });
+  const containerRef = useRef<HTMLDivElement>(null);
+
+
+
+  const compositeScore = Math.min(
+    99,
+    Math.max(
+      10,
+      Math.round(
+        report.scores.hook * 0.35 +
+        report.scores.retention * 0.25 +
+        report.scores.emotion * 0.15 +
+        report.scores.clarity * 0.15 +
+        report.scores.shareability * 0.10
+      )
+    )
+  );
+
+  useEffect(() => {
+    // GSAP count up animation for composite performance score
+    gsap.to(scoreCounterRef.current, {
+      val: compositeScore,
+      duration: 1.2,
+      ease: "power3.out",
+      onUpdate: () => {
+        setAnimatedScore(Math.round(scoreCounterRef.current.val));
+      },
+    });
+
+    // GSAP circle gauge draw animation
+    if (circleRef.current) {
+      const targetOffset = 263.89 - (compositeScore / 100) * 263.89;
+      gsap.fromTo(
+        circleRef.current,
+        { strokeDashoffset: 263.89 },
+        { strokeDashoffset: targetOffset, duration: 1.4, ease: "power3.out" }
+      );
+    }
+  }, [compositeScore, videoId]);
+
   const formatMs = (ms: number) => {
     const totalSec = Math.floor(ms / 1000);
     const m = Math.floor(totalSec / 60);
@@ -150,20 +194,7 @@ export function ReportViewer({
   const verdictDropoff = verdictParts[1] || "Viewer momentum holds steady across key narrative beats.";
   const verdictFit = verdictParts[2] || "Best fit: TikTok and Instagram Reels paid social ad.";
 
-  // Calculate composite performance score
-  const compositeScore = Math.min(
-    99,
-    Math.max(
-      10,
-      Math.round(
-        report.scores.hook * 0.35 +
-        report.scores.retention * 0.25 +
-        report.scores.emotion * 0.15 +
-        report.scores.clarity * 0.15 +
-        report.scores.shareability * 0.10
-      )
-    )
-  );
+
 
   // Extract engagement telemetry
   const statsMap = (report.stats || []).reduce((acc: any, curr) => {
@@ -190,7 +221,7 @@ export function ReportViewer({
   const hasTelemetry = telemetry.views > 0 || telemetry.likes > 0;
 
   return (
-    <div className="space-y-6 animate-fade-in text-primary">
+    <div ref={containerRef} className="space-y-6 animate-fade-in text-primary">
       {/* ========================================================= */}
       {/* 0. VIRAL ENGAGEMENT TELEMETRY BANNER                      */}
       {/* ========================================================= */}
@@ -292,6 +323,7 @@ export function ReportViewer({
                   strokeWidth="6"
                 />
                 <circle
+                  ref={circleRef}
                   cx="50"
                   cy="50"
                   r="42"
@@ -299,14 +331,13 @@ export function ReportViewer({
                   stroke="#171717"
                   strokeWidth="6"
                   strokeDasharray="263.89"
-                  strokeDashoffset={263.89 - (compositeScore / 100) * 263.89}
+                  strokeDashoffset={263.89}
                   strokeLinecap="round"
-                  className="transition-all duration-700 ease-out"
                 />
               </svg>
               <div className="absolute inset-0 flex flex-col items-center justify-center text-center">
                 <span className="text-3xl font-normal tracking-tight text-primary">
-                  {compositeScore}
+                  {animatedScore}
                 </span>
                 <span className="text-[10px] font-medium text-secondary uppercase tracking-wider">
                   Out of 100

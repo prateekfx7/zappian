@@ -1,6 +1,7 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
+import { gsap } from "../lib/gsap";
 import {
   Brain,
   Sparkles,
@@ -136,6 +137,17 @@ export function BrainViewer({ onLaunchRemix, onSelectVideoForAutopsy }: BrainVie
   const [recommendation, setRecommendation] = useState<BrainRecommendation | null>(null);
   const [isLoadingRecs, setIsLoadingRecs] = useState(false);
   const [syncStatusMsg, setSyncStatusMsg] = useState<string | null>(null);
+  const metricsGridRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (summary && metricsGridRef.current) {
+      gsap.fromTo(
+        metricsGridRef.current.children,
+        { opacity: 0, y: 16, scale: 0.98 },
+        { opacity: 1, y: 0, scale: 1, duration: 0.6, stagger: 0.08, ease: "power2.out" }
+      );
+    }
+  }, [summary]);
 
   const formatMetricNumber = (num?: number) => {
     if (!num || num <= 0) return "0";
@@ -266,8 +278,8 @@ export function BrainViewer({ onLaunchRemix, onSelectVideoForAutopsy }: BrainVie
           </div>
         )}
 
-        {/* Metric Cards Grid */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-6">
+        {/* Metric Cards Grid Animated with GSAP */}
+        <div ref={metricsGridRef} className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-6">
           <div className="p-4 bg-neutral rounded-md border border-border">
             <div className="text-xs text-secondary mb-1">Total Videos Indexed</div>
             <div className="text-2xl md:text-3xl font-medium tracking-tight text-primary">

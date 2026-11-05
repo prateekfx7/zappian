@@ -456,8 +456,17 @@ export default function Home() {
         });
 
         if (!response.ok) {
-          const errData = await response.json().catch(() => ({ detail: "Upload failed" }));
-          throw new Error(errData.detail || "Upload rejected by media server.");
+          let errorDetail = `Upload rejected (HTTP ${response.status})`;
+          try {
+            const errData = await response.json();
+            errorDetail = errData.detail || errData.message || errorDetail;
+          } catch {
+            const rawText = await response.text().catch(() => "");
+            if (rawText) {
+              errorDetail = `${errorDetail}: ${rawText.slice(0, 150)}`;
+            }
+          }
+          throw new Error(errorDetail);
         }
 
         const data = await response.json();
@@ -482,8 +491,17 @@ export default function Home() {
         });
 
         if (!response.ok) {
-          const errData = await response.json().catch(() => ({ detail: "Failed to queue URL" }));
-          throw new Error(errData.detail || "Server rejected video URL request.");
+          let errorDetail = `Server rejected video URL (HTTP ${response.status})`;
+          try {
+            const errData = await response.json();
+            errorDetail = errData.detail || errData.message || errorDetail;
+          } catch {
+            const rawText = await response.text().catch(() => "");
+            if (rawText) {
+              errorDetail = `${errorDetail}: ${rawText.slice(0, 150)}`;
+            }
+          }
+          throw new Error(errorDetail);
         }
 
         const data = await response.json();

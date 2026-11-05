@@ -18,9 +18,17 @@ class EvidenceValidationError(Exception):
 
 
 def load_report_schema() -> dict[str, Any]:
-    schema_path = Path("packages/schemas/report.json")
-    with open(schema_path, "r", encoding="utf-8") as f:
-        return json.load(f)
+    candidates = [
+        Path("packages/schemas/report.json"),
+        Path("apps/api/packages/schemas/report.json"),
+        Path(__file__).resolve().parent.parent.parent / "packages/schemas/report.json",
+        Path(__file__).resolve().parent.parent.parent / "apps/api/packages/schemas/report.json",
+    ]
+    for p in candidates:
+        if p.exists():
+            with open(p, "r", encoding="utf-8") as f:
+                return json.load(f)
+    raise FileNotFoundError("report.json schema not found")
 
 
 def find_nearest_valid_timestamp(
@@ -52,6 +60,24 @@ def validate_and_repair_report(
     4. Drops claims that cannot be grounded in frame evidence
     5. Checks overall evidence coverage (must be >= 95%)
     """
+    from datetime import UTC, datetime
+
+    # Auto-repair stats array to strictly match report schema
+    valid_sources = {"youtube_api", "ytdlp", "manual", "csv", "connector"}
+    now_iso = datetime.now(UTC).isoformat()
+    repaired_stats = []
+    for s in report.get("stats", []):
+        if not isinstance(s, dict):
+            continue
+        item = {
+            "metric": str(s.get("metric", "views")),
+            "value": float(s.get("value", 0)),
+            "source": s.get("source") if s.get("source") in valid_sources else "manual",
+            "fetched_at": str(s.get("fetched_at") or now_iso),
+        }
+        repaired_stats.append(item)
+    report["stats"] = repaired_stats
+
     schema = load_report_schema()
 
     # 1. Structural schema validation

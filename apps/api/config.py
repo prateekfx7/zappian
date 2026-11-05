@@ -15,6 +15,7 @@ class Settings(BaseSettings):
     api_host: str = "0.0.0.0"
     api_port: int = 8000
     secret_key: str = "dummy-dev-secret-key-32-chars-minimum"
+    cors_origins: str = "http://localhost:3000,http://127.0.0.1:3000"
 
     # Database & Cache
     postgres_host: str = "localhost"

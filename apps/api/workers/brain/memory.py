@@ -370,7 +370,7 @@ class BrainMemoryEngine:
                 "occurrences": len(scores_list),
                 "avg_composite_score": round(sum(scores_list) / len(scores_list), 1),
             })
-        blueprint_patterns.sort(key=lambda x: x["avg_composite_score"], reverse=True)
+        blueprint_patterns.sort(key=lambda x: float(str(x.get("avg_composite_score", 0.0))), reverse=True)
         self.data["patterns"]["blueprints"] = blueprint_patterns[:4]
 
     def sync_existing_analyses(self) -> int:
@@ -533,6 +533,9 @@ class BrainMemoryEngine:
             f"9:16 vertical {platform.capitalize()} format, high visual clarity, zero watermark, photorealistic."
         )
 
+        techs = best_hook.get("techniques", ["Macro push-in"])
+        opening_shot = techs[0] if isinstance(techs, list) and techs else "Macro push-in"
+
         return {
             "product_or_topic": product_or_topic,
             "target_platform": platform,
@@ -540,7 +543,7 @@ class BrainMemoryEngine:
             "recommended_hook": {
                 "archetype": best_hook.get("archetype"),
                 "proven_hold_rate": f"{best_hook.get('avg_hook_score')}% (Brain Empirical Average)",
-                "opening_shot_technique": best_hook.get("techniques", ["Macro push-in"])[0],
+                "opening_shot_technique": str(opening_shot),
                 "sample_line": f"Stop using conventional alternatives for {product_or_topic} until you see this.",
             },
             "recommended_pacing": {

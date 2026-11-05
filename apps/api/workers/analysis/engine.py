@@ -51,10 +51,11 @@ def extract_visual_palette(frames: list[dict[str, Any]]) -> tuple[list[str], str
             gray = cv2.cvtColor(small, cv2.COLOR_BGR2GRAY)
             brightnesses.append(float(np.mean(gray)))
 
-            pixels = np.float32(small.reshape(-1, 3))
+            pixels = np.ascontiguousarray(small.reshape(-1, 3), dtype=np.float32)
             criteria = (cv2.TERM_CRITERIA_EPS + cv2.TERM_CRITERIA_MAX_ITER, 10, 1.0)
+            best_labels: np.ndarray = np.empty((0,), dtype=np.int32)
             _, _, palette = cv2.kmeans(
-                pixels, 1, None, criteria, 10, cv2.KMEANS_RANDOM_CENTERS
+                pixels, 1, best_labels, criteria, 10, cv2.KMEANS_RANDOM_CENTERS
             )
             c = palette[0]
             colors.append(f"#{int(c[2]):02x}{int(c[1]):02x}{int(c[0]):02x}")

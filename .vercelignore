@@ -1,0 +1,22 @@
+# Vercel Ignore File
+.venv/
+venv/
+__pycache__/
+*.pyc
+.mypy_cache/
+.pytest_cache/
+.ruff_cache/
+node_modules/
+apps/web/node_modules/
+apps/web/.next/
+
+# Large local media files
+storage/originals/
+storage/proxies/
+storage/frames/
+storage/audio/
+tests/golden/*.mp4
+data/
+infra/docker/
+*.png
+

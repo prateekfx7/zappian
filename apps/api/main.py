@@ -31,10 +31,16 @@ app = FastAPI(
     redoc_url="/redoc",
 )
 
-# CORS setup for Next.js web client
+# CORS setup for web client and deployment
+cors_origins_env = getattr(settings, "cors_origins", "")
+allowed_origins = [o.strip() for o in cors_origins_env.split(",") if o.strip()]
+if not allowed_origins:
+    allowed_origins = ["http://localhost:3000", "http://127.0.0.1:3000"]
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000", "http://127.0.0.1:3000"],
+    allow_origins=allowed_origins,
+    allow_origin_regex=r"^https?://.*",
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -173,7 +179,7 @@ def download_and_process_url_background(
 
                 api_res = cureq.post(
                     "https://www.tikwm.com/api/",
-                    data={"url": clean_url, "hd": 1},
+                    data={"url": clean_url, "hd": "1"},
                     impersonate="chrome124",
                     timeout=20,
                 )
@@ -244,13 +250,13 @@ def download_and_process_url_background(
 
                 state.update("ingest", 15, "Downloading direct video file...")
                 target_file = resolved_dir / "downloaded_direct.mp4"
-                with cureq.get(url.strip(), impersonate="chrome124", timeout=45) as r:
-                    if r.status_code == 200 and len(r.content) > 1000:
-                        with open(target_file, "wb") as f:
-                            f.write(r.content)
-                        if target_file.exists() and target_file.stat().st_size > 1000:
-                            downloaded_file = target_file
-                            social_meta = {"platform": "web", "title": "Direct Video"}
+                r = cureq.get(url.strip(), impersonate="chrome124", timeout=45)
+                if r.status_code == 200 and len(r.content) > 1000:
+                    with open(target_file, "wb") as f:
+                        f.write(r.content)
+                    if target_file.exists() and target_file.stat().st_size > 1000:
+                        downloaded_file = target_file
+                        social_meta = {"platform": "web", "title": "Direct Video"}
             except Exception as e:
                 logger.warning(f"Direct video download failed: {e}")
 
@@ -914,6 +920,68 @@ async def save_video_thoughts(video_id: str, payload: CreatorThoughtsRequest) ->
     from workers.brain.memory import brain_memory
     record = brain_memory.learn_creator_thought(video_id, payload.model_dump())
     return {"status": "ok", "thoughts": record}
+
+
+# ---------------------------------------------------------
+# Grok Bot (xAI) Integration Routes
+# ---------------------------------------------------------
+
+class GrokChatRequest(BaseModel):
+    prompt: str = Field(..., description="Prompt or query for Grok Bot")
+    model: str = Field("grok-2-latest", description="grok-2-latest, grok-beta, etc.")
+    video_id: str | None = Field(None, description="Optional video ID to ground Grok in autopsy context")
+    system_prompt: str | None = Field(None, description="Custom system prompt override")
+    api_key: str | None = Field(None, description="Optional user-supplied xAI API key")
+
+
+@app.get("/v1/grok/status", tags=["Grok"])
+async def get_grok_status(api_key: str | None = None) -> dict[str, Any]:
+    """Checks whether the xAI Grok API key is configured and functional."""
+    from packages.providers.grok import check_grok_status
+    return check_grok_status(api_key)
+
+
+@app.post("/v1/grok/chat", tags=["Grok"])
+async def grok_chat_endpoint(payload: GrokChatRequest) -> dict[str, Any]:
+    """Sends a prompt to Grok Bot, injecting autopsy transcript/blueprint if video_id is provided."""
+    from packages.providers.grok import call_grok_chat
+
+    prompt = payload.prompt
+    if payload.video_id:
+        p_path = STORAGE_DIR / "pipelines" / f"{payload.video_id}.json"
+        if p_path.exists():
+            try:
+                with open(p_path, "r", encoding="utf-8") as f:
+                    p_data = json.load(f)
+                tx = p_data.get("transcript", {}).get("text", "")
+                analysis = p_data.get("analysis", {})
+                verdict = analysis.get("verdict", "")
+                blueprint = analysis.get("blueprint", [])
+                bp_summary = ", ".join([f"{b.get('role', '')} ({b.get('t_start_ms', 0)}ms)" for b in blueprint[:5]])
+                context_addon = (
+                    f"\n\n[CONTEXT: Video ID {payload.video_id}]\n"
+                    f"Transcript: {tx[:300]}\n"
+                    f"Verdict: {verdict}\n"
+                    f"Blueprint: {bp_summary}\n"
+                )
+                prompt = f"{prompt}\n{context_addon}"
+            except Exception:
+                pass
+
+    try:
+        reply = call_grok_chat(
+            prompt=prompt,
+            system_prompt=payload.system_prompt,
+            model=payload.model,
+            api_key=payload.api_key,
+        )
+        return {"status": "ok", "model": payload.model, "reply": reply}
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=str(e),
+        )
+
 
 
 if __name__ == "__main__":

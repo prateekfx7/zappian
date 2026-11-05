@@ -239,7 +239,11 @@ def extract_frames_cv2(
     proxy_path: Path, frames_dir: Path, thumbs_dir: Path
 ) -> list[dict[str, Any]]:
     """Pure OpenCV fallback to extract 1 frame per second when ffmpeg is unavailable."""
-    import cv2
+    try:
+        import cv2
+    except ImportError:
+        logger.warning("cv2 not available for frame extraction fallback")
+        return []
 
     cap = cv2.VideoCapture(str(proxy_path))
     if not cap.isOpened():

@@ -1,5 +1,7 @@
 import asyncio
 import json
+import os
+import sys
 import uuid
 from datetime import UTC, datetime
 from pathlib import Path
@@ -20,7 +22,18 @@ from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field
 from sse_starlette.sse import EventSourceResponse
 
-from apps.api.config import settings
+# Support both repo root execution and Vercel serverless execution where root is apps/api
+API_DIR = Path(__file__).resolve().parent
+REPO_ROOT = API_DIR.parent.parent
+for _p in [str(API_DIR), str(REPO_ROOT)]:
+    if _p not in sys.path:
+        sys.path.insert(0, _p)
+
+try:
+    from apps.api.config import settings
+except ModuleNotFoundError:
+    from config import settings  # type: ignore[no-redef]
+
 from workers.pipeline import get_or_create_pipeline_state, run_media_pipeline
 
 app = FastAPI(
